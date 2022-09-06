@@ -1,4 +1,4 @@
 [submodule "gear"]
-	path = gear
+	path = packages/gear
 	url = https://github.com/nickeldan/gear
     tag = 0.4.1
