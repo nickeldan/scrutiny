@@ -16,18 +16,34 @@ typedef struct scrStats {
 } scrStats;
 
 scrRunner *
-scrRunnerCreate(void);
+scrRunnerCreate(void)
+#ifdef __GNUC__
+    __attribute__((malloc))
+#endif
+    ;
 
 void
 scrRunnerDestroy(scrRunner *runner);
 
 scrGroup *
-scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn);
+scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
+#ifdef __GNUC__
+    __attribute__((malloc)) __attribute__((nonnull(1)))
+#endif
+    ;
 
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout);
+scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout)
+#ifdef __GNUC__
+    __attribute__((nonnull(1, 2, 3)))
+#endif
+    ;
 
 void
-scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats);
+scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
+#ifdef __GNUC__
+    __attribute__((nonnull(1)))
+#endif
+    ;
 
 #endif  // SCRUTINY_RUN_H

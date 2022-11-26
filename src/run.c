@@ -351,10 +351,6 @@ scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn clea
 {
     scrGroup group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
 
-    if (!runner) {
-        return NULL;
-    }
-
     gearInit(&group.params, sizeof(scrTestParam));
     if (gearAppend(&runner->groups, &group) != GEAR_RET_OK) {
         exit(1);
@@ -364,13 +360,9 @@ scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn clea
 }
 
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout)
+scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout)
 {
     scrTestParam param = {.test_fn = test_fn, .timeout = timeout};
-
-    if (!group || !name || !test_fn) {
-        return;
-    }
 
     param.name = strdup(name);
     if (!param.name) {
