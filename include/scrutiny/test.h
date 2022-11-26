@@ -4,12 +4,12 @@
 #include <stdint.h>
 #include <stdio.h>
 
-enum scrTestCode {
+typedef enum scrTestCode {
     SCR_TEST_CODE_OK = 0,
-    SRC_TEST_CODE_SETUP_FAIL,
     SCR_TEST_CODE_FAIL,
+    SCR_TEST_CODE_ERROR,
     SCR_TEST_CODE_SKIP,
-};
+} scrTestCode;
 
 typedef struct scrTestCtx {
     void *group_ctx;
@@ -18,6 +18,7 @@ typedef struct scrTestCtx {
 } scrTestCtx;
 
 #define SCR_TEST_FN(func) void func(void *_test_ctx)
+#define NOT_USING_CTX     (void)_test_ctx
 
 #define SCR_TEST_CTX() (((scrTestCtx *)_test_ctx)->group_ctx)
 
@@ -43,7 +44,7 @@ scrError(const scrTestCtx *ctx, SCR_CONTEXT_DECL, const char *format, ...)
         }                                                                           \
     } while (0)
 
-#define SCR_ASSERT_FUNC(name, type)                                                               \
+#define SCR_ASSERT_FUNC(func, type)                                                               \
     void scrAssert##func(const scrTestCtx *ctx, SCR_CONTEXT_DECL, type value1, const char *expr1, \
                          type value2, const char *expr2)
 #define SCR_ASSERT_MACRO(func, expr1, expr2) \

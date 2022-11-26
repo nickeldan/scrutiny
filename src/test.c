@@ -19,7 +19,7 @@ scrError(const scrTestCtx *ctx, SCR_CONTEXT_DECL, const char *format, ...)
     dprintf(ctx->log_fd, "[ERROR] On line %u of %s in %s:\n\t", line_no, function_name, file_name);
 
     va_start(args, format);
-    vdprintf(fd, format, args);
+    vdprintf(ctx->log_fd, format, args);
     va_end(args);
 
     dprintf(ctx->log_fd, "\n");
@@ -175,7 +175,7 @@ SCR_ASSERT_FUNC(GeFloat, long double)
     }
 }
 
-SCR_ASSERT_PTR_EQ(PtrEq, void *)
+SCR_ASSERT_FUNC(PtrEq, const void *)
 {
     if (value1 != value2) {
         scrError(ctx, file_name, function_name, line_no, "%s != %s\n\t%p != %p", expr1, expr2, value1,
@@ -183,7 +183,7 @@ SCR_ASSERT_PTR_EQ(PtrEq, void *)
     }
 }
 
-SCR_ASSERT_PTR_NEQ(PtrNeq, void *)
+SCR_ASSERT_FUNC(PtrNeq, const void *)
 {
     if (value1 == value2) {
         scrError(ctx, file_name, function_name, line_no, "%s == %s\n\t%p == %p", expr1, expr2, value1,
