@@ -80,19 +80,25 @@ done:
 #define RED         "\x1b[0;31m"
 #define RESET_COLOR "\x1b[0m"
 
-static void
+static bool
 dumpFd(int fd, bool show_color)
 {
+    bool printed = false;
     ssize_t transmitted;
     char buffer[1024];
 
+    lseek(fd, 0, SEEK_SET);
+
     while ((transmitted = read(fd, buffer, sizeof(buffer))) > 0) {
         if (write(STDOUT_FILENO, buffer, transmitted) < 0) {}
+        printed = true;
     }
 
     if (show_color) {
         if (write(STDOUT_FILENO, RESET_COLOR, sizeof(RESET_COLOR) - 1) < 0) {}
     }
+
+    return printed;
 }
 
 static scrTestCode
@@ -141,20 +147,23 @@ testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, p
     }
 
     if (show_output) {
-        printf("--------- logs ---------\n\n");
         fflush(stdout);
         dumpFd(log_fd, show_color);
-        printf("\n------------------------\n\n");
+        printf("\n");
 
-        printf("-------- stdout --------\n\n");
+        printf("-------- stdout --------\n");
         fflush(stdout);
-        dumpFd(stdout_fd, show_color);
-        printf("\n------------------------\n\n");
+        if (dumpFd(stdout_fd, show_color)) {
+            printf("\n");
+        }
+        printf("------------------------\n\n");
 
-        printf("-------- stderr --------\n\n");
+        printf("-------- stderr --------\n");
         fflush(stdout);
-        dumpFd(stderr_fd, show_color);
-        printf("\n------------------------\n\n");
+        if (dumpFd(stderr_fd, show_color)) {
+            printf("\n");
+        }
+        printf("------------------------\n\n");
     }
 
     return ret;

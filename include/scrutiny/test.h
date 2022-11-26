@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef enum scrTestCode {
     SCR_TEST_CODE_OK = 0,
