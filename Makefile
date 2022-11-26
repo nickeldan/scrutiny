@@ -1,7 +1,7 @@
 CC ?= gcc
 debug ?= no
 
-CFLAGS := -std=gnu11 -fdiagnostics-color -Wall -Wextra
+CFLAGS := -std=gnu11 -fdiagnostics-color -Wall -Wextra -Wshadow -Werror
 ifeq ($(debug),yes)
     CFLAGS += -O0 -g -DDEBUG
 else

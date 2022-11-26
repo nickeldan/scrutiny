@@ -11,6 +11,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#define GEAR_DEFAULT_EXPANSION 10
 #include <gear/gear.h>
 
 #include <scrutiny/run.h>
