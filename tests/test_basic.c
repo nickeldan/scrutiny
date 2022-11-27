@@ -1,9 +1,10 @@
+#include <unistd.h>
+
 #include <scrutiny/run.h>
 #include <scrutiny/test.h>
 
 static SCR_TEST_FN(do_nothing)
 {
-    (void)_test_ctx;
 }
 
 static SCR_TEST_FN(integers_equal)
@@ -296,19 +297,25 @@ static SCR_TEST_FN(fail_pointers_not_equal)
     SCR_ASSERT_PTR_NEQ(p1, p2);
 }
 
+static SCR_TEST_FN(error_timeout)
+{
+    sleep(2);
+}
+
 static SCR_TEST_FN(skip_me)
 {
-    (void)_test_ctx;
     SCR_TEST_SKIP();
 }
 
 int
 main()
 {
-    unsigned int num_pass = 0, num_fail = 0, num_skip = 0;
+    unsigned int num_pass = 0, num_fail = 0, num_error = 0, num_skip = 0;
     scrRunner *runner;
     scrGroup *group;
     scrStats stats;
+
+    scrInit();
 
     runner = scrRunnerCreate();
     group = scrGroupCreate(runner, NULL, NULL);
@@ -322,6 +329,11 @@ main()
     do {                                                       \
         scrGroupAddTest(group, "fail_" #test, fail_##test, 0); \
         num_fail++;                                            \
+    } while (0)
+#define ADD_TIMEOUT(test, timeout)                    \
+    do {                                              \
+        scrGroupAddTest(group, #test, test, timeout); \
+        num_error++;                                  \
     } while (0)
 #define ADD_SKIP(test)                          \
     do {                                        \
@@ -370,15 +382,17 @@ main()
     ADD_FAIL(floats_greater_than_or_equal);
     ADD_FAIL(pointers_equal);
     ADD_FAIL(pointers_not_equal);
+    ADD_TIMEOUT(error_timeout, 1);
     ADD_SKIP(skip_me);
 
 #undef ADD_PASS
 #undef ADD_FAIL
+#undef ADD_TIMEOUT
 #undef ADD_SKIP
 
     scrRunnerRun(runner, NULL, &stats);
     scrRunnerDestroy(runner);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||
-            stats.num_errored != 0);
+            stats.num_errored != num_error);
 }

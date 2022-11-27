@@ -9,13 +9,19 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 
-#define GEAR_DEFAULT_EXPANSION 10
 #include <gear/gear.h>
 
 #include <scrutiny/run.h>
 #include <scrutiny/test.h>
+
+#include "internal.h"
+
+#ifndef ARRAY_LENGTH
+#define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
+#endif
 
 typedef struct scrTestParam {
     scrTestFn test_fn;
@@ -34,6 +40,23 @@ struct scrRunner {
     scrStats stats;
 };
 
+static void
+signalHandler(int signum)
+{
+    (void)signum;
+    kill(-1, SIGTERM);
+    while (waitpid(-1, NULL, 0) > 0) {}
+}
+
+static bool
+caughtSignal(void)
+{
+    sigset_t set;
+
+    sigpending(&set);
+    return sigismember(&set, SIGTERM);
+}
+
 #ifdef __GNUC__
 static void
 testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param, void *group_ctx)
@@ -45,9 +68,8 @@ testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param, void
 {
     int ret = SCR_TEST_CODE_ERROR, stdin_fd;
     sigset_t set;
-    scrTestCtx ctx = {.group_ctx = group_ctx, .log_fd = log_fd};
 
-    ctx.log_to_tty = isatty(STDOUT_FILENO);
+    setParams(group_ctx, log_fd);
 
     stdin_fd = open("/dev/null", O_RDONLY);
     if (stdin_fd < 0 || dup2(stdin_fd, STDIN_FILENO) < 0) {
@@ -63,12 +85,11 @@ testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param, void
 
     sigemptyset(&set);
     sigprocmask(SIG_SETMASK, &set, NULL);
-
     if (param->timeout > 0) {
         alarm(param->timeout);
     }
 
-    param->test_fn(&ctx);
+    param->test_fn();
     ret = SCR_TEST_CODE_OK;
 
 done:
@@ -107,12 +128,25 @@ testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, p
     scrTestCode ret;
     int status;
     bool show_output = false, show_color;
-
-    while (waitpid(child, &status, 0) < 0) {}
-
-    printf("Test result (%s): ", test_name);
+    struct timespec spec = {.tv_nsec = 10000000};  // 1/100 of a second
 
     show_color = isatty(STDOUT_FILENO);
+
+    while (1) {
+        if (caughtSignal()) {
+            kill(child, SIGKILL);
+            waitpid(child, NULL, 0);
+            exit(0);
+        }
+
+        if (waitpid(child, &status, WNOHANG) == child) {
+            break;
+        }
+
+        nanosleep(&spec, NULL);
+    }
+
+    printf("Test result (%s): ", test_name);
 
     if (WIFSIGNALED(status)) {
         printf("%sERROR%s: Terminated by signal (%i)\n", show_color ? RED : "",
@@ -241,9 +275,13 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
 
     if (child == 0) {
         void *group_ctx;
+        sigset_t set;
         scrTestParam *param;
 
         close(fds[0]);
+
+        sigfillset(&set);
+        sigprocmask(SIG_SETMASK, &set, NULL);
 
         if (group->create_fn) {
             group_ctx = group->create_fn(global_ctx);
@@ -317,6 +355,18 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
     }
 }
 
+void
+scrInit(void)
+{
+    int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
+    struct sigaction action = {.sa_handler = signalHandler};
+
+    sigfillset(&action.sa_mask);
+    for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
+        sigaction(kill_signals[k], &action, NULL);
+    }
+}
+
 scrRunner *
 scrRunnerCreate(void)
 {
@@ -361,6 +411,7 @@ scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn clea
     scrGroup group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
 
     gearInit(&group.params, sizeof(scrTestParam));
+    gearSetExpansion(&group.params, 5, 10);
     if (gearAppend(&runner->groups, &group) != GEAR_RET_OK) {
         exit(1);
     }

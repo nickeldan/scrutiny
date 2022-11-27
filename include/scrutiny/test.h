@@ -2,7 +2,6 @@
 #define SCRUTINY_TEST_H
 
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 typedef enum scrTestCode {
@@ -12,44 +11,47 @@ typedef enum scrTestCode {
     SCR_TEST_CODE_SKIP,
 } scrTestCode;
 
-typedef struct scrTestCtx {
-    void *group_ctx;
-    int log_fd;
-    unsigned int log_to_tty : 1;
-} scrTestCtx;
+#define SCR_TEST_FN(name) void name(void)
 
-#define SCR_TEST_FN(func) void func(void *_test_ctx)
-#define NOT_USING_CTX     (void)_test_ctx
-
-#define SCR_TEST_CTX() (((scrTestCtx *)_test_ctx)->group_ctx)
+void *
+scrGroupCtx(void)
+#ifdef __GNUC__
+    __attribute__((pure))
+#endif
+    ;
+#define SCR_GROUP_CTX() scrGroupCtx()
 
 #define SCR_TEST_SKIP() exit(SCR_TEST_CODE_SKIP);
 
-#define SCR_LOG(format, ...) \
-    dprintf(((scrTestCtx *)_test_ctx)->log_fd, "[INFO]  " format "\n", ##__VA_ARGS__)
+void
+scrLog(const char *format, ...)
+#ifdef __GNUC__
+    __attribute__((format(printf, 1, 2)))
+#endif
+    ;
+#define SCR_LOG(...) scrLog(__VA_ARGS__)
 
 #define SCR_CONTEXT_DECL   const char *file_name, const char *function_name, unsigned int line_no
 #define SCR_CONTEXT_PARAMS __FILE__, __func__, __LINE__
 
 void
-scrError(const scrTestCtx *ctx, SCR_CONTEXT_DECL, const char *format, ...)
+scrError(SCR_CONTEXT_DECL, const char *format, ...)
 #ifdef __GNUC__
-    __attribute__((format(printf, 5, 6))) __attribute__((noreturn))
+    __attribute__((format(printf, 4, 5))) __attribute__((noreturn))
 #endif
     ;
 
-#define SCR_ASSERT(expr)                                                            \
-    do {                                                                            \
-        if (!(expr)) {                                                              \
-            scrError(_test_ctx, SCR_CONTEXT_PARAMS, "Assertion failed: %s", #expr); \
-        }                                                                           \
+#define SCR_ASSERT(expr)                                                 \
+    do {                                                                 \
+        if (!(expr)) {                                                   \
+            scrError(SCR_CONTEXT_PARAMS, "Assertion failed: %s", #expr); \
+        }                                                                \
     } while (0)
 
-#define SCR_ASSERT_FUNC(func, type)                                                               \
-    void scrAssert##func(const scrTestCtx *ctx, SCR_CONTEXT_DECL, type value1, const char *expr1, \
-                         type value2, const char *expr2)
+#define SCR_ASSERT_FUNC(func, type) \
+    void scrAssert##func(SCR_CONTEXT_DECL, type value1, const char *expr1, type value2, const char *expr2)
 #define SCR_ASSERT_MACRO(func, expr1, expr2) \
-    scrAssert##func(_test_ctx, SCR_CONTEXT_PARAMS, expr1, #expr1, expr2, #expr2)
+    scrAssert##func(SCR_CONTEXT_PARAMS, expr1, #expr1, expr2, #expr2)
 
 SCR_ASSERT_FUNC(Eq, intmax_t);
 #define SCR_ASSERT_EQ(expr1, expr2) SCR_ASSERT_MACRO(Eq, expr1, expr2)

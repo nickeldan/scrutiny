@@ -4,16 +4,19 @@
 typedef struct scrRunner scrRunner;
 typedef struct scrGroup scrGroup;
 
-typedef void (*scrTestFn)(void *);
-typedef void *(*scrCtxCreateFn)(void *);
-typedef void (*scrCtxCleanupFn)(void *);
-
 typedef struct scrStats {
     unsigned int num_passed;
     unsigned int num_skipped;
     unsigned int num_failed;
     unsigned int num_errored;
 } scrStats;
+
+typedef void (*scrTestFn)(void);
+typedef void *(*scrCtxCreateFn)(void *);
+typedef void (*scrCtxCleanupFn)(void *);
+
+void
+scrInit(void);
 
 scrRunner *
 scrRunnerCreate(void)
