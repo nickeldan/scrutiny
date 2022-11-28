@@ -315,8 +315,6 @@ main()
     scrGroup *group;
     scrStats stats;
 
-    scrInit();
-
     runner = scrRunnerCreate();
     group = scrGroupCreate(runner, NULL, NULL);
 

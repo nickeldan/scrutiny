@@ -57,31 +57,36 @@ caughtSignal(void)
     return sigismember(&set, SIGTERM);
 }
 
-#ifdef __GNUC__
-static void
-testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param, void *group_ctx)
-    __attribute__((noreturn));
-#endif
-
-static void
+static int
 testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param, void *group_ctx)
 {
-    int ret = SCR_TEST_CODE_ERROR, stdin_fd;
+    int stdin_fd, local_errno;
+    bool check;
     sigset_t set;
 
     setParams(group_ctx, log_fd);
 
     stdin_fd = open("/dev/null", O_RDONLY);
-    if (stdin_fd < 0 || dup2(stdin_fd, STDIN_FILENO) < 0) {
-        goto done;
+    if (stdin_fd < 0) {
+        perror("open");
+        goto error;
     }
+    check = (dup2(stdin_fd, STDIN_FILENO) >= 0);
+    local_errno = errno;
     close(stdin_fd);
-
-    if (dup2(stdout_fd, STDOUT_FILENO) < 0 || dup2(stderr_fd, STDERR_FILENO) < 0) {
-        goto done;
+    if (!check) {
+        fprintf(stderr, "dup2: %s\n", strerror(local_errno));
+        goto error;
     }
+
+    check = (dup2(stdout_fd, STDOUT_FILENO) >= 0 && dup2(stderr_fd, STDERR_FILENO) >= 0);
+    local_errno = errno;
     close(stdout_fd);
     close(stderr_fd);
+    if (!check) {
+        fprintf(stderr, "dup2: %s\n", strerror(local_errno));
+        return SCR_TEST_CODE_ERROR;
+    }
 
     sigemptyset(&set);
     sigprocmask(SIG_SETMASK, &set, NULL);
@@ -90,10 +95,12 @@ testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param, void
     }
 
     param->test_fn();
-    ret = SCR_TEST_CODE_OK;
+    return SCR_TEST_CODE_OK;
 
-done:
-    exit(ret);
+error:
+    close(stdout_fd);
+    close(stderr_fd);
+    return SCR_TEST_CODE_ERROR;
 }
 
 #define GREEN       "\x1b[0;32m"
@@ -241,8 +248,7 @@ testRun(const scrTestParam *param, void *group_ctx)
     switch (child) {
     case -1: perror("fork"); goto done;
 
-    case 0: testDo(stdout_fd, stderr_fd, log_fd, param, group_ctx);
-
+    case 0: exit(testDo(stdout_fd, stderr_fd, log_fd, param, group_ctx));
     default: break;
     }
 
@@ -264,13 +270,13 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
 
     if (pipe(fds) != 0) {
         perror("pipe");
-        exit(1);
+        exit(SCR_TEST_CODE_FAIL);
     }
 
     child = fork();
     if (child < 0) {
         perror("fork");
-        exit(1);
+        exit(SCR_TEST_CODE_FAIL);
     }
 
     if (child == 0) {
@@ -287,7 +293,7 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
             group_ctx = group->create_fn(global_ctx);
         }
         else {
-            group_ctx = NULL;
+            group_ctx = global_ctx;
         }
 
         memset(stats, 0, sizeof(stats));
@@ -310,10 +316,10 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
         }
 
         if (write(fds[1], stats, sizeof(stats)) != (ssize_t)sizeof(stats)) {
-            exit(1);
+            exit(SCR_TEST_CODE_ERROR);
         }
 
-        exit(0);
+        exit(SCR_TEST_CODE_OK);
     }
     else {
         int status;
@@ -326,7 +332,10 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
             fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
             runner->stats.num_errored = group->params.length;
         }
-        else if (WEXITSTATUS(status) != 0) {
+        else if (WEXITSTATUS(status) == SCR_TEST_CODE_SKIP) {
+            runner->stats.num_skipped += group->params.length;
+        }
+        else if (WEXITSTATUS(status) != SCR_TEST_CODE_OK) {
             fprintf(stderr, "Group runner exited with an error\n");
             runner->stats.num_errored = group->params.length;
         }
@@ -355,22 +364,23 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
     }
 }
 
-void
-scrInit(void)
-{
-    int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
-    struct sigaction action = {.sa_handler = signalHandler};
-
-    sigfillset(&action.sa_mask);
-    for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
-        sigaction(kill_signals[k], &action, NULL);
-    }
-}
-
 scrRunner *
 scrRunnerCreate(void)
 {
+    static bool initialized = false;
     scrRunner *runner;
+
+    if (!initialized) {
+        int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
+        struct sigaction action = {.sa_handler = signalHandler};
+
+        sigfillset(&action.sa_mask);
+        for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
+            sigaction(kill_signals[k], &action, NULL);
+        }
+
+        initialized = true;
+    }
 
     runner = malloc(sizeof(*runner));
     if (!runner) {
@@ -439,7 +449,7 @@ scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
 {
     scrGroup *group;
 
-    runner->stats = (scrStats){0};
+    memset(&runner->stats, 0, sizeof(runner->stats));
 
     GEAR_FOR_EACH(&runner->groups, group)
     {

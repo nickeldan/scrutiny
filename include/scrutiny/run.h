@@ -15,9 +15,6 @@ typedef void (*scrTestFn)(void);
 typedef void *(*scrCtxCreateFn)(void *);
 typedef void (*scrCtxCleanupFn)(void *);
 
-void
-scrInit(void);
-
 scrRunner *
 scrRunnerCreate(void)
 #ifdef __GNUC__
