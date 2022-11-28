@@ -266,17 +266,17 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
 {
     pid_t child;
     int fds[2];
-    uint32_t stats[4];
+    scrStats stats = {0};
 
     if (pipe(fds) != 0) {
         perror("pipe");
-        exit(SCR_TEST_CODE_FAIL);
+        exit(SCR_TEST_CODE_ERROR);
     }
 
     child = fork();
     if (child < 0) {
         perror("fork");
-        exit(SCR_TEST_CODE_FAIL);
+        exit(SCR_TEST_CODE_ERROR);
     }
 
     if (child == 0) {
@@ -296,18 +296,16 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
             group_ctx = global_ctx;
         }
 
-        memset(stats, 0, sizeof(stats));
-
         GEAR_FOR_EACH(&group->params, param)
         {
             switch (testRun(param, group_ctx)) {
-            case SCR_TEST_CODE_OK: stats[0]++; break;
+            case SCR_TEST_CODE_OK: stats.num_passed++; break;
 
-            case SCR_TEST_CODE_SKIP: stats[1]++; break;
+            case SCR_TEST_CODE_SKIP: stats.num_skipped++; break;
 
-            case SCR_TEST_CODE_FAIL: stats[2]++; break;
+            case SCR_TEST_CODE_FAIL: stats.num_failed++; break;
 
-            default: stats[3]++; break;
+            default: stats.num_errored++; break;
             }
         }
 
@@ -315,7 +313,7 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
             group->cleanup_fn(group_ctx);
         }
 
-        if (write(fds[1], stats, sizeof(stats)) != (ssize_t)sizeof(stats)) {
+        if (write(fds[1], &stats, sizeof(stats)) != (ssize_t)sizeof(stats)) {
             exit(SCR_TEST_CODE_ERROR);
         }
 
@@ -330,14 +328,14 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
 
         if (WIFSIGNALED(status)) {
             fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
-            runner->stats.num_errored = group->params.length;
+            runner->stats.num_errored += group->params.length;
         }
         else if (WEXITSTATUS(status) == SCR_TEST_CODE_SKIP) {
             runner->stats.num_skipped += group->params.length;
         }
         else if (WEXITSTATUS(status) != SCR_TEST_CODE_OK) {
             fprintf(stderr, "Group runner exited with an error\n");
-            runner->stats.num_errored = group->params.length;
+            runner->stats.num_errored += group->params.length;
         }
         else {
             ssize_t transmitted;
@@ -353,10 +351,10 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
                 runner->stats.num_errored = group->params.length;
             }
             else {
-                runner->stats.num_passed = stats[0];
-                runner->stats.num_skipped = stats[1];
-                runner->stats.num_failed = stats[2];
-                runner->stats.num_errored = stats[3];
+                runner->stats.num_passed += stats.num_passed;
+                runner->stats.num_skipped += stats.num_skipped;
+                runner->stats.num_failed += stats.num_failed;
+                runner->stats.num_errored += stats.num_errored;
             }
         }
 
