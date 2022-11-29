@@ -37,7 +37,6 @@ struct scrGroup {
 
 struct scrRunner {
     gear groups;
-    scrStats stats;
 };
 
 static void
@@ -58,13 +57,13 @@ caughtSignal(void)
 }
 
 static int
-testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param, void *group_ctx)
+testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
 {
     int stdin_fd, local_errno;
     bool check;
     sigset_t set;
 
-    setParams(group_ctx, log_fd);
+    setLogFd(log_fd);
 
     stdin_fd = open("/dev/null", O_RDONLY);
     if (stdin_fd < 0) {
@@ -103,11 +102,6 @@ error:
     return SCR_TEST_CODE_ERROR;
 }
 
-#define GREEN       "\x1b[0;32m"
-#define YELLOW      "\x1b[0;33m"
-#define RED         "\x1b[0;31m"
-#define RESET_COLOR "\x1b[0m"
-
 static bool
 dumpFd(int fd, bool show_color)
 {
@@ -129,15 +123,34 @@ dumpFd(int fd, bool show_color)
     return printed;
 }
 
+static void
+showTestResult(const char *test_name, scrTestCode result, bool show_color)
+{
+    printf("Test result: (%s): ", test_name);
+    switch (result) {
+    case SCR_TEST_CODE_OK:
+        printf("%sPASSED%s\n", show_color ? GREEN : "", show_color ? RESET_COLOR : "");
+        break;
+
+    case SCR_TEST_CODE_SKIP:
+        printf("%sSKIPPED%s\n", show_color ? YELLOW : "", show_color ? RESET_COLOR : "");
+        break;
+
+    case SCR_TEST_CODE_FAIL:
+        printf("%sFAILED%s\n", show_color ? RED : "", show_color ? RESET_COLOR : "");
+        break;
+
+    default: printf("%sERROR%s\n", show_color ? RED : "", show_color ? RESET_COLOR : ""); break;
+    }
+}
+
 static scrTestCode
-testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, pid_t child)
+testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, pid_t child, bool show_color)
 {
     scrTestCode ret;
     int status;
-    bool show_output = false, show_color;
+    bool show_output = false;
     struct timespec spec = {.tv_nsec = 10000000};  // 1/100 of a second
-
-    show_color = isatty(STDOUT_FILENO);
 
     while (1) {
         if (caughtSignal()) {
@@ -153,38 +166,18 @@ testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, p
         nanosleep(&spec, NULL);
     }
 
-    printf("Test result (%s): ", test_name);
-
     if (WIFSIGNALED(status)) {
-        printf("%sERROR%s: Terminated by signal (%i)\n", show_color ? RED : "",
+        printf("Test result (%s): %sERROR%s: Terminated by signal (%i)\n", test_name, show_color ? RED : "",
                show_color ? RESET_COLOR : "", WTERMSIG(status));
         ret = SCR_TEST_CODE_ERROR;
         show_output = true;
     }
     else {
         ret = WEXITSTATUS(status);
-        switch (ret) {
-        case SCR_TEST_CODE_OK:
-            printf("%sPASSED%s\n", show_color ? GREEN : "", show_color ? RESET_COLOR : "");
-            break;
-
-        case SCR_TEST_CODE_SKIP:
-            printf("%sSKIPPED%s\n", show_color ? YELLOW : "", show_color ? RESET_COLOR : "");
-            break;
-
-        case SCR_TEST_CODE_FAIL:
-            printf("%sFAILED%s\n", show_color ? RED : "", show_color ? RESET_COLOR : "");
+        if (ret != SCR_TEST_CODE_OK && ret != SCR_TEST_CODE_SKIP) {
             show_output = true;
-            break;
-
-        default:
-            ret = SCR_TEST_CODE_ERROR;
-            /* FALLTHROUGH */
-        case SCR_TEST_CODE_ERROR:
-            printf("%sERROR%s\n", show_color ? RED : "", show_color ? RESET_COLOR : "");
-            show_output = true;
-            break;
         }
+        showTestResult(test_name, ret, show_color);
     }
 
     if (show_output) {
@@ -210,13 +203,8 @@ testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, p
     return ret;
 }
 
-#undef GREEN
-#undef YELLOW
-#undef RED
-#undef RESET_COLOR
-
 static scrTestCode
-testRun(const scrTestParam *param, void *group_ctx)
+testRun(const scrTestParam *param, bool show_color)
 {
     int stdout_fd, stderr_fd = -1, log_fd = -1;
     scrTestCode ret = SCR_TEST_CODE_ERROR;
@@ -248,11 +236,11 @@ testRun(const scrTestParam *param, void *group_ctx)
     switch (child) {
     case -1: perror("fork"); goto done;
 
-    case 0: exit(testDo(stdout_fd, stderr_fd, log_fd, param, group_ctx));
+    case 0: exit(testDo(stdout_fd, stderr_fd, log_fd, param));
     default: break;
     }
 
-    ret = testSummarize(param->name, stdout_fd, stderr_fd, log_fd, child);
+    ret = testSummarize(param->name, stdout_fd, stderr_fd, log_fd, child, show_color);
 
 done:
     close(stdout_fd);
@@ -262,11 +250,12 @@ done:
 }
 
 static void
-groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
+groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_color)
 {
     pid_t child;
     int fds[2];
-    scrStats stats = {0};
+    scrStats stats_obj = {0};
+    scrTestParam *param;
 
     if (pipe(fds) != 0) {
         perror("pipe");
@@ -282,12 +271,13 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
     if (child == 0) {
         void *group_ctx;
         sigset_t set;
-        scrTestParam *param;
 
         close(fds[0]);
 
         sigfillset(&set);
         sigprocmask(SIG_SETMASK, &set, NULL);
+
+        setToTty(show_color);
 
         if (group->create_fn) {
             group_ctx = group->create_fn(global_ctx);
@@ -296,16 +286,18 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
             group_ctx = global_ctx;
         }
 
+        setGroupCtx(group_ctx);
+
         GEAR_FOR_EACH(&group->params, param)
         {
-            switch (testRun(param, group_ctx)) {
-            case SCR_TEST_CODE_OK: stats.num_passed++; break;
+            switch (testRun(param, show_color)) {
+            case SCR_TEST_CODE_OK: stats_obj.num_passed++; break;
 
-            case SCR_TEST_CODE_SKIP: stats.num_skipped++; break;
+            case SCR_TEST_CODE_SKIP: stats_obj.num_skipped++; break;
 
-            case SCR_TEST_CODE_FAIL: stats.num_failed++; break;
+            case SCR_TEST_CODE_FAIL: stats_obj.num_failed++; break;
 
-            default: stats.num_errored++; break;
+            default: stats_obj.num_errored++; break;
             }
         }
 
@@ -313,7 +305,7 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
             group->cleanup_fn(group_ctx);
         }
 
-        if (write(fds[1], &stats, sizeof(stats)) != (ssize_t)sizeof(stats)) {
+        if (write(fds[1], &stats_obj, sizeof(stats_obj)) != (ssize_t)sizeof(stats_obj)) {
             exit(SCR_TEST_CODE_ERROR);
         }
 
@@ -328,33 +320,49 @@ groupRun(scrRunner *runner, const scrGroup *group, void *global_ctx)
 
         if (WIFSIGNALED(status)) {
             fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
-            runner->stats.num_errored += group->params.length;
+            stats->num_errored += group->params.length;
+            GEAR_FOR_EACH(&group->params, param)
+            {
+                showTestResult(param->name, SCR_TEST_CODE_ERROR, show_color);
+            }
         }
         else if (WEXITSTATUS(status) == SCR_TEST_CODE_SKIP) {
-            runner->stats.num_skipped += group->params.length;
+            stats->num_skipped += group->params.length;
+            GEAR_FOR_EACH(&group->params, param)
+            {
+                showTestResult(param->name, SCR_TEST_CODE_SKIP, show_color);
+            }
         }
         else if (WEXITSTATUS(status) != SCR_TEST_CODE_OK) {
             fprintf(stderr, "Group runner exited with an error\n");
-            runner->stats.num_errored += group->params.length;
+            stats->num_errored += group->params.length;
+            GEAR_FOR_EACH(&group->params, param)
+            {
+                showTestResult(param->name, SCR_TEST_CODE_ERROR, show_color);
+            }
         }
         else {
             ssize_t transmitted;
 
-            transmitted = read(fds[0], &stats, sizeof(stats));
-            if (transmitted < (ssize_t)sizeof(stats)) {
+            transmitted = read(fds[0], &stats_obj, sizeof(stats_obj));
+            if (transmitted < (ssize_t)sizeof(stats_obj)) {
                 if (transmitted < 0) {
                     perror("read");
                 }
                 else {
                     fprintf(stderr, "Failed to communicate with group runner\n");
                 }
-                runner->stats.num_errored = group->params.length;
+                stats->num_errored = group->params.length;
+                GEAR_FOR_EACH(&group->params, param)
+                {
+                    showTestResult(param->name, SCR_TEST_CODE_ERROR, show_color);
+                }
             }
             else {
-                runner->stats.num_passed += stats.num_passed;
-                runner->stats.num_skipped += stats.num_skipped;
-                runner->stats.num_failed += stats.num_failed;
-                runner->stats.num_errored += stats.num_errored;
+                stats->num_passed += stats_obj.num_passed;
+                stats->num_skipped += stats_obj.num_skipped;
+                stats->num_failed += stats_obj.num_failed;
+                stats->num_errored += stats_obj.num_errored;
             }
         }
 
@@ -445,23 +453,26 @@ scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int tim
 void
 scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
 {
+    bool show_color;
     scrGroup *group;
+    scrStats stats_obj;
 
-    memset(&runner->stats, 0, sizeof(runner->stats));
+    if (!stats) {
+        stats = &stats_obj;
+    }
+    memset(stats, 0, sizeof(*stats));
+
+    show_color = isatty(STDOUT_FILENO);
 
     GEAR_FOR_EACH(&runner->groups, group)
     {
-        groupRun(runner, group, global_ctx);
+        groupRun(group, global_ctx, stats, show_color);
     }
 
-    printf("\n\nTests run: %u\n", runner->stats.num_passed + runner->stats.num_failed +
-                                      runner->stats.num_errored + runner->stats.num_skipped);
-    printf("Passed: %u\n", runner->stats.num_passed);
-    printf("Skipped: %u\n", runner->stats.num_skipped);
-    printf("Failed: %u\n", runner->stats.num_failed);
-    printf("Errored: %u\n", runner->stats.num_errored);
-
-    if (stats) {
-        memcpy(stats, &runner->stats, sizeof(*stats));
-    }
+    printf("\n\nTests run: %u\n",
+           stats->num_passed + stats->num_failed + stats->num_errored + stats->num_skipped);
+    printf("Passed: %u\n", stats->num_passed);
+    printf("Skipped: %u\n", stats->num_skipped);
+    printf("Failed: %u\n", stats->num_failed);
+    printf("Errored: %u\n", stats->num_errored);
 }

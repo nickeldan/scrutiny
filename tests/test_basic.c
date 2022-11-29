@@ -1,7 +1,9 @@
+#include <stdio.h>
 #include <unistd.h>
 
-#include <scrutiny/run.h>
-#include <scrutiny/test.h>
+#include <scrutiny/scrutiny.h>
+
+#include "common.h"
 
 static SCR_TEST_FN(do_nothing)
 {
@@ -297,6 +299,11 @@ static SCR_TEST_FN(fail_pointers_not_equal)
     SCR_ASSERT_PTR_NEQ(p1, p2);
 }
 
+static SCR_TEST_FN(fail_error_message)
+{
+    SCR_ERROR("This is an error message.");
+}
+
 static SCR_TEST_FN(error_timeout)
 {
     sleep(2);
@@ -308,36 +315,18 @@ static SCR_TEST_FN(skip_me)
 }
 
 int
-main()
+main(int argc, char **argv)
 {
     unsigned int num_pass = 0, num_fail = 0, num_error = 0, num_skip = 0;
     scrRunner *runner;
     scrGroup *group;
     scrStats stats;
+    (void)argc;
+
+    printf("\nRunning %s\n\n", argv[0]);
 
     runner = scrRunnerCreate();
     group = scrGroupCreate(runner, NULL, NULL);
-
-#define ADD_PASS(test)                          \
-    do {                                        \
-        scrGroupAddTest(group, #test, test, 0); \
-        num_pass++;                             \
-    } while (0)
-#define ADD_FAIL(test)                                         \
-    do {                                                       \
-        scrGroupAddTest(group, "fail_" #test, fail_##test, 0); \
-        num_fail++;                                            \
-    } while (0)
-#define ADD_TIMEOUT(test, timeout)                    \
-    do {                                              \
-        scrGroupAddTest(group, #test, test, timeout); \
-        num_error++;                                  \
-    } while (0)
-#define ADD_SKIP(test)                          \
-    do {                                        \
-        scrGroupAddTest(group, #test, test, 0); \
-        num_skip++;                             \
-    } while (0)
 
     ADD_PASS(do_nothing);
     ADD_PASS(integers_equal);
@@ -380,6 +369,7 @@ main()
     ADD_FAIL(floats_greater_than_or_equal);
     ADD_FAIL(pointers_equal);
     ADD_FAIL(pointers_not_equal);
+    ADD_FAIL(error_message);
     ADD_TIMEOUT(error_timeout, 1);
     ADD_SKIP(skip_me);
 

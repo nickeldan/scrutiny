@@ -1,5 +1,4 @@
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -8,19 +7,26 @@
 
 #include "internal.h"
 
-#define RED   "\033[31m"
-#define RESET "\033[0m"
-
 static void *group_ctx;
 static int log_fd;
 static bool log_to_tty;
 
 void
-setParams(void *ctx, int fd)
+setGroupCtx(void *ctx)
 {
     group_ctx = ctx;
+}
+
+void
+setToTty(bool to_tty)
+{
+    log_to_tty = to_tty;
+}
+
+void
+setLogFd(int fd)
+{
     log_fd = fd;
-    log_to_tty = isatty(STDOUT_FILENO);
 }
 
 void *
@@ -61,7 +67,7 @@ scrError(SCR_CONTEXT_DECL, const char *format, ...)
     dprintf(log_fd, "\n");
 
     if (log_to_tty) {
-        dprintf(log_fd, RESET);
+        dprintf(log_fd, RESET_COLOR);
     }
 
     exit(SCR_TEST_CODE_FAIL);

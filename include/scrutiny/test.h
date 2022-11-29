@@ -40,12 +40,13 @@ scrError(SCR_CONTEXT_DECL, const char *format, ...)
     __attribute__((format(printf, 4, 5))) __attribute__((noreturn))
 #endif
     ;
+#define SCR_ERROR(...) scrError(SCR_CONTEXT_PARAMS, __VA_ARGS__)
 
-#define SCR_ASSERT(expr)                                                 \
-    do {                                                                 \
-        if (!(expr)) {                                                   \
-            scrError(SCR_CONTEXT_PARAMS, "Assertion failed: %s", #expr); \
-        }                                                                \
+#define SCR_ASSERT(expr)                              \
+    do {                                              \
+        if (!(expr)) {                                \
+            SCR_ERROR("Assertion failed: %s", #expr); \
+        }                                             \
     } while (0)
 
 #define SCR_ASSERT_FUNC(func, type) \
