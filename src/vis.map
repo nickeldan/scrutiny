@@ -1,0 +1,33 @@
+{
+    global:
+        scrRunnerCreate;
+        scrRunnerDestroy;
+        scrRunnerRun;
+        scrGroupCreate;
+        scrGroupAddTest;
+        scrGroupCtx;
+        scrLog;
+        scrError;
+        scrAssertEq;
+        scrAssertNeq;
+        scrAssertLt;
+        scrAssertLe;
+        scrAssertGt;
+        scrAssertGe;
+        scrAssertEqUnsigned;
+        scrAssertNeqUnsigned;
+        scrAssertLtUnsigned;
+        scrAssertLeUnsigned;
+        scrAssertGtUnsigned;
+        scrAssertGeUnsigned;
+        scrAssertEqFloat;
+        scrAssertNeqFloat;
+        scrAssertLtFloat;
+        scrAssertLeFloat;
+        scrAssertGtFloat;
+        scrAssertGeFloat;
+        scrAssertPtrEq;
+        scrAssertPtrNeq;
+    local:
+        *;
+};

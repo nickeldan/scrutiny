@@ -440,6 +440,33 @@ scrRunnerDestroy(scrRunner *runner)
     free(runner);
 }
 
+void
+scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
+{
+    bool show_color;
+    scrGroup *group;
+    scrStats stats_obj;
+
+    if (!stats) {
+        stats = &stats_obj;
+    }
+    memset(stats, 0, sizeof(*stats));
+
+    show_color = isatty(STDOUT_FILENO);
+
+    GEAR_FOR_EACH(&runner->groups, group)
+    {
+        groupRun(group, global_ctx, stats, show_color);
+    }
+
+    printf("\n\nTests run: %u\n",
+           stats->num_passed + stats->num_failed + stats->num_errored + stats->num_skipped);
+    printf("Passed: %u\n", stats->num_passed);
+    printf("Skipped: %u\n", stats->num_skipped);
+    printf("Failed: %u\n", stats->num_failed);
+    printf("Errored: %u\n", stats->num_errored);
+}
+
 scrGroup *
 scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 {
@@ -467,31 +494,4 @@ scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int tim
     if (gearAppend(&group->params, &param) != GEAR_RET_OK) {
         exit(1);
     }
-}
-
-void
-scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
-{
-    bool show_color;
-    scrGroup *group;
-    scrStats stats_obj;
-
-    if (!stats) {
-        stats = &stats_obj;
-    }
-    memset(stats, 0, sizeof(*stats));
-
-    show_color = isatty(STDOUT_FILENO);
-
-    GEAR_FOR_EACH(&runner->groups, group)
-    {
-        groupRun(group, global_ctx, stats, show_color);
-    }
-
-    printf("\n\nTests run: %u\n",
-           stats->num_passed + stats->num_failed + stats->num_errored + stats->num_skipped);
-    printf("Passed: %u\n", stats->num_passed);
-    printf("Skipped: %u\n", stats->num_skipped);
-    printf("Failed: %u\n", stats->num_failed);
-    printf("Errored: %u\n", stats->num_errored);
 }

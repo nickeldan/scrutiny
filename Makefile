@@ -4,6 +4,7 @@ ifeq ($(debug),yes)
 else
     CFLAGS += -O2 -DNDEBUG
 endif
+LDFLAGS := -Wl,--version-script,src/vis.map
 
 all: _all
 
@@ -40,10 +41,10 @@ include $(SCR_DEPS_FILE)
 
 endif
 
-$(SCR_SHARED_LIBRARY): $(SCR_OBJECT_FILES)
+$(SCR_SHARED_LIBRARY): $(SCR_OBJECT_FILES) $(GEAR_OBJECT_FILES)
 	$(CC) $(LDFLAGS) -shared -o $@ $^
 
-$(SCR_STATIC_LIBRARY): $(SCR_OBJECT_FILES)
+$(SCR_STATIC_LIBRARY): $(SCR_OBJECT_FILES) $(GEAR_OBJECT_FILES)
 	$(AR) rcs $@ $^
 
 TEST_DIR := tests

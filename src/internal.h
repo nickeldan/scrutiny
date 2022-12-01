@@ -9,24 +9,12 @@
 #define RESET_COLOR "\x1b[0m"
 
 void
-setGroupCtx(void *ctx)
-#ifdef __GNUC__
-    __attribute__((visibility("hidden")))
-#endif
-    ;
+setGroupCtx(void *ctx);
 
 void
-setToTty(bool to_tty)
-#ifdef __GNUC__
-    __attribute__((visibility("hidden")))
-#endif
-    ;
+setToTty(bool to_tty);
 
 void
-setLogFd(int fd)
-#ifdef __GNUC__
-    __attribute__((visibility("hidden")))
-#endif
-    ;
+setLogFd(int fd);
 
 #endif  // SCRUTINY_INTERNAL_H
