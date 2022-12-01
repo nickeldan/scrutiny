@@ -384,11 +384,6 @@ main(int argc, char **argv)
     ADD_XFAIL(xfail_basic);
     ADD_XPASS(xpass_basic);
 
-#undef ADD_PASS
-#undef ADD_FAIL
-#undef ADD_TIMEOUT
-#undef ADD_SKIP
-
     scrRunnerRun(runner, NULL, &stats);
     scrRunnerDestroy(runner);
 
