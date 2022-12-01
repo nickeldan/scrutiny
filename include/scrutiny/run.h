@@ -15,6 +15,8 @@ typedef void (*scrTestFn)(void);
 typedef void *(*scrCtxCreateFn)(void *);
 typedef void (*scrCtxCleanupFn)(void *);
 
+#define SCR_FLAG_XFAIL 0x00000001
+
 scrRunner *
 scrRunnerCreate(void)
 #ifdef __GNUC__
@@ -33,7 +35,7 @@ scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn clea
     ;
 
 void
-scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout)
+scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout, unsigned int flags)
 #ifdef __GNUC__
     __attribute__((nonnull(1, 2, 3)))
 #endif

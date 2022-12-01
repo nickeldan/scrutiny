@@ -21,7 +21,7 @@ scrGroupCtx(void)
     ;
 #define SCR_GROUP_CTX() scrGroupCtx()
 
-#define SCR_TEST_SKIP() exit(SCR_TEST_CODE_SKIP);
+#define SCR_TEST_SKIP() exit(SCR_TEST_CODE_SKIP)
 
 void
 scrLog(const char *format, ...)

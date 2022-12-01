@@ -27,6 +27,7 @@ typedef struct scrTestParam {
     scrTestFn test_fn;
     char *name;
     unsigned int timeout;
+    unsigned int flags;
 } scrTestParam;
 
 struct scrGroup {
@@ -39,12 +40,15 @@ struct scrRunner {
     gear groups;
 };
 
+static const int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
+
 static void
 signalHandler(int signum)
 {
     (void)signum;
     kill(-1, SIGTERM);
     while (waitpid(-1, NULL, 0) > 0) {}
+    exit(1);
 }
 
 static bool
@@ -124,12 +128,15 @@ dumpFd(int fd, bool show_color)
 }
 
 static void
-showTestResult(const char *test_name, scrTestCode result, bool show_color)
+showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
 {
-    printf("Test result: (%s): ", test_name);
+    bool xfail = (param->flags & SCR_FLAG_XFAIL);
+
+    printf("Test result: (%s): ", param->name);
     switch (result) {
     case SCR_TEST_CODE_OK:
-        printf("%sPASSED%s\n", show_color ? GREEN : "", show_color ? RESET_COLOR : "");
+        printf("%s%s%s\n", show_color ? GREEN : "", xfail ? "XFAILED" : "PASSED",
+               show_color ? RESET_COLOR : "");
         break;
 
     case SCR_TEST_CODE_SKIP:
@@ -137,7 +144,7 @@ showTestResult(const char *test_name, scrTestCode result, bool show_color)
         break;
 
     case SCR_TEST_CODE_FAIL:
-        printf("%sFAILED%s\n", show_color ? RED : "", show_color ? RESET_COLOR : "");
+        printf("%s%s%s", show_color ? RED : "", xfail ? "XPASSED" : "FAILED", show_color ? RESET_COLOR : "");
         break;
 
     default: printf("%sERROR%s\n", show_color ? RED : "", show_color ? RESET_COLOR : ""); break;
@@ -145,7 +152,8 @@ showTestResult(const char *test_name, scrTestCode result, bool show_color)
 }
 
 static scrTestCode
-testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, pid_t child, bool show_color)
+testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_fd, pid_t child,
+              bool show_color)
 {
     scrTestCode ret;
     int status;
@@ -167,17 +175,25 @@ testSummarize(const char *test_name, int stdout_fd, int stderr_fd, int log_fd, p
     }
 
     if (WIFSIGNALED(status)) {
-        printf("Test result (%s): %sERROR%s: Terminated by signal (%i)\n", test_name, show_color ? RED : "",
-               show_color ? RESET_COLOR : "", WTERMSIG(status));
+        printf("Test result (%s): %sERROR%s: Terminated by signal (%i)\n", param->name,
+               show_color ? RED : "", show_color ? RESET_COLOR : "", WTERMSIG(status));
         ret = SCR_TEST_CODE_ERROR;
         show_output = true;
     }
     else {
         ret = WEXITSTATUS(status);
+        if (param->flags & SCR_FLAG_XFAIL) {
+            if (ret == SCR_TEST_CODE_OK) {
+                ret = SCR_TEST_CODE_FAIL;
+            }
+            else if (ret == SCR_TEST_CODE_FAIL) {
+                ret = SCR_TEST_CODE_OK;
+            }
+        }
         if (ret != SCR_TEST_CODE_OK && ret != SCR_TEST_CODE_SKIP) {
             show_output = true;
         }
-        showTestResult(test_name, ret, show_color);
+        showTestResult(param, ret, show_color);
     }
 
     if (show_output) {
@@ -240,7 +256,7 @@ testRun(const scrTestParam *param, bool show_color)
     default: break;
     }
 
-    ret = testSummarize(param->name, stdout_fd, stderr_fd, log_fd, child, show_color);
+    ret = testSummarize(param, stdout_fd, stderr_fd, log_fd, child, show_color);
 
 done:
     close(stdout_fd);
@@ -271,11 +287,16 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
     if (child == 0) {
         void *group_ctx;
         sigset_t set;
+        struct sigaction action = {.sa_handler = SIG_DFL};
 
         close(fds[0]);
 
         sigfillset(&set);
         sigprocmask(SIG_SETMASK, &set, NULL);
+
+        for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
+            sigaction(kill_signals[k], &action, NULL);
+        }
 
         setToTty(show_color);
 
@@ -285,7 +306,6 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
         else {
             group_ctx = global_ctx;
         }
-
         setGroupCtx(group_ctx);
 
         GEAR_FOR_EACH(&group->params, param)
@@ -323,14 +343,14 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
             stats->num_errored += group->params.length;
             GEAR_FOR_EACH(&group->params, param)
             {
-                showTestResult(param->name, SCR_TEST_CODE_ERROR, show_color);
+                showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
             }
         }
         else if (WEXITSTATUS(status) == SCR_TEST_CODE_SKIP) {
             stats->num_skipped += group->params.length;
             GEAR_FOR_EACH(&group->params, param)
             {
-                showTestResult(param->name, SCR_TEST_CODE_SKIP, show_color);
+                showTestResult(param, SCR_TEST_CODE_SKIP, show_color);
             }
         }
         else if (WEXITSTATUS(status) != SCR_TEST_CODE_OK) {
@@ -338,7 +358,7 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
             stats->num_errored += group->params.length;
             GEAR_FOR_EACH(&group->params, param)
             {
-                showTestResult(param->name, SCR_TEST_CODE_ERROR, show_color);
+                showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
             }
         }
         else {
@@ -355,7 +375,7 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
                 stats->num_errored = group->params.length;
                 GEAR_FOR_EACH(&group->params, param)
                 {
-                    showTestResult(param->name, SCR_TEST_CODE_ERROR, show_color);
+                    showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
                 }
             }
             else {
@@ -377,7 +397,6 @@ scrRunnerCreate(void)
     scrRunner *runner;
 
     if (!initialized) {
-        int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
         struct sigaction action = {.sa_handler = signalHandler};
 
         sigfillset(&action.sa_mask);
@@ -436,9 +455,9 @@ scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn clea
 }
 
 void
-scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout)
+scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout, unsigned int flags)
 {
-    scrTestParam param = {.test_fn = test_fn, .timeout = timeout};
+    scrTestParam param = {.test_fn = test_fn, .timeout = timeout, .flags = flags};
 
     param.name = strdup(name);
     if (!param.name) {

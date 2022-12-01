@@ -314,6 +314,15 @@ static SCR_TEST_FN(skip_me)
     SCR_TEST_SKIP();
 }
 
+static SCR_TEST_FN(xfail_basic)
+{
+    SCR_ASSERT_EQ(5, 6);
+}
+
+static SCR_TEST_FN(xpass_basic)
+{
+}
+
 int
 main(int argc, char **argv)
 {
@@ -349,29 +358,31 @@ main(int argc, char **argv)
     ADD_PASS(floats_greater_than_or_equal);
     ADD_PASS(pointers_equal);
     ADD_PASS(pointers_not_equal);
-    ADD_FAIL(integers_equal);
-    ADD_FAIL(integers_not_equal);
-    ADD_FAIL(integers_less_than);
-    ADD_FAIL(integers_less_than_or_equal);
-    ADD_FAIL(integers_greater_than);
-    ADD_FAIL(integers_greater_than_or_equal);
-    ADD_FAIL(unsigned_integers_equal);
-    ADD_FAIL(unsigned_integers_not_equal);
-    ADD_FAIL(unsigned_integers_less_than);
-    ADD_FAIL(unsigned_integers_less_than_or_equal);
-    ADD_FAIL(unsigned_integers_greater_than);
-    ADD_FAIL(unsigned_integers_greater_than_or_equal);
-    ADD_FAIL(floats_equal);
-    ADD_FAIL(floats_not_equal);
-    ADD_FAIL(floats_less_than);
-    ADD_FAIL(floats_less_than_or_equal);
-    ADD_FAIL(floats_greater_than);
-    ADD_FAIL(floats_greater_than_or_equal);
-    ADD_FAIL(pointers_equal);
-    ADD_FAIL(pointers_not_equal);
-    ADD_FAIL(error_message);
+    ADD_FAIL(fail_integers_equal);
+    ADD_FAIL(fail_integers_not_equal);
+    ADD_FAIL(fail_integers_less_than);
+    ADD_FAIL(fail_integers_less_than_or_equal);
+    ADD_FAIL(fail_integers_greater_than);
+    ADD_FAIL(fail_integers_greater_than_or_equal);
+    ADD_FAIL(fail_unsigned_integers_equal);
+    ADD_FAIL(fail_unsigned_integers_not_equal);
+    ADD_FAIL(fail_unsigned_integers_less_than);
+    ADD_FAIL(fail_unsigned_integers_less_than_or_equal);
+    ADD_FAIL(fail_unsigned_integers_greater_than);
+    ADD_FAIL(fail_unsigned_integers_greater_than_or_equal);
+    ADD_FAIL(fail_floats_equal);
+    ADD_FAIL(fail_floats_not_equal);
+    ADD_FAIL(fail_floats_less_than);
+    ADD_FAIL(fail_floats_less_than_or_equal);
+    ADD_FAIL(fail_floats_greater_than);
+    ADD_FAIL(fail_floats_greater_than_or_equal);
+    ADD_FAIL(fail_pointers_equal);
+    ADD_FAIL(fail_pointers_not_equal);
+    ADD_FAIL(fail_error_message);
     ADD_TIMEOUT(error_timeout, 1);
     ADD_SKIP(skip_me);
+    ADD_XFAIL(xfail_basic);
+    ADD_XPASS(xpass_basic);
 
 #undef ADD_PASS
 #undef ADD_FAIL

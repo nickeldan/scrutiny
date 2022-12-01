@@ -116,8 +116,8 @@ main(int argc, char **argv)
     ADD_SKIP(skip_me2);
 
     group = scrGroupCreate(runner, bad_setup, NULL);
-    ADD_ERROR(setup_fail1);
-    ADD_ERROR(setup_fail2);
+    ADD_ERROR(error_setup_fail1);
+    ADD_ERROR(error_setup_fail2);
 
     scrRunnerRun(runner, &global_num, &stats);
     scrRunnerDestroy(runner);
