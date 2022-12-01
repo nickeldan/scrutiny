@@ -144,7 +144,8 @@ showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
         break;
 
     case SCR_TEST_CODE_FAIL:
-        printf("%s%s%s", show_color ? RED : "", xfail ? "XPASSED" : "FAILED", show_color ? RESET_COLOR : "");
+        printf("%s%s%s\n", show_color ? RED : "", xfail ? "XPASSED" : "FAILED",
+               show_color ? RESET_COLOR : "");
         break;
 
     default: printf("%sERROR%s\n", show_color ? RED : "", show_color ? RESET_COLOR : ""); break;
