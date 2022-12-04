@@ -51,15 +51,6 @@ signalHandler(int signum)
     exit(1);
 }
 
-static bool
-caughtSignal(void)
-{
-    sigset_t set;
-
-    sigpending(&set);
-    return sigismember(&set, SIGTERM);
-}
-
 static int
 testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
 {
@@ -159,21 +150,8 @@ testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
     scrTestCode ret;
     int status;
     bool show_output = false;
-    struct timespec spec = {.tv_nsec = 10000000};  // 1/100 of a second
 
-    while (1) {
-        if (caughtSignal()) {
-            kill(child, SIGKILL);
-            waitpid(child, NULL, 0);
-            exit(0);
-        }
-
-        if (waitpid(child, &status, WNOHANG) == child) {
-            break;
-        }
-
-        nanosleep(&spec, NULL);
-    }
+    waitForProcess(child, &status);
 
     if (WIFSIGNALED(status)) {
         printf("Test result (%s): %sERROR%s: Terminated by signal (%i)\n", param->name,

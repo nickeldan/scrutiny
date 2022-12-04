@@ -2,6 +2,7 @@
 #define SCRUTINY_INTERNAL_H
 
 #include <stdbool.h>
+#include <sys/types.h>
 
 #define GREEN       "\x1b[0;32m"
 #define YELLOW      "\x1b[0;33m"
@@ -16,5 +17,8 @@ setToTty(bool to_tty);
 
 void
 setLogFd(int fd);
+
+void
+waitForProcess(pid_t pid, int *status);
 
 #endif  // SCRUTINY_INTERNAL_H

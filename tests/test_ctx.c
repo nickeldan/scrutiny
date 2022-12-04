@@ -47,7 +47,7 @@ static void *
 bad_setup(void *global_ctx)
 {
     (void)global_ctx;
-    SCR_ERROR("Failing in group setup.");
+    SCR_ERROR("Intentionally failing in group setup.");
 }
 
 static SCR_TEST_FN(use_global_ctx)
