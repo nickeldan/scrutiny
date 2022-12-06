@@ -28,6 +28,10 @@
         scrAssertGeFloat;
         scrAssertPtrEq;
         scrAssertPtrNeq;
+        scrAssertStrEq;
+        scrAssertStrNeq;
+        scrAssertCharEq;
+        srcAssertCharNeq;
     local:
         *;
 };

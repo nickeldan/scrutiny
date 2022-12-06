@@ -42,7 +42,8 @@ scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn clea
     ;
 
 void
-scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout, unsigned int flags)
+scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
+                unsigned int flags)
 #ifdef __GNUC__
     __attribute__((nonnull(1, 2, 3)))
 #endif

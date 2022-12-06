@@ -114,4 +114,16 @@ SCR_ASSERT_FUNC(PtrEq, const void *);
 SCR_ASSERT_FUNC(PtrNeq, const void *);
 #define SCR_ASSERT_PTR_NEQ(expr1, expr2) SCR_ASSERT_MACRO(PtrNeq, expr1, expr2)
 
+SCR_ASSERT_FUNC(StrEq, const char *);
+#define SCR_ASSERT_STR_EQ(expr1, expr2) SCR_ASSERT_MACRO(StrEq, expr1, expr2)
+
+SCR_ASSERT_FUNC(StrNeq, const char *);
+#define SCR_ASSERT_STR_NEQ(expr1, expr2) SCR_ASSERT_MACRO(StrNeq, expr1, expr2)
+
+SCR_ASSERT_FUNC(CharEq, char);
+#define SCR_ASSERT_CHAR_EQ(expr1, expr2) SCR_ASSERT_MACRO(CharEq, expr1, expr2)
+
+SCR_ASSERT_FUNC(CharNeq, char);
+#define SCR_ASSERT_CHAR_NEQ(expr1, expr2) SCR_ASSERT_MACRO(CharNeq, expr1, expr2)
+
 #endif  // SCRUTINY_TEST_H

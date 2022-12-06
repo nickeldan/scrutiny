@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <time.h>
 #include <unistd.h>
 
 #include <gear/gear.h>
@@ -154,8 +153,16 @@ testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
     waitForProcess(child, &status);
 
     if (WIFSIGNALED(status)) {
-        printf("Test result (%s): %sERROR%s: Terminated by signal (%i)\n", param->name,
-               show_color ? RED : "", show_color ? RESET_COLOR : "", WTERMSIG(status));
+        int signum = WTERMSIG(status);
+
+        printf("Test result (%s): %sERROR%s: ", param->name, show_color ? RED : "",
+               show_color ? RESET_COLOR : "");
+        if (signum == SIGALRM) {
+            printf("Timed out\n");
+        }
+        else {
+            printf("Terminated by signal (%i): %s\n", signum, strsignal(signum));
+        }
         ret = SCR_TEST_CODE_ERROR;
         show_output = true;
     }
@@ -461,7 +468,8 @@ scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn clea
 }
 
 void
-scrGroupAddTest(scrGroup *group, char *name, scrTestFn test_fn, unsigned int timeout, unsigned int flags)
+scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
+                unsigned int flags)
 {
     scrTestParam param = {.test_fn = test_fn, .timeout = timeout, .flags = flags};
 

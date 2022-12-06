@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <scrutiny/test.h>
@@ -230,5 +231,39 @@ SCR_ASSERT_FUNC(PtrNeq, const void *)
     if (value1 == value2) {
         scrError(file_name, function_name, line_no, "Assertion failed: %s != %s\n\t%p != %p", expr1, expr2,
                  value1, value2);
+    }
+}
+
+SCR_ASSERT_FUNC(StrEq, const char *)
+{
+    if (strcmp(value1, value2) != 0) {
+        scrError(file_name, function_name, line_no,
+                 "Assertion failed: strcmp(%s, %s) == 0\n\tstrcmp(\"%s\", \"%s\") == 0", expr1, expr2,
+                 value1, value2);
+    }
+}
+
+SCR_ASSERT_FUNC(StrNeq, const char *)
+{
+    if (strcmp(value1, value2) == 0) {
+        scrError(file_name, function_name, line_no,
+                 "Assertion failed: strcmp(%s, %s) != 0\n\tstrcmp(\"%s\", \"%s\") != 0", expr1, expr2,
+                 value1, value2);
+    }
+}
+
+SCR_ASSERT_FUNC(CharEq, char)
+{
+    if (value1 != value2) {
+        scrError(file_name, function_name, line_no, "Assertion failed: %s == %s\n\t'%c' == '%c'", expr1,
+                 expr2, value1, value2);
+    }
+}
+
+SCR_ASSERT_FUNC(CharNeq, char)
+{
+    if (value1 == value2) {
+        scrError(file_name, function_name, line_no, "Assertion failed: %s != %s\n\t'%c' != '%c'", expr1,
+                 expr2, value1, value2);
     }
 }

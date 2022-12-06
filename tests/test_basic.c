@@ -157,6 +157,34 @@ static SCR_TEST_FN(pointers_not_equal)
     SCR_ASSERT_PTR_NEQ(p1, p2);
 }
 
+static SCR_TEST_FN(strings_equal)
+{
+    const char *x = "foo", *y = "foo";
+
+    SCR_ASSERT_STR_EQ(x, y);
+}
+
+static SCR_TEST_FN(strings_not_equal)
+{
+    const char *x = "foo", *y = "bar";
+
+    SCR_ASSERT_STR_NEQ(x, y);
+}
+
+static SCR_TEST_FN(chars_equal)
+{
+    char x = 'a', y = 'a';
+
+    SCR_ASSERT_CHAR_EQ(x, y);
+}
+
+static SCR_TEST_FN(chars_not_equal)
+{
+    char x = 'a', y = 'b';
+
+    SCR_ASSERT_CHAR_NEQ(x, y);
+}
+
 static SCR_TEST_FN(fail_integers_equal)
 {
     int x = 5, y = 6;
@@ -299,6 +327,34 @@ static SCR_TEST_FN(fail_pointers_not_equal)
     SCR_ASSERT_PTR_NEQ(p1, p2);
 }
 
+static SCR_TEST_FN(fail_strings_equal)
+{
+    const char *x = "foo", *y = "bar";
+
+    SCR_ASSERT_STR_EQ(x, y);
+}
+
+static SCR_TEST_FN(fail_strings_not_equal)
+{
+    const char *x = "foo", *y = "foo";
+
+    SCR_ASSERT_STR_NEQ(x, y);
+}
+
+static SCR_TEST_FN(fail_chars_equal)
+{
+    char x = 'a', y = 'b';
+
+    SCR_ASSERT_CHAR_EQ(x, y);
+}
+
+static SCR_TEST_FN(fail_chars_not_equal)
+{
+    char x = 'a', y = 'a';
+
+    SCR_ASSERT_CHAR_NEQ(x, y);
+}
+
 static SCR_TEST_FN(fail_error_message)
 {
     SCR_ERROR("This is an error message.");
@@ -307,6 +363,11 @@ static SCR_TEST_FN(fail_error_message)
 static SCR_TEST_FN(error_timeout)
 {
     sleep(2);
+}
+
+static SCR_TEST_FN(error_segfault)
+{
+    *(unsigned char *)SCR_GROUP_CTX() = 0;
 }
 
 static SCR_TEST_FN(skip_me)
@@ -358,6 +419,10 @@ main(int argc, char **argv)
     ADD_PASS(floats_greater_than_or_equal);
     ADD_PASS(pointers_equal);
     ADD_PASS(pointers_not_equal);
+    ADD_PASS(strings_equal);
+    ADD_PASS(strings_not_equal);
+    ADD_PASS(chars_equal);
+    ADD_PASS(chars_not_equal);
     ADD_FAIL(fail_integers_equal);
     ADD_FAIL(fail_integers_not_equal);
     ADD_FAIL(fail_integers_less_than);
@@ -378,8 +443,13 @@ main(int argc, char **argv)
     ADD_FAIL(fail_floats_greater_than_or_equal);
     ADD_FAIL(fail_pointers_equal);
     ADD_FAIL(fail_pointers_not_equal);
+    ADD_FAIL(fail_strings_equal);
+    ADD_FAIL(fail_strings_not_equal);
+    ADD_FAIL(fail_chars_equal);
+    ADD_FAIL(fail_chars_not_equal);
     ADD_FAIL(fail_error_message);
     ADD_TIMEOUT(error_timeout, 1);
+    ADD_ERROR(error_segfault);
     ADD_SKIP(skip_me);
     ADD_XFAIL(xfail_basic);
     ADD_XPASS(xpass_basic);
