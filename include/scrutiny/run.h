@@ -49,4 +49,11 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
 #endif
     ;
 
+int
+scrStatsReturn(const scrStats *stats)
+#ifdef __GNUC__
+    __attribute__((nonnull(1)))
+#endif
+    ;
+
 #endif  // SCRUTINY_RUN_H

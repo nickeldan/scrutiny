@@ -482,3 +482,9 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
         exit(1);
     }
 }
+
+int
+scrStatsReturn(const scrStats *stats)
+{
+    return stats->num_failed > 0 || stats->num_errored > 0;
+}
