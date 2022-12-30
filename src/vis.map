@@ -5,7 +5,6 @@
         scrRunnerRun;
         scrGroupCreate;
         scrGroupAddTest;
-        scrStatsReturn;
         scrGroupCtx;
         scrLog;
         scrError;

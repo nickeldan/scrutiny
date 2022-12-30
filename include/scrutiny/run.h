@@ -27,7 +27,7 @@ scrRunnerCreate(void)
 void
 scrRunnerDestroy(scrRunner *runner);
 
-void
+int
 scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
 #ifdef __GNUC__
     __attribute__((nonnull(1)))
@@ -46,13 +46,6 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
                 unsigned int flags)
 #ifdef __GNUC__
     __attribute__((nonnull(1, 2, 3)))
-#endif
-    ;
-
-int
-scrStatsReturn(const scrStats *stats)
-#ifdef __GNUC__
-    __attribute__((nonnull(1)))
 #endif
     ;
 

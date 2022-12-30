@@ -426,7 +426,7 @@ scrRunnerDestroy(scrRunner *runner)
     free(runner);
 }
 
-void
+int
 scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
 {
     bool show_color;
@@ -451,6 +451,8 @@ scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
     printf("Skipped: %u\n", stats->num_skipped);
     printf("Failed: %u\n", stats->num_failed);
     printf("Errored: %u\n", stats->num_errored);
+
+    return (stats->num_failed > 0 || stats->num_errored > 0);
 }
 
 scrGroup *
@@ -481,10 +483,4 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
     if (gearAppend(&group->params, &param) != GEAR_RET_OK) {
         exit(1);
     }
-}
-
-int
-scrStatsReturn(const scrStats *stats)
-{
-    return stats->num_failed > 0 || stats->num_errored > 0;
 }
