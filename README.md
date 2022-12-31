@@ -48,11 +48,7 @@ Once you have added all of the tests, you can run them by
 scrRunnerRun(runner, NULL, NULL);
 ```
 
-This function will return `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function will also summarize the results in `stdout`.  After the function returns, `runner` should be considered unusable (i.e., `scrRunnerRun` will free any associated resources).  If you need to tear down the runner without running `scrRunnerRun`, you can call
-
-```c
-scrRunnerDestroy(runner);
-```
+This function will return `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function will also summarize the results in `stdout`.
 
 You can pass a `scrStats*` to `scrRunnerRun`:
 
@@ -71,6 +67,12 @@ typedef struct scrStats {
     unsigned int num_failed;
     unsigned int num_errored;
 } scrStats;
+```
+
+When done with the runner, you can free its resources by
+
+```c
+scrRunnerDestroy(runner);
 ```
 
 Writing tests
