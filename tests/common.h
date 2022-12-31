@@ -29,7 +29,7 @@
 #define ADD_TIMEOUT(test, timeout)                       \
     do {                                                 \
         scrGroupAddTest(group, #test, test, timeout, 0); \
-        num_error++;                                     \
+        num_fail++;                                      \
     } while (0)
 #define ADD_SKIP(test)                             \
     do {                                           \

@@ -13,8 +13,7 @@
 
 #include <gear/gear.h>
 
-#include <scrutiny/run.h>
-#include <scrutiny/test.h>
+#include <scrutiny/scrutiny.h>
 
 #include "internal.h"
 
@@ -155,15 +154,16 @@ testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
     if (WIFSIGNALED(status)) {
         int signum = WTERMSIG(status);
 
-        printf("Test result (%s): %sERROR%s: ", param->name, show_color ? RED : "",
-               show_color ? RESET_COLOR : "");
+        printf("Test result (%s): %s%s%s: ", param->name, show_color ? RED : "",
+               (signum == SIGALRM) ? "FAIL" : "ERROR", show_color ? RESET_COLOR : "");
         if (signum == SIGALRM) {
             printf("Timed out\n");
+            ret = SCR_TEST_CODE_FAIL;
         }
         else {
             printf("Terminated by signal (%i): %s\n", signum, strsignal(signum));
+            ret = SCR_TEST_CODE_ERROR;
         }
-        ret = SCR_TEST_CODE_ERROR;
         show_output = true;
     }
     else {
@@ -439,6 +439,8 @@ scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
     memset(stats, 0, sizeof(*stats));
 
     show_color = isatty(STDOUT_FILENO);
+
+    printf("Scrutiny version " SCRUTINY_VERSION "\n\n");
 
     GEAR_FOR_EACH(&runner->groups, group)
     {
