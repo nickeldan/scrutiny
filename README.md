@@ -48,7 +48,7 @@ Once you have added all of the tests, you can run them by
 scrRunnerRun(runner, NULL, NULL);
 ```
 
-This function will return `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function will also summarize the results in `stdout`.
+This function returns `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function also summarizes the results in `stdout`.
 
 You can pass a `scrStats*` to `scrRunnerRun`:
 
@@ -208,7 +208,7 @@ typedef void (*scrCtxCleanupFn)(void *);
 
 If specified, then `create_fn` will be called with the global context as the argument.  The pointer returned will be the group context.
 
-If specified, then `cleanup_fn` will be called with the group countext (or the global context if `create_fn` was unspecified).
+If specified, then `cleanup_fn` will be called with the group context (or the global context if `create_fn` was unspecified).
 
 You can use the test macros in `create_fn`.  If any of the assertions fail, then all of the tests in that group will be counted as having failed.  You can also call `SCR_TEST_SKIP()` which will skip all of the group's tests.
 

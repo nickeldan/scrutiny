@@ -83,18 +83,18 @@ static SCR_TEST_FN(skip_me2)
 {
 }
 
-static SCR_TEST_FN(error_setup_fail1)
+static SCR_TEST_FN(setup_fail1)
 {
 }
 
-static SCR_TEST_FN(error_setup_fail2)
+static SCR_TEST_FN(setup_fail2)
 {
 }
 
 int
 main(int argc, char **argv)
 {
-    unsigned int num_pass = 0, num_skip = 0, num_error = 0;
+    unsigned int num_pass = 0, num_skip = 0, num_fail = 0, num_error = 0;
     scrRunner *runner;
     scrGroup *group;
     scrStats stats;
@@ -116,12 +116,12 @@ main(int argc, char **argv)
     ADD_SKIP(skip_me2);
 
     group = scrGroupCreate(runner, bad_setup, NULL);
-    ADD_ERROR(error_setup_fail1);
-    ADD_ERROR(error_setup_fail2);
+    ADD_FAIL(setup_fail1);
+    ADD_FAIL(setup_fail2);
 
     scrRunnerRun(runner, &global_num, &stats);
     scrRunnerDestroy(runner);
 
-    return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != 0 ||
+    return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||
             stats.num_errored != num_error);
 }

@@ -318,11 +318,13 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
         exit(SCR_TEST_CODE_OK);
     }
     else {
-        int status;
+        int status, exit_code;
 
         close(fds[1]);
 
         while (waitpid(child, &status, 0) < 0) {}
+
+        exit_code = WEXITSTATUS(status);
 
         if (WIFSIGNALED(status)) {
             fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
@@ -332,19 +334,24 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
                 showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
             }
         }
-        else if (WEXITSTATUS(status) == SCR_TEST_CODE_SKIP) {
+        else if (exit_code == SCR_TEST_CODE_SKIP) {
             stats->num_skipped += group->params.length;
             GEAR_FOR_EACH(&group->params, param)
             {
                 showTestResult(param, SCR_TEST_CODE_SKIP, show_color);
             }
         }
-        else if (WEXITSTATUS(status) != SCR_TEST_CODE_OK) {
-            fprintf(stderr, "Group runner exited with an error\n");
-            stats->num_errored += group->params.length;
+        else if (exit_code != SCR_TEST_CODE_OK) {
+            if (exit_code == SCR_TEST_CODE_FAIL) {
+                stats->num_failed += group->params.length;
+            }
+            else {
+                fprintf(stderr, "Group runner exited with an error\n");
+                stats->num_errored += group->params.length;
+            }
             GEAR_FOR_EACH(&group->params, param)
             {
-                showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
+                showTestResult(param, exit_code, show_color);
             }
         }
         else {
