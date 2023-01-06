@@ -10,7 +10,12 @@
 
 static void *group_ctx;
 static int log_fd;
-static bool log_to_tty;
+static bool show_color;
+
+#define LOG_STRING(str)                                 \
+    do {                                                \
+        if (write(log_fd, str, sizeof(str) - 1) < 0) {} \
+    } while (0)
 
 void
 setGroupCtx(void *ctx)
@@ -19,9 +24,9 @@ setGroupCtx(void *ctx)
 }
 
 void
-setToTty(bool to_tty)
+setShowColor(bool should_show_color)
 {
-    log_to_tty = to_tty;
+    show_color = should_show_color;
 }
 
 void
@@ -41,13 +46,13 @@ scrLog(const char *format, ...)
 {
     va_list args;
 
-    dprintf(log_fd, "[INFO]  ");
+    LOG_STRING("[INFO] ");
 
     va_start(args, format);
     vdprintf(log_fd, format, args);
     va_end(args);
 
-    dprintf(log_fd, "\n");
+    LOG_STRING("\n");
 }
 
 void
@@ -55,7 +60,7 @@ scrError(SCR_CONTEXT_DECL, const char *format, ...)
 {
     va_list args;
 
-    if (log_to_tty) {
+    if (show_color) {
         dprintf(log_fd, RED);
     }
 
@@ -65,9 +70,9 @@ scrError(SCR_CONTEXT_DECL, const char *format, ...)
     vdprintf(log_fd, format, args);
     va_end(args);
 
-    dprintf(log_fd, "\n");
+    LOG_STRING("\n");
 
-    if (log_to_tty) {
+    if (show_color) {
         dprintf(log_fd, RESET_COLOR);
     }
 

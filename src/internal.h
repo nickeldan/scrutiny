@@ -13,7 +13,7 @@ void
 setGroupCtx(void *ctx);
 
 void
-setToTty(bool to_tty);
+setShowColor(bool should_show_color);
 
 void
 setLogFd(int fd);

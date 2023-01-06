@@ -29,7 +29,7 @@ format:
 
 install: /usr/local/lib/$(SCR_SHARED_LIBRARY) $(foreach file,$(SCR_ONLY_HEADER_FILES),/usr/local/include/scrutiny/$(notdir $(file)))
 
-/usr/local/lib/$(SCR_SHARED_LIBRARY): $(SCR_SHARED_LIBRARY)
+/usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY)): $(SCR_SHARED_LIBRARY)
 	cp $< $@
 
 /usr/local/include/scrutiny/%.h: include/scrutiny/%.h
@@ -38,7 +38,7 @@ install: /usr/local/lib/$(SCR_SHARED_LIBRARY) $(foreach file,$(SCR_ONLY_HEADER_F
 
 uninstall:
 	rm -rf /usr/local/include/scrutiny
-	rm -f /usr/local/lib/$(SCR_SHARED_LIBRARY)
+	rm -f /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY))
 
 clean: $(CLEAN_TARGETS)
 	@rm -f $(DEPS_FILES)

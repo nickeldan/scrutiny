@@ -95,25 +95,26 @@ error:
     return SCR_TEST_CODE_ERROR;
 }
 
-static bool
+static void
 dumpFd(int fd, bool show_color)
 {
-    bool printed = false;
     ssize_t transmitted;
     char buffer[1024];
 
+    fflush(stdout);
     lseek(fd, 0, SEEK_SET);
 
     while ((transmitted = read(fd, buffer, sizeof(buffer))) > 0) {
         if (write(STDOUT_FILENO, buffer, transmitted) < 0) {}
-        printed = true;
     }
 
-    if (show_color) {
-        if (write(STDOUT_FILENO, RESET_COLOR, sizeof(RESET_COLOR) - 1) < 0) {}
-    }
+    if (show_color && write(STDOUT_FILENO, RESET_COLOR, sizeof(RESET_COLOR) - 1) < 0) {}
+}
 
-    return printed;
+static bool
+hasData(int fd)
+{
+    return lseek(fd, 0, SEEK_END) > 0;
 }
 
 static void
@@ -121,7 +122,7 @@ showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
 {
     bool xfail = (param->flags & SCR_FLAG_XFAIL);
 
-    printf("Test result: (%s): ", param->name);
+    printf("Test result (%s): ", param->name);
     switch (result) {
     case SCR_TEST_CODE_OK:
         printf("%s%s%s\n", show_color ? GREEN : "", xfail ? "XFAILED" : "PASSED",
@@ -183,27 +184,41 @@ testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
     }
 
     if (show_output) {
-        fflush(stdout);
-        dumpFd(log_fd, show_color);
-        printf("\n");
+        bool some_output = false;
 
-        printf("-------- stdout --------\n");
-        fflush(stdout);
-        if (dumpFd(stdout_fd, show_color)) {
+        if (hasData(log_fd)) {
+            dumpFd(log_fd, show_color);
+            some_output = true;
+        }
+
+        if (hasData(stdout_fd)) {
+            printf("\n-------- stdout --------\n");
+            dumpFd(stdout_fd, show_color);
+            printf("\n------------------------\n");
+            some_output = true;
+        }
+
+        if (hasData(stderr_fd)) {
+            printf("\n-------- stderr --------\n");
+            dumpFd(stderr_fd, show_color);
+            printf("\n------------------------\n");
+            some_output = true;
+        }
+
+        if (some_output) {
             printf("\n");
         }
-        printf("------------------------\n\n");
-
-        printf("-------- stderr --------\n");
-        fflush(stdout);
-        if (dumpFd(stderr_fd, show_color)) {
-            printf("\n");
-        }
-        printf("------------------------\n\n");
     }
 
     return ret;
 }
+
+#if defined(ANDROID) || defined(__ANDROID__)
+#define TMP_PREFIX "/data/local"
+#else
+#define TMP_PREFIX
+#endif
+#define TEMPLATE(fmt) TMP_PREFIX "/tmp/scrutiny_" #fmt "_XXXXXX"
 
 static scrTestCode
 testRun(const scrTestParam *param, bool show_color)
@@ -211,8 +226,10 @@ testRun(const scrTestParam *param, bool show_color)
     int stdout_fd, stderr_fd = -1, log_fd = -1;
     scrTestCode ret = SCR_TEST_CODE_ERROR;
     pid_t child;
-    char stdout_template[] = "/tmp/scrutiny_out_XXXXXX", stderr_template[] = "/tmp/scrutiny_err_XXXXXX",
-         log_template[] = "/tmp/scrutiny_log_XXXXXX";
+    char stdout_template[] = TEMPLATE(out), stderr_template[] = TEMPLATE(err),
+         log_template[] = TEMPLATE(log);
+#undef TEMPLATE
+#undef TMP_PREFIX
 
     stdout_fd = mkstemp(stdout_template);
     if (stdout_fd < 0) {
@@ -284,9 +301,10 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
             sigaction(kill_signals[k], &action, NULL);
         }
 
-        setToTty(show_color);
+        setShowColor(show_color);
 
         if (group->create_fn) {
+            setLogFd(STDOUT_FILENO);
             group_ctx = group->create_fn(global_ctx);
         }
         else {

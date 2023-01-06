@@ -360,6 +360,13 @@ static SCR_TEST_FN(fail_error_message)
     SCR_ERROR("This is an error message.");
 }
 
+static SCR_TEST_FN(fail_with_output)
+{
+    printf("Here's some stdout\n");
+    fprintf(stderr, "Here's some stderr\n");
+    SCR_ERROR("Intentionally failing");
+}
+
 static SCR_TEST_FN(error_timeout)
 {
     sleep(2);
@@ -448,6 +455,7 @@ main(int argc, char **argv)
     ADD_FAIL(fail_chars_equal);
     ADD_FAIL(fail_chars_not_equal);
     ADD_FAIL(fail_error_message);
+    ADD_FAIL(fail_with_output);
     ADD_TIMEOUT(error_timeout, 1);
     ADD_ERROR(error_segfault);
     ADD_SKIP(skip_me);
