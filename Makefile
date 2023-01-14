@@ -27,7 +27,7 @@ _all: $(SCR_SHARED_LIBRARY) $(SCR_STATIC_LIBRARY)
 format:
 	find . -path ./packages -prune -o -name '*.[hc]' -print0 | xargs -0 -n 1 clang-format -i
 
-install: /usr/local/lib/$(SCR_SHARED_LIBRARY) $(foreach file,$(SCR_ONLY_HEADER_FILES),/usr/local/include/scrutiny/$(notdir $(file)))
+install: /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY)) $(foreach file,$(SCR_ONLY_HEADER_FILES),/usr/local/include/scrutiny/$(notdir $(file)))
 
 /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY)): $(SCR_SHARED_LIBRARY)
 	cp $< $@

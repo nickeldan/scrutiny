@@ -7,7 +7,7 @@
 #define SCRUTINY_RUN_H
 
 /**
- * @brief An opaque structure which controls all of the tests.
+ * @brief An opaque structure which runs all of the tests.
  */
 typedef struct scrRunner scrRunner;
 
