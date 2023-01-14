@@ -33,12 +33,12 @@ typedef struct scrStats {
 typedef void (*scrTestFn)(void);
 
 /**
- * @brief The signature of a group context creation function.
+ * @brief The signature for a group context creation function.
  */
 typedef void *(*scrCtxCreateFn)(void *);
 
 /**
- * @brief The signature of a group context cleanup function.
+ * @brief The signature for a group context cleanup function.
  */
 typedef void (*scrCtxCleanupFn)(void *);
 
@@ -53,7 +53,7 @@ typedef void (*scrCtxCleanupFn)(void *);
 #define SCR_RUN_FLAG_FAIL_FAST 0x00000001
 
 /**
- * @brief Creats a runner.
+ * @brief Creates a runner.
  *
  * @return  A runner handle.
  */
@@ -81,8 +81,6 @@ scrRunnerDestroy(scrRunner *runner);
  * @param[out] stats    If not NULL, then will be populated with the run's statistics.
  *
  * @return              0 if all of the tests either passed or were skipped and 1 otherwise.
- *
- * @note The runner should be considered unusable once this function returns.
  */
 int
 scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats)
