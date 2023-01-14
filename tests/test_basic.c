@@ -462,7 +462,7 @@ main(int argc, char **argv)
     ADD_XFAIL(xfail_basic);
     ADD_XPASS(xpass_basic);
 
-    scrRunnerRun(runner, NULL, &stats);
+    scrRunnerRun(runner, 0, NULL, &stats);
     scrRunnerDestroy(runner);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||

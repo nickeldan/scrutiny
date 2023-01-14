@@ -45,7 +45,7 @@ scrGroupAddTest(group, "Test name", my_test, 0, 0);
 Once you have added all of the tests, you can run them by
 
 ```c
-scrRunnerRun(runner, NULL, NULL);
+scrRunnerRun(runner, 0, NULL, NULL);
 ```
 
 This function returns `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function also summarizes the results in `stdout`.
@@ -55,7 +55,7 @@ You can pass a `scrStats*` to `scrRunnerRun`:
 ```c
 scrStats stats;
 
-scrRunnerRun(runner, NULL, &stats);
+scrRunnerRun(runner, 0, NULL, &stats);
 ```
 
 where `scrStats` is defined as
@@ -172,7 +172,7 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
 
 If `timeout` is positive, then the test will fail if not completed within that many seconds.
 
-At the moment, the only valid value for `flags` other than `0` is `SCR_FLAG_XFAIL`.  If this value is passed, then success/failure will be inverted.  That is, the test will be expected to fail and a failure will be counted if the test passes.
+At the moment, the only valid value for `flags` other than `0` is `SCR_TEST_FLAG_XFAIL`.  If this value is passed, then success/failure will be inverted.  That is, the test will be expected to fail and a failure will be counted if the test passes.
 
 Global/group context
 --------------------
@@ -189,7 +189,7 @@ The signature of `scrRunnerRun` is
 
 ```c
 int
-scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats);
+scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats);
 ```
 
 By default, each group context is equal to the global context.  However, you can pass function pointers to `scrGroupCreate` which can set up and tear down a group context.  The signature of `scrGroupCreate` is
@@ -211,6 +211,11 @@ If specified, then `create_fn` will be called with the global context as the arg
 If specified, then `cleanup_fn` will be called with the group context (or the global context if `create_fn` was unspecified).
 
 You can use the test macros in `create_fn`.  If any of the assertions fail, then all of the tests in that group will be counted as having failed.  You can also call `SCR_TEST_SKIP()` which will skip all of the group's tests.
+
+Run flags
+---------
+
+At the moment, the only valid value for the `flags` argument in `scrRunnerRun` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the runner to stop running tests as soon as any test either fails or encounters an error.
 
 Building Scrutiny
 -----------------

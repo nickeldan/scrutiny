@@ -120,7 +120,7 @@ hasData(int fd)
 static void
 showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
 {
-    bool xfail = (param->flags & SCR_FLAG_XFAIL);
+    bool xfail = (param->flags & SCR_TEST_FLAG_XFAIL);
 
     printf("Test result (%s): ", param->name);
     switch (result) {
@@ -169,7 +169,7 @@ testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
     }
     else {
         ret = WEXITSTATUS(status);
-        if (param->flags & SCR_FLAG_XFAIL) {
+        if (param->flags & SCR_TEST_FLAG_XFAIL) {
             if (ret == SCR_TEST_CODE_OK) {
                 ret = SCR_TEST_CODE_FAIL;
             }
@@ -268,9 +268,10 @@ done:
     return ret;
 }
 
-static void
-groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_color)
+static bool
+groupRun(const scrGroup *group, unsigned int run_flags, void *global_ctx, scrStats *stats, bool show_color)
 {
+    bool ret = true;
     pid_t child;
     int fds[2];
     scrStats stats_obj = {0};
@@ -278,13 +279,13 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
 
     if (pipe(fds) != 0) {
         perror("pipe");
-        exit(SCR_TEST_CODE_ERROR);
+        exit(1);
     }
 
     child = fork();
     if (child < 0) {
         perror("fork");
-        exit(SCR_TEST_CODE_ERROR);
+        exit(1);
     }
 
     if (child == 0) {
@@ -314,7 +315,11 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
 
         GEAR_FOR_EACH(&group->params, param)
         {
-            switch (testRun(param, show_color)) {
+            int result;
+
+            result = testRun(param, show_color);
+
+            switch (result) {
             case SCR_TEST_CODE_OK: stats_obj.num_passed++; break;
 
             case SCR_TEST_CODE_SKIP: stats_obj.num_skipped++; break;
@@ -322,6 +327,11 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
             case SCR_TEST_CODE_FAIL: stats_obj.num_failed++; break;
 
             default: stats_obj.num_errored++; break;
+            }
+
+            if (run_flags & SCR_RUN_FLAG_FAIL_FAST && result != SCR_TEST_CODE_OK &&
+                result != SCR_TEST_CODE_SKIP) {
+                break;
             }
         }
 
@@ -388,17 +398,28 @@ groupRun(const scrGroup *group, void *global_ctx, scrStats *stats, bool show_col
                 {
                     showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
                 }
+
+                if (run_flags & SCR_RUN_FLAG_FAIL_FAST) {
+                    ret = false;
+                }
             }
             else {
                 stats->num_passed += stats_obj.num_passed;
                 stats->num_skipped += stats_obj.num_skipped;
                 stats->num_failed += stats_obj.num_failed;
                 stats->num_errored += stats_obj.num_errored;
+
+                if (run_flags & SCR_RUN_FLAG_FAIL_FAST &&
+                    (stats_obj.num_failed > 0 || stats_obj.num_errored > 0)) {
+                    ret = false;
+                }
             }
         }
 
         close(fds[0]);
     }
+
+    return ret;
 }
 
 scrRunner *
@@ -452,7 +473,7 @@ scrRunnerDestroy(scrRunner *runner)
 }
 
 int
-scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
+scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats)
 {
     bool show_color;
     scrGroup *group;
@@ -469,7 +490,9 @@ scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
 
     GEAR_FOR_EACH(&runner->groups, group)
     {
-        groupRun(group, global_ctx, stats, show_color);
+        if (!groupRun(group, flags, global_ctx, stats, show_color)) {
+            break;
+        }
     }
 
     printf("\n\nTests run: %u\n",

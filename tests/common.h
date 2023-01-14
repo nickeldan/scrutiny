@@ -6,20 +6,20 @@
         scrGroupAddTest(group, #test, test, 0, 0); \
         num_pass++;                                \
     } while (0)
-#define ADD_XFAIL(test)                                         \
-    do {                                                        \
-        scrGroupAddTest(group, #test, test, 0, SCR_FLAG_XFAIL); \
-        num_pass++;                                             \
+#define ADD_XFAIL(test)                                              \
+    do {                                                             \
+        scrGroupAddTest(group, #test, test, 0, SCR_TEST_FLAG_XFAIL); \
+        num_pass++;                                                  \
     } while (0)
 #define ADD_FAIL(test)                             \
     do {                                           \
         scrGroupAddTest(group, #test, test, 0, 0); \
         num_fail++;                                \
     } while (0)
-#define ADD_XPASS(test)                                         \
-    do {                                                        \
-        scrGroupAddTest(group, #test, test, 0, SCR_FLAG_XFAIL); \
-        num_fail++;                                             \
+#define ADD_XPASS(test)                                              \
+    do {                                                             \
+        scrGroupAddTest(group, #test, test, 0, SCR_TEST_FLAG_XFAIL); \
+        num_fail++;                                                  \
     } while (0)
 #define ADD_ERROR(test)                            \
     do {                                           \

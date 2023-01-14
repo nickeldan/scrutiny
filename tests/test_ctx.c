@@ -119,7 +119,7 @@ main(int argc, char **argv)
     ADD_FAIL(setup_fail1);
     ADD_FAIL(setup_fail2);
 
-    scrRunnerRun(runner, &global_num, &stats);
+    scrRunnerRun(runner, 0, &global_num, &stats);
     scrRunnerDestroy(runner);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||

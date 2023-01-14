@@ -45,7 +45,12 @@ typedef void (*scrCtxCleanupFn)(void *);
 /**
  * @brief Indicates that a test is expected to fail.
  */
-#define SCR_FLAG_XFAIL 0x00000001
+#define SCR_TEST_FLAG_XFAIL 0x00000001
+
+/**
+ * @brief Instructs the runner to stop as soon as a test fails.
+ */
+#define SCR_RUN_FLAG_FAIL_FAST 0x00000001
 
 /**
  * @brief Creats a runner.
@@ -71,6 +76,7 @@ scrRunnerDestroy(scrRunner *runner);
  * @brief Runs all of tests.
  *
  * @param runner        The runner handle.
+ * @param flags         Zero or more flags bitwise-or combined.
  * @param global_ctx    The global context to use for the run.
  * @param[out] stats    If not NULL, then will be populated with the run's statistics.
  *
@@ -79,7 +85,7 @@ scrRunnerDestroy(scrRunner *runner);
  * @note The runner should be considered unusable once this function returns.
  */
 int
-scrRunnerRun(scrRunner *runner, void *global_ctx, scrStats *stats)
+scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats)
 #ifdef __GNUC__
     __attribute__((nonnull(1)))
 #endif

@@ -1,2 +1,3 @@
 test_basic
 test_ctx
+test_fail_fast
