@@ -97,6 +97,7 @@ main(int argc, char **argv)
     unsigned int num_pass = 0, num_skip = 0, num_fail = 0, num_error = 0;
     scrRunner *runner;
     scrGroup *group;
+    scrOptions options = {.global_ctx = &global_num};
     scrStats stats;
     (void)argc;
 
@@ -119,7 +120,7 @@ main(int argc, char **argv)
     ADD_FAIL(setup_fail1);
     ADD_FAIL(setup_fail2);
 
-    scrRunnerRun(runner, 0, &global_num, &stats);
+    scrRunnerRun(runner, &options, &stats);
     scrRunnerDestroy(runner);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||

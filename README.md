@@ -45,7 +45,7 @@ scrGroupAddTest(group, "Test name", my_test, 0, 0);
 Once you have added all of the tests, you can run them by
 
 ```c
-scrRunnerRun(runner, 0, NULL, NULL);
+scrRunnerRun(runner, NULL, NULL);
 ```
 
 This function returns `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function also summarizes the results in `stdout`.
@@ -55,7 +55,7 @@ You can pass a `scrStats*` to `scrRunnerRun`:
 ```c
 scrStats stats;
 
-scrRunnerRun(runner, 0, NULL, &stats);
+scrRunnerRun(runner, NULL, &stats);
 ```
 
 where `scrStats` is defined as
@@ -189,8 +189,19 @@ The signature of `scrRunnerRun` is
 
 ```c
 int
-scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats);
+scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats);
 ```
+
+where `scrOptions` is defined as
+
+```c
+typedef scrOptions {
+    void *global_ctx;
+    unsigned int flags;
+} scrOptions;
+```
+
+If the `options` argument is `NULL`, then default values will be used (i.e., `NULL` and `0`).
 
 By default, each group context is equal to the global context.  However, you can pass function pointers to `scrGroupCreate` which can set up and tear down a group context.  The signature of `scrGroupCreate` is
 
@@ -215,7 +226,7 @@ You can use the test macros in `create_fn`.  If any of the assertions fail, then
 Run flags
 ---------
 
-At the moment, the only valid value for the `flags` argument in `scrRunnerRun` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the runner to stop running tests as soon as any test either fails or encounters an error.
+At the moment, the only valid value for `flags` in `scrOptions` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the runner to stop running tests as soon as any test either fails or encounters an error.
 
 Building Scrutiny
 -----------------

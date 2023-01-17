@@ -367,7 +367,7 @@ static SCR_TEST_FN(fail_with_output)
     SCR_ERROR("Intentionally failing");
 }
 
-static SCR_TEST_FN(error_timeout)
+static SCR_TEST_FN(fail_timeout)
 {
     sleep(2);
 }
@@ -456,13 +456,13 @@ main(int argc, char **argv)
     ADD_FAIL(fail_chars_not_equal);
     ADD_FAIL(fail_error_message);
     ADD_FAIL(fail_with_output);
-    ADD_TIMEOUT(error_timeout, 1);
+    ADD_TIMEOUT(fail_timeout, 1);
     ADD_ERROR(error_segfault);
     ADD_SKIP(skip_me);
     ADD_XFAIL(xfail_basic);
     ADD_XPASS(xpass_basic);
 
-    scrRunnerRun(runner, 0, NULL, &stats);
+    scrRunnerRun(runner, NULL, &stats);
     scrRunnerDestroy(runner);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||

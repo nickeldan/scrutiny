@@ -269,7 +269,7 @@ done:
 }
 
 static bool
-groupRun(const scrGroup *group, unsigned int run_flags, void *global_ctx, scrStats *stats, bool show_color)
+groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool show_color)
 {
     bool ret = true;
     pid_t child;
@@ -306,10 +306,10 @@ groupRun(const scrGroup *group, unsigned int run_flags, void *global_ctx, scrSta
 
         if (group->create_fn) {
             setLogFd(STDOUT_FILENO);
-            group_ctx = group->create_fn(global_ctx);
+            group_ctx = group->create_fn(options->global_ctx);
         }
         else {
-            group_ctx = global_ctx;
+            group_ctx = options->global_ctx;
         }
         setGroupCtx(group_ctx);
 
@@ -329,7 +329,7 @@ groupRun(const scrGroup *group, unsigned int run_flags, void *global_ctx, scrSta
             default: stats_obj.num_errored++; break;
             }
 
-            if (run_flags & SCR_RUN_FLAG_FAIL_FAST && result != SCR_TEST_CODE_OK &&
+            if ((options->flags) & SCR_RUN_FLAG_FAIL_FAST && result != SCR_TEST_CODE_OK &&
                 result != SCR_TEST_CODE_SKIP) {
                 break;
             }
@@ -399,7 +399,7 @@ groupRun(const scrGroup *group, unsigned int run_flags, void *global_ctx, scrSta
                     showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
                 }
 
-                if (run_flags & SCR_RUN_FLAG_FAIL_FAST) {
+                if ((options->flags) & SCR_RUN_FLAG_FAIL_FAST) {
                     ret = false;
                 }
             }
@@ -409,7 +409,7 @@ groupRun(const scrGroup *group, unsigned int run_flags, void *global_ctx, scrSta
                 stats->num_failed += stats_obj.num_failed;
                 stats->num_errored += stats_obj.num_errored;
 
-                if (run_flags & SCR_RUN_FLAG_FAIL_FAST &&
+                if ((options->flags) & SCR_RUN_FLAG_FAIL_FAST &&
                     (stats_obj.num_failed > 0 || stats_obj.num_errored > 0)) {
                     ret = false;
                 }
@@ -473,11 +473,16 @@ scrRunnerDestroy(scrRunner *runner)
 }
 
 int
-scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats)
+scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats)
 {
     bool show_color;
     scrGroup *group;
+    const scrOptions options_obj = {0};
     scrStats stats_obj;
+
+    if (!options) {
+        options = &options_obj;
+    }
 
     if (!stats) {
         stats = &stats_obj;
@@ -490,7 +495,7 @@ scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *
 
     GEAR_FOR_EACH(&runner->groups, group)
     {
-        if (!groupRun(group, flags, global_ctx, stats, show_color)) {
+        if (!groupRun(group, options, stats, show_color)) {
             break;
         }
     }

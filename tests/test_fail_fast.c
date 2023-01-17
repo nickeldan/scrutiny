@@ -16,6 +16,7 @@ main(int argc, char **argv)
 {
     scrRunner *runner;
     scrGroup *group;
+    scrOptions options = {.flags = SCR_RUN_FLAG_FAIL_FAST};
     scrStats stats;
     (void)argc;
 
@@ -27,7 +28,7 @@ main(int argc, char **argv)
     scrGroupAddTest(group, "gonna_fail", gonna_fail, 0, 0);
     scrGroupAddTest(group, "never_gonna_run", never_gonna_run, 0, 0);
 
-    scrRunnerRun(runner, SCR_RUN_FLAG_FAIL_FAST, NULL, &stats);
+    scrRunnerRun(runner, &options, &stats);
 
     return !(stats.num_passed == 0 && stats.num_skipped == 0 && stats.num_failed == 1 &&
              stats.num_errored == 0);
