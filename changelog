@@ -1,0 +1,3 @@
+0.2.0:
+    - Changed the signature of scrRunnerRun to take a scrOptions pointer.
+    - Removed the SCR_TEST_FN macro.
