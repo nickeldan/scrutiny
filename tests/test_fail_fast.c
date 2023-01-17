@@ -2,12 +2,14 @@
 
 #include <scrutiny/scrutiny.h>
 
-static SCR_TEST_FN(gonna_fail)
+static void
+gonna_fail(void)
 {
     SCR_ERROR("Failing");
 }
 
-static SCR_TEST_FN(never_gonna_run)
+static void
+never_gonna_run(void)
 {
 }
 
