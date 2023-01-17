@@ -5,32 +5,37 @@
 
 #include "common.h"
 
-static SCR_TEST_FN(do_nothing)
+static void
+do_nothing(void)
 {
 }
 
-static SCR_TEST_FN(integers_equal)
+static void
+integers_equal(void)
 {
     int x = 5, y = 5;
 
     SCR_ASSERT_EQ(x, y);
 }
 
-static SCR_TEST_FN(integers_not_equal)
+static void
+integers_not_equal(void)
 {
     int x = 5, y = 6;
 
     SCR_ASSERT_NEQ(x, y);
 }
 
-static SCR_TEST_FN(integers_less_than)
+static void
+integers_less_than(void)
 {
     int x = 5, y = 6;
 
     SCR_ASSERT_LT(x, y);
 }
 
-static SCR_TEST_FN(integers_less_than_or_equal)
+static void
+integers_less_than_or_equal(void)
 {
     int x = 5, y = 5, z = 6;
 
@@ -38,14 +43,16 @@ static SCR_TEST_FN(integers_less_than_or_equal)
     SCR_ASSERT_LE(x, z);
 }
 
-static SCR_TEST_FN(integers_greater_than)
+static void
+integers_greater_than(void)
 {
     int x = 6, y = 5;
 
     SCR_ASSERT_GT(x, y);
 }
 
-static SCR_TEST_FN(integers_greater_than_or_equal)
+static void
+integers_greater_than_or_equal(void)
 {
     int x = 6, y = 6, z = 5;
 
@@ -53,28 +60,32 @@ static SCR_TEST_FN(integers_greater_than_or_equal)
     SCR_ASSERT_GE(x, z);
 }
 
-static SCR_TEST_FN(unsigned_integers_equal)
+static void
+unsigned_integers_equal(void)
 {
     unsigned int x = 5, y = 5;
 
     SCR_ASSERT_UNSIGNED_EQ(x, y);
 }
 
-static SCR_TEST_FN(unsigned_integers_not_equal)
+static void
+unsigned_integers_not_equal(void)
 {
     unsigned int x = 5, y = 6;
 
     SCR_ASSERT_UNSIGNED_NEQ(x, y);
 }
 
-static SCR_TEST_FN(unsigned_integers_less_than)
+static void
+unsigned_integers_less_than(void)
 {
     unsigned int x = 5, y = 6;
 
     SCR_ASSERT_UNSIGNED_LT(x, y);
 }
 
-static SCR_TEST_FN(unsigned_integers_less_than_or_equal)
+static void
+unsigned_integers_less_than_or_equal(void)
 {
     unsigned int x = 5, y = 5, z = 6;
 
@@ -82,14 +93,16 @@ static SCR_TEST_FN(unsigned_integers_less_than_or_equal)
     SCR_ASSERT_UNSIGNED_LE(x, z);
 }
 
-static SCR_TEST_FN(unsigned_integers_greater_than)
+static void
+unsigned_integers_greater_than(void)
 {
     unsigned int x = 6, y = 5;
 
     SCR_ASSERT_UNSIGNED_GT(x, y);
 }
 
-static SCR_TEST_FN(unsigned_integers_greater_than_or_equal)
+static void
+unsigned_integers_greater_than_or_equal(void)
 {
     unsigned int x = 6, y = 6, z = 5;
 
@@ -97,28 +110,32 @@ static SCR_TEST_FN(unsigned_integers_greater_than_or_equal)
     SCR_ASSERT_UNSIGNED_GE(x, z);
 }
 
-static SCR_TEST_FN(floats_equal)
+static void
+floats_equal(void)
 {
     float x = 5.0, y = 5.0;
 
     SCR_ASSERT_FLOAT_EQ(x, y);
 }
 
-static SCR_TEST_FN(floats_not_equal)
+static void
+floats_not_equal(void)
 {
     float x = 5.0, y = 6.0;
 
     SCR_ASSERT_FLOAT_NEQ(x, y);
 }
 
-static SCR_TEST_FN(floats_less_than)
+static void
+floats_less_than(void)
 {
     float x = 5.0, y = 6.0;
 
     SCR_ASSERT_FLOAT_LT(x, y);
 }
 
-static SCR_TEST_FN(floats_less_than_or_equal)
+static void
+floats_less_than_or_equal(void)
 {
     float x = 5.0, y = 5.0, z = 6.0;
 
@@ -126,14 +143,16 @@ static SCR_TEST_FN(floats_less_than_or_equal)
     SCR_ASSERT_FLOAT_LE(x, z);
 }
 
-static SCR_TEST_FN(floats_greater_than)
+static void
+floats_greater_than(void)
 {
     float x = 6.0, y = 5.0;
 
     SCR_ASSERT_FLOAT_GT(x, y);
 }
 
-static SCR_TEST_FN(floats_greater_than_or_equal)
+static void
+floats_greater_than_or_equal(void)
 {
     float x = 6.0, y = 6.0, z = 5.0;
 
@@ -141,7 +160,8 @@ static SCR_TEST_FN(floats_greater_than_or_equal)
     SCR_ASSERT_FLOAT_GE(x, z);
 }
 
-static SCR_TEST_FN(pointers_equal)
+static void
+pointers_equal(void)
 {
     int x = 0;
     int *p1 = &x, *p2 = &x;
@@ -149,7 +169,8 @@ static SCR_TEST_FN(pointers_equal)
     SCR_ASSERT_PTR_EQ(p1, p2);
 }
 
-static SCR_TEST_FN(pointers_not_equal)
+static void
+pointers_not_equal(void)
 {
     int x = 0, y = 0;
     int *p1 = &x, *p2 = &y;
@@ -157,161 +178,184 @@ static SCR_TEST_FN(pointers_not_equal)
     SCR_ASSERT_PTR_NEQ(p1, p2);
 }
 
-static SCR_TEST_FN(strings_equal)
+static void
+strings_equal(void)
 {
     const char *x = "foo", *y = "foo";
 
     SCR_ASSERT_STR_EQ(x, y);
 }
 
-static SCR_TEST_FN(strings_not_equal)
+static void
+strings_not_equal(void)
 {
     const char *x = "foo", *y = "bar";
 
     SCR_ASSERT_STR_NEQ(x, y);
 }
 
-static SCR_TEST_FN(chars_equal)
+static void
+chars_equal(void)
 {
     char x = 'a', y = 'a';
 
     SCR_ASSERT_CHAR_EQ(x, y);
 }
 
-static SCR_TEST_FN(chars_not_equal)
+static void
+chars_not_equal(void)
 {
     char x = 'a', y = 'b';
 
     SCR_ASSERT_CHAR_NEQ(x, y);
 }
 
-static SCR_TEST_FN(fail_integers_equal)
+static void
+fail_integers_equal(void)
 {
     int x = 5, y = 6;
 
     SCR_ASSERT_EQ(x, y);
 }
 
-static SCR_TEST_FN(fail_integers_not_equal)
+static void
+fail_integers_not_equal(void)
 {
     int x = 5, y = 5;
 
     SCR_ASSERT_NEQ(x, y);
 }
 
-static SCR_TEST_FN(fail_integers_less_than)
+static void
+fail_integers_less_than(void)
 {
     int x = 5, y = 5;
 
     SCR_ASSERT_LT(x, y);
 }
 
-static SCR_TEST_FN(fail_integers_less_than_or_equal)
+static void
+fail_integers_less_than_or_equal(void)
 {
     int x = 5, y = 4;
 
     SCR_ASSERT_LE(x, y);
 }
 
-static SCR_TEST_FN(fail_integers_greater_than)
+static void
+fail_integers_greater_than(void)
 {
     int x = 5, y = 5;
 
     SCR_ASSERT_GT(x, y);
 }
 
-static SCR_TEST_FN(fail_integers_greater_than_or_equal)
+static void
+fail_integers_greater_than_or_equal(void)
 {
     int x = 5, y = 6;
 
     SCR_ASSERT_GE(x, y);
 }
 
-static SCR_TEST_FN(fail_unsigned_integers_equal)
+static void
+fail_unsigned_integers_equal(void)
 {
     unsigned int x = 5, y = 6;
 
     SCR_ASSERT_UNSIGNED_EQ(x, y);
 }
 
-static SCR_TEST_FN(fail_unsigned_integers_not_equal)
+static void
+fail_unsigned_integers_not_equal(void)
 {
     unsigned int x = 5, y = 5;
 
     SCR_ASSERT_UNSIGNED_NEQ(x, y);
 }
 
-static SCR_TEST_FN(fail_unsigned_integers_less_than)
+static void
+fail_unsigned_integers_less_than(void)
 {
     unsigned int x = 5, y = 5;
 
     SCR_ASSERT_UNSIGNED_LT(x, y);
 }
 
-static SCR_TEST_FN(fail_unsigned_integers_less_than_or_equal)
+static void
+fail_unsigned_integers_less_than_or_equal(void)
 {
     unsigned int x = 5, y = 4;
 
     SCR_ASSERT_UNSIGNED_LE(x, y);
 }
 
-static SCR_TEST_FN(fail_unsigned_integers_greater_than)
+static void
+fail_unsigned_integers_greater_than(void)
 {
     unsigned int x = 5, y = 5;
 
     SCR_ASSERT_UNSIGNED_GT(x, y);
 }
 
-static SCR_TEST_FN(fail_unsigned_integers_greater_than_or_equal)
+static void
+fail_unsigned_integers_greater_than_or_equal(void)
 {
     unsigned int x = 5, y = 6;
 
     SCR_ASSERT_UNSIGNED_GE(x, y);
 }
 
-static SCR_TEST_FN(fail_floats_equal)
+static void
+fail_floats_equal(void)
 {
     float x = 5.0, y = 6.0;
 
     SCR_ASSERT_FLOAT_EQ(x, y);
 }
 
-static SCR_TEST_FN(fail_floats_not_equal)
+static void
+fail_floats_not_equal(void)
 {
     float x = 5.0, y = 5.0;
 
     SCR_ASSERT_FLOAT_NEQ(x, y);
 }
 
-static SCR_TEST_FN(fail_floats_less_than)
+static void
+fail_floats_less_than(void)
 {
     float x = 5.0, y = 5.0;
 
     SCR_ASSERT_FLOAT_LT(x, y);
 }
 
-static SCR_TEST_FN(fail_floats_less_than_or_equal)
+static void
+fail_floats_less_than_or_equal(void)
 {
     float x = 6.0, y = 5.0;
 
     SCR_ASSERT_FLOAT_LE(x, y);
 }
 
-static SCR_TEST_FN(fail_floats_greater_than)
+static void
+fail_floats_greater_than(void)
 {
     float x = 5.0, y = 5.0;
 
     SCR_ASSERT_FLOAT_GT(x, y);
 }
 
-static SCR_TEST_FN(fail_floats_greater_than_or_equal)
+static void
+fail_floats_greater_than_or_equal(void)
 {
     float x = 5.0, y = 6.0;
 
     SCR_ASSERT_FLOAT_GE(x, y);
 }
 
-static SCR_TEST_FN(fail_pointers_equal)
+static void
+fail_pointers_equal(void)
 {
     int x = 0, y = 0;
     int *p1 = &x, *p2 = &y;
@@ -319,7 +363,8 @@ static SCR_TEST_FN(fail_pointers_equal)
     SCR_ASSERT_PTR_EQ(p1, p2);
 }
 
-static SCR_TEST_FN(fail_pointers_not_equal)
+static void
+fail_pointers_not_equal(void)
 {
     int x = 0;
     int *p1 = &x, *p2 = &x;
@@ -327,67 +372,78 @@ static SCR_TEST_FN(fail_pointers_not_equal)
     SCR_ASSERT_PTR_NEQ(p1, p2);
 }
 
-static SCR_TEST_FN(fail_strings_equal)
+static void
+fail_strings_equal(void)
 {
     const char *x = "foo", *y = "bar";
 
     SCR_ASSERT_STR_EQ(x, y);
 }
 
-static SCR_TEST_FN(fail_strings_not_equal)
+static void
+fail_strings_not_equal(void)
 {
     const char *x = "foo", *y = "foo";
 
     SCR_ASSERT_STR_NEQ(x, y);
 }
 
-static SCR_TEST_FN(fail_chars_equal)
+static void
+fail_chars_equal(void)
 {
     char x = 'a', y = 'b';
 
     SCR_ASSERT_CHAR_EQ(x, y);
 }
 
-static SCR_TEST_FN(fail_chars_not_equal)
+static void
+fail_chars_not_equal(void)
 {
     char x = 'a', y = 'a';
 
     SCR_ASSERT_CHAR_NEQ(x, y);
 }
 
-static SCR_TEST_FN(fail_error_message)
+static void
+fail_error_message(void)
 {
     SCR_ERROR("This is an error message.");
 }
 
-static SCR_TEST_FN(fail_with_output)
+static void
+fail_with_output(void)
 {
     printf("Here's some stdout\n");
     fprintf(stderr, "Here's some stderr\n");
     SCR_ERROR("Intentionally failing");
 }
 
-static SCR_TEST_FN(error_timeout)
+static void
+fail_timeout(void)
 {
     sleep(2);
 }
 
-static SCR_TEST_FN(error_segfault)
+static void
+error_segfault(void)
 {
     *(unsigned char *)SCR_GROUP_CTX() = 0;
 }
 
-static SCR_TEST_FN(skip_me)
+static void
+skip_me(void)
 {
     SCR_TEST_SKIP();
 }
 
-static SCR_TEST_FN(xfail_basic)
+static void
+xfail_basic(void)
 {
     SCR_ASSERT_EQ(5, 6);
 }
 
-static SCR_TEST_FN(xpass_basic)
+static void
+xpass_basic(void)
 {
 }
 
@@ -456,13 +512,13 @@ main(int argc, char **argv)
     ADD_FAIL(fail_chars_not_equal);
     ADD_FAIL(fail_error_message);
     ADD_FAIL(fail_with_output);
-    ADD_TIMEOUT(error_timeout, 1);
+    ADD_TIMEOUT(fail_timeout, 1);
     ADD_ERROR(error_segfault);
     ADD_SKIP(skip_me);
     ADD_XFAIL(xfail_basic);
     ADD_XPASS(xpass_basic);
 
-    scrRunnerRun(runner, 0, NULL, &stats);
+    scrRunnerRun(runner, NULL, &stats);
     scrRunnerDestroy(runner);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||

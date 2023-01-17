@@ -31,7 +31,7 @@ group = scrGroupCreate(runner, NULL, NULL);
 After that, you can define a test function:
 
 ```c
-SCR_TEST_FN(my_test) {
+void my_test(void) {
     ...
 }
 ```
@@ -45,7 +45,7 @@ scrGroupAddTest(group, "Test name", my_test, 0, 0);
 Once you have added all of the tests, you can run them by
 
 ```c
-scrRunnerRun(runner, 0, NULL, NULL);
+scrRunnerRun(runner, NULL, NULL);
 ```
 
 This function returns `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function also summarizes the results in `stdout`.
@@ -55,7 +55,7 @@ You can pass a `scrStats*` to `scrRunnerRun`:
 ```c
 scrStats stats;
 
-scrRunnerRun(runner, 0, NULL, &stats);
+scrRunnerRun(runner, NULL, &stats);
 ```
 
 where `scrStats` is defined as
@@ -81,7 +81,7 @@ Writing tests
 Various macros are provided in order to test various conditions.  For example, for integers,
 
 ```c
-SCR_TEST_FN(integer_test) {
+void integer_test(void) {
     int x = 5, y = 5, z = 6;
 
     SCR_ASSERT_EQ(x, y); // equal
@@ -100,7 +100,7 @@ Though `char` variables are also integer variables, you should use the `SCR_ASSE
 You can compare pointers by
 
 ```c
-SCR_TEST_FN(pointer_test) {
+void pointer_test(void) {
     void *p = NULL;
     int x;
 
@@ -112,7 +112,7 @@ SCR_TEST_FN(pointer_test) {
 You can compare strings (i.e., `char` arrays) by
 
 ```c
-SCR_TEST_FN(string_test) {
+void string_test(void) {
     const char *word = "hello";
 
     SCR_ASSERT_STR_EQ(word, "hello");
@@ -125,7 +125,7 @@ Please note that you cannot use the string macros with `NULL` pointers.
 You can skip a test by
 
 ```c
-SCR_TEST_FN(skip_me) {
+void skip_me(void) {
     SCR_TEST_SKIP();
 }
 ```
@@ -133,7 +133,7 @@ SCR_TEST_FN(skip_me) {
 In addition, you can make general assertions by
 
 ```c
-SCR_TEST_FN(my_test) {
+void my_test(void) {
     int x = 5, y = 5;
 
     SCR_ASSERT(x + y == 10);
@@ -143,7 +143,7 @@ SCR_TEST_FN(my_test) {
 You can fail a test without any assertion by
 
 ```c
-SCR_TEST_FN(gonna_fail) {
+void gonna_fail(void) {
     SCR_ERROR("Failing this test for reasons");
 }
 ```
@@ -151,7 +151,7 @@ SCR_TEST_FN(gonna_fail) {
 You can emit logging statements by
 
 ```c
-SCR_TEST_FN(my_test) {
+void my_test(void) {
     int x = 5;
 
     SCR_LOG("x is %i", x);
@@ -180,7 +180,7 @@ Global/group context
 For each group of tests, there is a group context which is a `void*`.  It is accessible from the tests via
 
 ```c
-SCR_TEST_FN(my_test) {
+void my_test(void) {
     void *ctx = SCR_GROUP_CTX();
 }
 ```
@@ -189,8 +189,19 @@ The signature of `scrRunnerRun` is
 
 ```c
 int
-scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats);
+scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats);
 ```
+
+where `scrOptions` is defined as
+
+```c
+typedef scrOptions {
+    void *global_ctx;
+    unsigned int flags;
+} scrOptions;
+```
+
+If the `options` argument is `NULL`, then default values will be used (i.e., `NULL` and `0`).
 
 By default, each group context is equal to the global context.  However, you can pass function pointers to `scrGroupCreate` which can set up and tear down a group context.  The signature of `scrGroupCreate` is
 
@@ -215,7 +226,7 @@ You can use the test macros in `create_fn`.  If any of the assertions fail, then
 Run flags
 ---------
 
-At the moment, the only valid value for the `flags` argument in `scrRunnerRun` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the runner to stop running tests as soon as any test either fails or encounters an error.
+At the moment, the only valid value for `flags` in `scrOptions` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the runner to stop running tests as soon as any test either fails or encounters an error.
 
 Building Scrutiny
 -----------------

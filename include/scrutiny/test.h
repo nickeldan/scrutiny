@@ -16,11 +16,6 @@ typedef enum scrTestCode {
     SCR_TEST_CODE_SKIP,
 } scrTestCode;
 
-/**
- * @brief Declares/defines a test function.
- */
-#define SCR_TEST_FN(name) void name(void)
-
 void *
 scrGroupCtx(void)
 #ifdef __GNUC__

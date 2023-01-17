@@ -17,6 +17,14 @@ typedef struct scrRunner scrRunner;
 typedef struct scrGroup scrGroup;
 
 /**
+ * @brief Options to pass to scrRunnerRun.
+ */
+typedef struct scrOptions {
+    void *global_ctx;    /// The global context for the tests.
+    unsigned int flags;  /// Bitwise-or-combined flags.
+} scrOptions;
+
+/**
  * @brief Holds the test results.
  */
 typedef struct scrStats {
@@ -76,14 +84,13 @@ scrRunnerDestroy(scrRunner *runner);
  * @brief Runs all of tests.
  *
  * @param runner        The runner handle.
- * @param flags         Zero or more flags bitwise-or combined.
- * @param global_ctx    The global context to use for the run.
+ * @param options       A pointer to options to use.  If NULL, default options will be used.
  * @param[out] stats    If not NULL, then will be populated with the run's statistics.
  *
  * @return              0 if all of the tests either passed or were skipped and 1 otherwise.
  */
 int
-scrRunnerRun(scrRunner *runner, unsigned int flags, void *global_ctx, scrStats *stats)
+scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats)
 #ifdef __GNUC__
     __attribute__((nonnull(1)))
 #endif

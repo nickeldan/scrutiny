@@ -50,12 +50,14 @@ bad_setup(void *global_ctx)
     SCR_ERROR("Intentionally failing in group setup");
 }
 
-static SCR_TEST_FN(use_global_ctx)
+static void
+use_global_ctx(void)
 {
     SCR_ASSERT_PTR_EQ(SCR_GROUP_CTX(), &global_num);
 }
 
-static SCR_TEST_FN(read_from_pipe1)
+static void
+read_from_pipe1(void)
 {
     int fd = *(int *)SCR_GROUP_CTX();
     unsigned char buffer[2];
@@ -65,7 +67,8 @@ static SCR_TEST_FN(read_from_pipe1)
     SCR_ASSERT_EQ(buffer[1], 'b');
 }
 
-static SCR_TEST_FN(read_from_pipe2)
+static void
+read_from_pipe2(void)
 {
     int fd = *(int *)SCR_GROUP_CTX();
     unsigned char buffer[2];
@@ -75,19 +78,23 @@ static SCR_TEST_FN(read_from_pipe2)
     SCR_ASSERT_EQ(buffer[1], 'd');
 }
 
-static SCR_TEST_FN(skip_me1)
+static void
+skip_me1(void)
 {
 }
 
-static SCR_TEST_FN(skip_me2)
+static void
+skip_me2(void)
 {
 }
 
-static SCR_TEST_FN(setup_fail1)
+static void
+setup_fail1(void)
 {
 }
 
-static SCR_TEST_FN(setup_fail2)
+static void
+setup_fail2(void)
 {
 }
 
@@ -97,6 +104,7 @@ main(int argc, char **argv)
     unsigned int num_pass = 0, num_skip = 0, num_fail = 0, num_error = 0;
     scrRunner *runner;
     scrGroup *group;
+    scrOptions options = {.global_ctx = &global_num};
     scrStats stats;
     (void)argc;
 
@@ -119,7 +127,7 @@ main(int argc, char **argv)
     ADD_FAIL(setup_fail1);
     ADD_FAIL(setup_fail2);
 
-    scrRunnerRun(runner, 0, &global_num, &stats);
+    scrRunnerRun(runner, &options, &stats);
     scrRunnerDestroy(runner);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||
