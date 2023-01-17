@@ -31,6 +31,7 @@ install: /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY)) $(foreach file,$(SCR_ONL
 
 /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY)): $(SCR_SHARED_LIBRARY)
 	cp $< $@
+	ldconfig
 
 /usr/local/include/scrutiny/%.h: include/scrutiny/%.h
 	@mkdir -p $(@D)
@@ -39,6 +40,7 @@ install: /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY)) $(foreach file,$(SCR_ONL
 uninstall:
 	rm -rf /usr/local/include/scrutiny
 	rm -f /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY))
+	ldconfig
 
 clean: $(CLEAN_TARGETS)
 	@rm -f $(DEPS_FILES)
