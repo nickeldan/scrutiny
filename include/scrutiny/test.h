@@ -217,4 +217,10 @@ SCR_ASSERT_FUNC(CharNeq, char);
  */
 #define SCR_ASSERT_CHAR_NEQ(expr1, expr2) SCR_ASSERT_MACRO(CharNeq, expr1, expr2)
 
+void
+scrAssertMemEq(SCR_CONTEXT_DECL, const void *ptr1, const char *expr1, const void *ptr2, const char *expr2,
+               size_t size);
+#define SCR_ASSERT_MEM_EQ(expr1, expr2, size) \
+    scrAssertMemEq(SCR_CONTEXT_PARAMS, expr1, #expr1, expr2, #expr2, size)
+
 #endif  // SCRUTINY_TEST_H

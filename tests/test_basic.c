@@ -211,6 +211,15 @@ chars_not_equal(void)
 }
 
 static void
+buffers_equal(void)
+{
+    unsigned char buffer[] = {'h', 'e', 'l', 'p'};
+    const char *word = "hello";
+
+    SCR_ASSERT_MEM_EQ(buffer, word, 3);
+}
+
+static void
 fail_integers_equal(void)
 {
     int x = 5, y = 6;
@@ -405,6 +414,14 @@ fail_chars_not_equal(void)
 }
 
 static void
+fail_buffers_equal(void)
+{
+    const char *word1 = "help", *word2 = "hello";
+
+    SCR_ASSERT_MEM_EQ(word1, word2, 5);
+}
+
+static void
 fail_error_message(void)
 {
     SCR_ERROR("This is an error message.");
@@ -486,6 +503,7 @@ main(int argc, char **argv)
     ADD_PASS(strings_not_equal);
     ADD_PASS(chars_equal);
     ADD_PASS(chars_not_equal);
+    ADD_PASS(buffers_equal);
     ADD_FAIL(fail_integers_equal);
     ADD_FAIL(fail_integers_not_equal);
     ADD_FAIL(fail_integers_less_than);
@@ -510,6 +528,7 @@ main(int argc, char **argv)
     ADD_FAIL(fail_strings_not_equal);
     ADD_FAIL(fail_chars_equal);
     ADD_FAIL(fail_chars_not_equal);
+    ADD_FAIL(fail_buffers_equal);
     ADD_FAIL(fail_error_message);
     ADD_FAIL(fail_with_output);
     ADD_TIMEOUT(fail_timeout, 1);
