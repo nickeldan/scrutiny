@@ -275,3 +275,18 @@ SCR_ASSERT_FUNC(CharNeq, char)
                  expr2, ERROR_NEW_LINE, value1, value2);
     }
 }
+
+void
+scrAssertMemEq(SCR_CONTEXT_DECL, const void *ptr1, const char *expr1, const void *ptr2, const char *expr2,
+               size_t size)
+{
+    const unsigned char *buffer1 = ptr1, *buffer2 = ptr2;
+
+    for (size_t k = 0; k < size; k++) {
+        if (buffer1[k] != buffer2[k]) {
+            scrError(file_name, function_name, line_no,
+                     "Assertion failed: memcmp(%s, %s) == 0\n%sAt index %zu, %u != %u", expr1, expr2,
+                     ERROR_NEW_LINE, k, buffer1[k], buffer2[k]);
+        }
+    }
+}

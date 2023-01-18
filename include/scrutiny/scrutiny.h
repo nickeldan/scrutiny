@@ -1,7 +1,7 @@
 #ifndef SCRUTINY_SCRUTINY_H
 #define SCRUTINY_SCRUTINY_H
 
-#define SCRUTINY_VERSION "0.2.0"
+#define SCRUTINY_VERSION "0.3.0"
 
 #include "run.h"
 #include "test.h"

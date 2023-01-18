@@ -31,7 +31,8 @@
         scrAssertStrEq;
         scrAssertStrNeq;
         scrAssertCharEq;
-        srcAssertCharNeq;
+        scrAssertCharNeq;
+        scrAssertMemEq;
     local:
         *;
 };

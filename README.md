@@ -122,6 +122,14 @@ void string_test(void) {
 
 Please note that you cannot use the string macros with `NULL` pointers.
 
+You can test that two memory regions are equal (essentially, running `memcmp`) by
+
+```c
+void buffers_equal(void) {
+    SCR_ASSERT_MEM_EQ("help", "hello", 3);
+}
+```
+
 You can skip a test by
 
 ```c
@@ -195,7 +203,7 @@ scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats);
 where `scrOptions` is defined as
 
 ```c
-typedef scrOptions {
+typedef struct scrOptions {
     void *global_ctx;
     unsigned int flags;
 } scrOptions;
