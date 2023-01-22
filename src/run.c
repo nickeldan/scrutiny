@@ -49,6 +49,14 @@ signalHandler(int signum)
     exit(1);
 }
 
+static pid_t
+cleanFork(void)
+{
+    fflush(stdout);
+    fflush(stderr);
+    return fork();
+}
+
 static int
 testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
 {
@@ -250,7 +258,7 @@ testRun(const scrTestParam *param, bool show_color)
     }
     unlink(log_template);
 
-    child = fork();
+    child = cleanFork();
     switch (child) {
     case -1: perror("fork"); goto done;
 
@@ -272,16 +280,16 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
 {
     bool ret = true;
     pid_t child;
-    int fds[2];
+    int fds[2], error_fds[2];
     scrStats stats_obj = {0};
     scrTestParam *param;
 
-    if (pipe(fds) != 0) {
+    if (pipe(fds) != 0 || pipe(error_fds) != 0) {
         perror("pipe");
         exit(1);
     }
 
-    child = fork();
+    child = cleanFork();
     if (child < 0) {
         perror("fork");
         exit(1);
@@ -293,6 +301,12 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         struct sigaction action = {.sa_handler = SIG_DFL};
 
         close(fds[0]);
+        close(error_fds[0]);
+
+        if (dup2(error_fds[1], STDERR_FILENO) < 0) {
+            dprintf(error_fds[1], "dup2: %s\n", strerror(errno));
+            exit(SCR_TEST_CODE_ERROR);
+        }
 
         sigfillset(&set);
         sigprocmask(SIG_SETMASK, &set, NULL);
@@ -304,7 +318,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         setShowColor(show_color);
 
         if (group->create_fn) {
-            setLogFd(STDOUT_FILENO);
+            setLogFd(error_fds[1]);
             group_ctx = group->create_fn(options->global_ctx);
         }
         else {
@@ -348,6 +362,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         int status, exit_code;
 
         close(fds[1]);
+        close(error_fds[1]);
 
         while (waitpid(child, &status, 0) < 0) {}
 
@@ -380,6 +395,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
             {
                 showTestResult(param, exit_code, show_color);
             }
+            dumpFd(error_fds[0], show_color);
         }
         else {
             ssize_t transmitted;
@@ -416,6 +432,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         }
 
         close(fds[0]);
+        close(error_fds[0]);
     }
 
     return ret;
