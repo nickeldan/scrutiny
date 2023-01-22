@@ -226,8 +226,7 @@ testRun(const scrTestParam *param, bool show_color)
     int stdout_fd, stderr_fd = -1, log_fd = -1;
     scrTestCode ret = SCR_TEST_CODE_ERROR;
     pid_t child;
-    char stdout_template[] = TEMPLATE(out), stderr_template[] = TEMPLATE(err),
-         log_template[] = TEMPLATE(log);
+    char stdout_template[] = TEMPLATE(out), stderr_template[] = TEMPLATE(err), log_template[] = TEMPLATE(log);
 #undef TEMPLATE
 #undef TMP_PREFIX
 

@@ -285,8 +285,8 @@ scrAssertMemEq(SCR_CONTEXT_DECL, const void *ptr1, const char *expr1, const void
     for (size_t k = 0; k < size; k++) {
         if (buffer1[k] != buffer2[k]) {
             scrError(file_name, function_name, line_no,
-                     "Assertion failed: memcmp(%s, %s) == 0\n%sAt index %zu, %u != %u", expr1, expr2,
-                     ERROR_NEW_LINE, k, buffer1[k], buffer2[k]);
+                     "Assertion failed: memcmp(%s, %s, %zu) == 0\n%sAt index %zu, %u != %u", expr1, expr2,
+                     size, ERROR_NEW_LINE, k, buffer1[k], buffer2[k]);
         }
     }
 }

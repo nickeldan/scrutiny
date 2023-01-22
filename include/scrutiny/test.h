@@ -70,8 +70,7 @@ scrError(SCR_CONTEXT_DECL, const char *format, ...)
 
 #define SCR_ASSERT_FUNC(func, type) \
     void scrAssert##func(SCR_CONTEXT_DECL, type value1, const char *expr1, type value2, const char *expr2)
-#define SCR_ASSERT_MACRO(func, expr1, expr2) \
-    scrAssert##func(SCR_CONTEXT_PARAMS, expr1, #expr1, expr2, #expr2)
+#define SCR_ASSERT_MACRO(func, expr1, expr2) scrAssert##func(SCR_CONTEXT_PARAMS, expr1, #expr1, expr2, #expr2)
 
 SCR_ASSERT_FUNC(Eq, intmax_t);
 /**
