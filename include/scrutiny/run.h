@@ -20,19 +20,19 @@ typedef struct scrGroup scrGroup;
  * @brief Options to pass to scrRunnerRun.
  */
 typedef struct scrOptions {
-    void *global_ctx;    /// The global context for the tests.
-    unsigned int flags;  /// Bitwise-or-combined flags.
+    void *global_ctx;   /**< The global context for the tests. */
+    unsigned int flags; /**< Bitwise-or-combined flags. */
 } scrOptions;
 
 /**
  * @brief Holds the test results.
  */
 typedef struct scrStats {
-    unsigned int num_passed;   /// The number of tests which passed.
-    unsigned int num_skipped;  /// The number of tests which were skipped.
-    unsigned int num_failed;   /// The number of tests which failed.
+    unsigned int num_passed;  /**< The number of tests which passed. */
+    unsigned int num_skipped; /**< The number of tests which were skipped. */
+    unsigned int num_failed;  /**< The number of tests which failed. */
     unsigned int
-        num_errored;  /// The number of tests which encountered an error (i.e., some terminating signal).
+        num_errored; /**< The number of tests which encountered an error (i.e., some terminating signal). */
 } scrStats;
 
 /**
