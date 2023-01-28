@@ -31,6 +31,7 @@ main(int argc, char **argv)
     scrGroupAddTest(group, "never_gonna_run", never_gonna_run, 0, 0);
 
     scrRunnerRun(runner, &options, &stats);
+    scrRunnerDestroy(runner);
 
     return !(stats.num_passed == 0 && stats.num_skipped == 0 && stats.num_failed == 1 &&
              stats.num_errored == 0);
