@@ -1,0 +1,103 @@
+#include <errno.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "internal.h"
+
+static void *
+groupSetup(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd)
+{
+    unsigned num_signals;
+    const int *kill_signals;
+    void *group_ctx;
+    sigset_t set;
+    struct sigaction action = {.sa_handler = SIG_DFL};
+
+    if (dup2(error_fd, STDERR_FILENO) < 0) {
+        dprintf(error_fd, "dup2: %s\n", strerror(errno));
+        exit(SCR_TEST_CODE_ERROR);
+    }
+
+    sigfillset(&set);
+    sigprocmask(SIG_SETMASK, &set, NULL);
+
+    kill_signals = getKillSignals(&num_signals);
+
+    for (unsigned int k = 0; k < num_signals; k++) {
+        sigaction(kill_signals[k], &action, NULL);
+    }
+
+    setShowColor(show_color);
+
+    if (group->create_fn) {
+        setLogFd(error_fd);
+        group_ctx = group->create_fn(options->global_ctx);
+    }
+    else {
+        group_ctx = options->global_ctx;
+    }
+    setGroupCtx(group_ctx);
+
+    return group_ctx;
+}
+
+int
+groupDo(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd, int pipe_fd)
+{
+    void *group_ctx;
+    scrStats stats_obj = {0};
+    scrTestParam *param;
+
+    group_ctx = groupSetup(group, options, show_color, error_fd);
+
+    GEAR_FOR_EACH(&group->params, param)
+    {
+        int result;
+
+        result = testRun(param, show_color);
+
+        switch (result) {
+        case SCR_TEST_CODE_OK: stats_obj.num_passed++; break;
+
+        case SCR_TEST_CODE_SKIP: stats_obj.num_skipped++; break;
+
+        case SCR_TEST_CODE_FAIL: stats_obj.num_failed++; break;
+
+        default: stats_obj.num_errored++; break;
+        }
+
+        if ((options->flags) & SCR_RUN_FLAG_FAIL_FAST && result != SCR_TEST_CODE_OK &&
+            result != SCR_TEST_CODE_SKIP) {
+            break;
+        }
+    }
+
+    if (group->cleanup_fn) {
+        group->cleanup_fn(group_ctx);
+    }
+
+    if (write(pipe_fd, &stats_obj, sizeof(stats_obj)) != (ssize_t)sizeof(stats_obj)) {
+        exit(SCR_TEST_CODE_ERROR);
+    }
+
+    exit(SCR_TEST_CODE_OK);
+}
+
+void
+scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
+                unsigned int flags)
+{
+    scrTestParam param = {.test_fn = test_fn, .timeout = timeout, .flags = flags};
+
+    param.name = strdup(name);
+    if (!param.name) {
+        exit(1);
+    }
+
+    if (gearAppend(&group->params, &param) != GEAR_RET_OK) {
+        exit(1);
+    }
+}
