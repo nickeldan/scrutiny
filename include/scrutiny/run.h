@@ -1,20 +1,17 @@
 /**
  * @file run.h
- * @brief Defines the runner and group functionality.
+ * @brief Defines the runner functionality.
  */
 
 #ifndef SCRUTINY_RUN_H
 #define SCRUTINY_RUN_H
 
+#include "groups.h"
+
 /**
  * @brief An opaque structure which runs all of the tests.
  */
 typedef struct scrRunner scrRunner;
-
-/**
- * @brief An opaque structure encapsulating each testing group.
- */
-typedef struct scrGroup scrGroup;
 
 /**
  * @brief Options to pass to scrRunnerRun.
@@ -34,26 +31,6 @@ typedef struct scrStats {
     unsigned int
         num_errored; /**< The number of tests which encountered an error (i.e., some terminating signal). */
 } scrStats;
-
-/**
- * @brief The signature for a test function.
- */
-typedef void (*scrTestFn)(void);
-
-/**
- * @brief The signature for a group context creation function.
- */
-typedef void *(*scrCtxCreateFn)(void *);
-
-/**
- * @brief The signature for a group context cleanup function.
- */
-typedef void (*scrCtxCleanupFn)(void *);
-
-/**
- * @brief Indicates that a test is expected to fail.
- */
-#define SCR_TEST_FLAG_XFAIL 0x00000001
 
 /**
  * @brief Instructs the runner to stop as soon as a test fails.
@@ -111,23 +88,6 @@ scrGroup *
 scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 #ifdef __GNUC__
     __attribute__((malloc)) __attribute__((nonnull(1)))
-#endif
-    ;
-
-/**
- * @brief Adds a test to a group.
- *
- * @param group     The group handle.
- * @param name      The name of the test.
- * @param test_fn   The test function.
- * @param timeout   If positive, then the number of seconds the test has to finish.
- * @param flags     Zero or more flags bitwise-or combined.
- */
-void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
-                unsigned int flags)
-#ifdef __GNUC__
-    __attribute__((nonnull(1, 2, 3)))
 #endif
     ;
 
