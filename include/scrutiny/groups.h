@@ -1,3 +1,8 @@
+/**
+ * @file groups.h
+ * @brief Defines the group functionality.
+ */
+
 #ifndef SCRUTINY_GROUPS_H
 #define SCRUTINY_GROUPS_H
 
