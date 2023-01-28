@@ -99,11 +99,11 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:afbf76019c1c088b5b3debd5cc9e9f960"><td class="memItemLeft" align="right" valign="top"><a id="afbf76019c1c088b5b3debd5cc9e9f960"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#afbf76019c1c088b5b3debd5cc9e9f960">SCR_TEST_FLAG_XFAIL</a>&#160;&#160;&#160;0x00000001</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#afbf76019c1c088b5b3debd5cc9e9f960">SCR_TEST_FLAG_XFAIL</a></td></tr>
 <tr class="memdesc:afbf76019c1c088b5b3debd5cc9e9f960"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates that a test is expected to fail. <br /></td></tr>
 <tr class="separator:afbf76019c1c088b5b3debd5cc9e9f960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4701a8c215ac188f58bead0aaaa2e12d"><td class="memItemLeft" align="right" valign="top"><a id="a4701a8c215ac188f58bead0aaaa2e12d"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a4701a8c215ac188f58bead0aaaa2e12d">SCR_RUN_FLAG_FAIL_FAST</a>&#160;&#160;&#160;0x00000001</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a4701a8c215ac188f58bead0aaaa2e12d">SCR_RUN_FLAG_FAIL_FAST</a></td></tr>
 <tr class="memdesc:a4701a8c215ac188f58bead0aaaa2e12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instructs the runner to stop as soon as a test fails. <br /></td></tr>
 <tr class="separator:a4701a8c215ac188f58bead0aaaa2e12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -159,109 +159,6 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the runner and group functionality. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a99abef0928dfbbd9e32f11c1a3f03308"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99abef0928dfbbd9e32f11c1a3f03308">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void scrGroupAddTest </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *&#160;</td>
-          <td class="paramname"><em>group</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="run_8h.html#afcafbbb6a6f2f1a25b24463d43db05af">scrTestFn</a>&#160;</td>
-          <td class="paramname"><em>test_fn</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>timeout</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>flags</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Adds a test to a group. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">group</td><td>The group handle. </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the test. </td></tr>
-    <tr><td class="paramname">test_fn</td><td>The test function. </td></tr>
-    <tr><td class="paramname">timeout</td><td>If positive, then the number of seconds the test has to finish. </td></tr>
-    <tr><td class="paramname">flags</td><td>Zero or more flags bitwise-or combined. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a842be1690e36fd4845db6abb8c64c843"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a842be1690e36fd4845db6abb8c64c843">&#9670;&nbsp;</a></span>scrGroupCreate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a>* scrGroupCreate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="run_8h.html#ac3a848eb41861eaa58b64799f782e607">scrRunner</a> *&#160;</td>
-          <td class="paramname"><em>runner</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="run_8h.html#ab73c6d249ac70b6eb7f69f6a01ae783b">scrCtxCreateFn</a>&#160;</td>
-          <td class="paramname"><em>create_fn</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="run_8h.html#a7082a4eda78201e36a72cacf9fe43372">scrCtxCleanupFn</a>&#160;</td>
-          <td class="paramname"><em>cleanup_fn</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates a new test group. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">runner</td><td>The runner handle. </td></tr>
-    <tr><td class="paramname">create_fn</td><td>If not NULL, then a function that will create the group context from the global context. </td></tr>
-    <tr><td class="paramname">cleanup_fn</td><td>If not NULL, then a function that will be called with the group context after the tests have finished.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A group handle. </dd></dl>
-
-</div>
-</div>
 <a id="a3a23e3114a02fe1c65e82ef9e4a5514a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3a23e3114a02fe1c65e82ef9e4a5514a">&#9670;&nbsp;</a></span>scrRunnerCreate()</h2>
 
@@ -351,6 +248,109 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0 if all of the tests either passed or were skipped and 1 otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a842be1690e36fd4845db6abb8c64c843"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a842be1690e36fd4845db6abb8c64c843">&#9670;&nbsp;</a></span>scrGroupCreate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a>* scrGroupCreate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="run_8h.html#ac3a848eb41861eaa58b64799f782e607">scrRunner</a> *&#160;</td>
+          <td class="paramname"><em>runner</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="run_8h.html#ab73c6d249ac70b6eb7f69f6a01ae783b">scrCtxCreateFn</a>&#160;</td>
+          <td class="paramname"><em>create_fn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="run_8h.html#a7082a4eda78201e36a72cacf9fe43372">scrCtxCleanupFn</a>&#160;</td>
+          <td class="paramname"><em>cleanup_fn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a new test group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">runner</td><td>The runner handle. </td></tr>
+    <tr><td class="paramname">create_fn</td><td>If not NULL, then a function that will create the group context from the global context. </td></tr>
+    <tr><td class="paramname">cleanup_fn</td><td>If not NULL, then a function that will be called with the group context after the tests have finished.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A group handle. </dd></dl>
+
+</div>
+</div>
+<a id="a99abef0928dfbbd9e32f11c1a3f03308"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99abef0928dfbbd9e32f11c1a3f03308">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void scrGroupAddTest </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *&#160;</td>
+          <td class="paramname"><em>group</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="run_8h.html#afcafbbb6a6f2f1a25b24463d43db05af">scrTestFn</a>&#160;</td>
+          <td class="paramname"><em>test_fn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>timeout</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a test to a group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">group</td><td>The group handle. </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the test. </td></tr>
+    <tr><td class="paramname">test_fn</td><td>The test function. </td></tr>
+    <tr><td class="paramname">timeout</td><td>If positive, then the number of seconds the test has to finish. </td></tr>
+    <tr><td class="paramname">flags</td><td>Zero or more flags bitwise-or combined. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
