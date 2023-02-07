@@ -9,15 +9,15 @@
 #include <scrutiny/scrutiny.h>
 
 typedef struct scrTestParam {
-    scrTestFn test_fn;
+    scrTestFn *test_fn;
     char *name;
     unsigned int timeout;
     unsigned int flags;
 } scrTestParam;
 
 struct scrGroup {
-    scrCtxCreateFn create_fn;
-    scrCtxCleanupFn cleanup_fn;
+    scrCtxCreateFn *create_fn;
+    scrCtxCleanupFn *cleanup_fn;
     gear params;
 };
 

@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -23,27 +24,59 @@ signalHandler(int signum)
 }
 
 static bool
-groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool show_color)
+receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_color)
 {
-    bool ret = true;
-    int status, exit_code;
-    pid_t child;
-    int fds[2], error_fds[2];
+    bool were_failures = true;
+    ssize_t transmitted;
     scrStats stats_obj;
     scrTestParam *param;
 
+    transmitted = read(pipe_fd, &stats_obj, sizeof(stats_obj));
+    if (transmitted < (ssize_t)sizeof(stats_obj)) {
+        if (transmitted < 0) {
+            printf("read: %s\n", strerror(errno));
+        }
+        else {
+            printf("Failed to communicate with group runner\n");
+        }
+        stats->num_errored = group->params.length;
+        GEAR_FOR_EACH(&group->params, param)
+        {
+            showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
+        }
+    }
+    else {
+        stats->num_passed += stats_obj.num_passed;
+        stats->num_skipped += stats_obj.num_skipped;
+        stats->num_failed += stats_obj.num_failed;
+        stats->num_errored += stats_obj.num_errored;
+
+        were_failures = (stats_obj.num_failed > 0 || stats_obj.num_errored > 0);
+    }
+
+    return were_failures;
+}
+
+static bool
+groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool show_color)
+{
+    bool were_failures;
+    int status, exit_code;
+    pid_t child;
+    int fds[2], error_fds[2];
+    scrTestParam *param;
+
     if (pipe(fds) != 0 || pipe(error_fds) != 0) {
-        perror("pipe");
+        printf("pipe: %s\n", strerror(errno));
         exit(1);
     }
 
     child = cleanFork();
     switch (child) {
-    case -1: perror("fork"); exit(1);
+    case -1: printf("fork: %s\n", strerror(errno)); exit(1);
     case 0:
         close(fds[0]);
         close(error_fds[0]);
-
         exit(groupDo(group, options, show_color, error_fds[1], fds[1]));
     default: break;
     }
@@ -56,7 +89,8 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
     exit_code = WEXITSTATUS(status);
 
     if (WIFSIGNALED(status)) {
-        fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
+        were_failures = true;
+        printf("Group runner was terminated by a signal: %i\n", WTERMSIG(status));
         stats->num_errored += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
         {
@@ -64,6 +98,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         }
     }
     else if (exit_code == SCR_TEST_CODE_SKIP) {
+        were_failures = false;
         stats->num_skipped += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
         {
@@ -71,11 +106,12 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         }
     }
     else if (exit_code != SCR_TEST_CODE_OK) {
+        were_failures = true;
         if (exit_code == SCR_TEST_CODE_FAIL) {
             stats->num_failed += group->params.length;
         }
         else {
-            fprintf(stderr, "Group runner exited with an error\n");
+            printf("Group runner exited with an error\n");
             stats->num_errored += group->params.length;
         }
         GEAR_FOR_EACH(&group->params, param)
@@ -85,43 +121,13 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         dumpFd(error_fds[0], show_color);
     }
     else {
-        ssize_t transmitted;
-
-        transmitted = read(fds[0], &stats_obj, sizeof(stats_obj));
-        if (transmitted < (ssize_t)sizeof(stats_obj)) {
-            if (transmitted < 0) {
-                perror("read");
-            }
-            else {
-                fprintf(stderr, "Failed to communicate with group runner\n");
-            }
-            stats->num_errored = group->params.length;
-            GEAR_FOR_EACH(&group->params, param)
-            {
-                showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
-            }
-
-            if ((options->flags) & SCR_RUN_FLAG_FAIL_FAST) {
-                ret = false;
-            }
-        }
-        else {
-            stats->num_passed += stats_obj.num_passed;
-            stats->num_skipped += stats_obj.num_skipped;
-            stats->num_failed += stats_obj.num_failed;
-            stats->num_errored += stats_obj.num_errored;
-
-            if ((options->flags) & SCR_RUN_FLAG_FAIL_FAST &&
-                (stats_obj.num_failed > 0 || stats_obj.num_errored > 0)) {
-                ret = false;
-            }
-        }
+        were_failures = receiveStats(fds[0], group, stats, show_color);
     }
 
     close(fds[0]);
     close(error_fds[0]);
 
-    return ret;
+    return !(were_failures && (options->flags & SCR_RUN_FLAG_FAIL_FAST));
 }
 
 scrRunner *

@@ -1,3 +1,6 @@
+0.3.2:
+    - Redirected some stderr output to stdout.
+
 0.3.1:
     - Output from the group runners is now displayed by the root process.
     - Fixed the error output of SCR_ASSERT_MEM_EQ.
