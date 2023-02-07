@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "definitions.h"
+
 typedef enum scrTestCode {
     SCR_TEST_CODE_OK = 0,
     SCR_TEST_CODE_FAIL,
@@ -17,11 +19,7 @@ typedef enum scrTestCode {
 } scrTestCode;
 
 void *
-scrGroupCtx(void)
-#ifdef __GNUC__
-    __attribute__((pure))
-#endif
-    ;
+scrGroupCtx(void) SCR_PURE;
 
 /**
  * @brief Returns the group context in the form of a void*.
@@ -34,11 +32,7 @@ scrGroupCtx(void)
 #define SCR_TEST_SKIP() exit(SCR_TEST_CODE_SKIP)
 
 void
-scrLog(const char *format, ...)
-#ifdef __GNUC__
-    __attribute__((format(printf, 1, 2)))
-#endif
-    ;
+scrLog(const char *format, ...) SCR_PRINTF(1);
 /**
  * @brief Logs a message.
  */
@@ -48,11 +42,7 @@ scrLog(const char *format, ...)
 #define SCR_CONTEXT_PARAMS __FILE__, __func__, __LINE__
 
 void
-scrError(SCR_CONTEXT_DECL, const char *format, ...)
-#ifdef __GNUC__
-    __attribute__((format(printf, 4, 5))) __attribute__((noreturn))
-#endif
-    ;
+scrError(SCR_CONTEXT_DECL, const char *format, ...) SCR_PRINTF(4) SCR_NORETURN;
 /**
  * @brief Fails the current test with a message.
  */

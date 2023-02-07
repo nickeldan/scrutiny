@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Scrutiny
-   &#160;<span id="projectnumber">0.3.1</span>
+   &#160;<span id="projectnumber">0.3.2</span>
    </div>
    <div id="projectbrief">C testing framework for POSIX environments</div>
   </td>
@@ -78,7 +78,13 @@ $(function() {
 
 <p>Defines the group functionality.  
 <a href="#details">More...</a></p>
-<div class="textblock"><div class="dynheader">
+<div class="textblock"><code>#include &quot;definitions.h&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for groups.h:</div>
+<div class="dyncontent">
+<div class="center"><img src="groups_8h__incl.png" border="0" usemap="#ainclude_2scrutiny_2groups_8h" alt=""/></div>
+</div>
+</div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="groups_8h__dep__incl.png" border="0" usemap="#ainclude_2scrutiny_2groups_8hdep" alt=""/></div>
@@ -99,30 +105,30 @@ Typedefs</h2></td></tr>
 typedef struct <a class="el" href="groups_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a></td></tr>
 <tr class="memdesc:ac6666827e21523e7bc29f69e17650ef9"><td class="mdescLeft">&#160;</td><td class="mdescRight">An opaque structure encapsulating each testing group. <br /></td></tr>
 <tr class="separator:ac6666827e21523e7bc29f69e17650ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab73c6d249ac70b6eb7f69f6a01ae783b"><td class="memItemLeft" align="right" valign="top"><a id="ab73c6d249ac70b6eb7f69f6a01ae783b"></a>
-typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#ab73c6d249ac70b6eb7f69f6a01ae783b">scrCtxCreateFn</a>) (void *)</td></tr>
-<tr class="memdesc:ab73c6d249ac70b6eb7f69f6a01ae783b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The signature for a group context creation function. <br /></td></tr>
-<tr class="separator:ab73c6d249ac70b6eb7f69f6a01ae783b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7082a4eda78201e36a72cacf9fe43372"><td class="memItemLeft" align="right" valign="top"><a id="a7082a4eda78201e36a72cacf9fe43372"></a>
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#a7082a4eda78201e36a72cacf9fe43372">scrCtxCleanupFn</a>) (void *)</td></tr>
-<tr class="memdesc:a7082a4eda78201e36a72cacf9fe43372"><td class="mdescLeft">&#160;</td><td class="mdescRight">The signature for a group context cleanup function. <br /></td></tr>
-<tr class="separator:a7082a4eda78201e36a72cacf9fe43372"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcafbbb6a6f2f1a25b24463d43db05af"><td class="memItemLeft" align="right" valign="top"><a id="afcafbbb6a6f2f1a25b24463d43db05af"></a>
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#afcafbbb6a6f2f1a25b24463d43db05af">scrTestFn</a>) (void)</td></tr>
-<tr class="memdesc:afcafbbb6a6f2f1a25b24463d43db05af"><td class="mdescLeft">&#160;</td><td class="mdescRight">The signature for a test function. <br /></td></tr>
-<tr class="separator:afcafbbb6a6f2f1a25b24463d43db05af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87f79c85e6288d77ac18d7b16ba5de00"><td class="memItemLeft" align="right" valign="top"><a id="a87f79c85e6288d77ac18d7b16ba5de00"></a>
+typedef void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#a87f79c85e6288d77ac18d7b16ba5de00">scrCtxCreateFn</a>(void *)</td></tr>
+<tr class="memdesc:a87f79c85e6288d77ac18d7b16ba5de00"><td class="mdescLeft">&#160;</td><td class="mdescRight">The signature for a group context creation function. <br /></td></tr>
+<tr class="separator:a87f79c85e6288d77ac18d7b16ba5de00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ddbd6caab0df72aea82c68428d9578a"><td class="memItemLeft" align="right" valign="top"><a id="a0ddbd6caab0df72aea82c68428d9578a"></a>
+typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a>(void *)</td></tr>
+<tr class="memdesc:a0ddbd6caab0df72aea82c68428d9578a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The signature for a group context cleanup function. <br /></td></tr>
+<tr class="separator:a0ddbd6caab0df72aea82c68428d9578a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78714973fe7a20ca16e1cf263d6035e4"><td class="memItemLeft" align="right" valign="top"><a id="a78714973fe7a20ca16e1cf263d6035e4"></a>
+typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a>(void)</td></tr>
+<tr class="memdesc:a78714973fe7a20ca16e1cf263d6035e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The signature for a test function. <br /></td></tr>
+<tr class="separator:a78714973fe7a20ca16e1cf263d6035e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a99abef0928dfbbd9e32f11c1a3f03308"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#a99abef0928dfbbd9e32f11c1a3f03308">scrGroupAddTest</a> (<a class="el" href="groups_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *name, <a class="el" href="groups_8h.html#afcafbbb6a6f2f1a25b24463d43db05af">scrTestFn</a> test_fn, unsigned int timeout, unsigned int flags)</td></tr>
-<tr class="memdesc:a99abef0928dfbbd9e32f11c1a3f03308"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="groups_8h.html#a99abef0928dfbbd9e32f11c1a3f03308">More...</a><br /></td></tr>
-<tr class="separator:a99abef0928dfbbd9e32f11c1a3f03308"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa599672b6e584eb5be7f0f3e0bb0d412"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="groups_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412">scrGroupAddTest</a> (<a class="el" href="groups_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *name, <a class="el" href="groups_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, unsigned int timeout, unsigned int flags) SCR_NONNULL(1</td></tr>
+<tr class="memdesc:aa599672b6e584eb5be7f0f3e0bb0d412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="groups_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412">More...</a><br /></td></tr>
+<tr class="separator:aa599672b6e584eb5be7f0f3e0bb0d412"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the group functionality. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a99abef0928dfbbd9e32f11c1a3f03308"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99abef0928dfbbd9e32f11c1a3f03308">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
+<a id="aa599672b6e584eb5be7f0f3e0bb0d412"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa599672b6e584eb5be7f0f3e0bb0d412">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -142,7 +148,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="groups_8h.html#afcafbbb6a6f2f1a25b24463d43db05af">scrTestFn</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="groups_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a>&#160;</td>
           <td class="paramname"><em>test_fn</em>, </td>
         </tr>
         <tr>

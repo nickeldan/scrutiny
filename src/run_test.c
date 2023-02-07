@@ -63,8 +63,37 @@ hasData(int fd)
     return lseek(fd, 0, SEEK_END) > 0;
 }
 
+static void
+showTestOutput(int log_fd, int stdout_fd, int stderr_fd, bool show_color)
+{
+    bool some_output = false;
+
+    if (hasData(log_fd)) {
+        dumpFd(log_fd, show_color);
+        some_output = true;
+    }
+
+    if (hasData(stdout_fd)) {
+        printf("\n-------- stdout --------\n");
+        dumpFd(stdout_fd, show_color);
+        printf("\n------------------------\n");
+        some_output = true;
+    }
+
+    if (hasData(stderr_fd)) {
+        printf("\n-------- stderr --------\n");
+        dumpFd(stderr_fd, show_color);
+        printf("\n------------------------\n");
+        some_output = true;
+    }
+
+    if (some_output) {
+        printf("\n");
+    }
+}
+
 static scrTestCode
-testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_fd, pid_t child,
+summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_fd, pid_t child,
               bool show_color)
 {
     scrTestCode ret;
@@ -105,33 +134,25 @@ testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
     }
 
     if (show_output) {
-        bool some_output = false;
-
-        if (hasData(log_fd)) {
-            dumpFd(log_fd, show_color);
-            some_output = true;
-        }
-
-        if (hasData(stdout_fd)) {
-            printf("\n-------- stdout --------\n");
-            dumpFd(stdout_fd, show_color);
-            printf("\n------------------------\n");
-            some_output = true;
-        }
-
-        if (hasData(stderr_fd)) {
-            printf("\n-------- stderr --------\n");
-            dumpFd(stderr_fd, show_color);
-            printf("\n------------------------\n");
-            some_output = true;
-        }
-
-        if (some_output) {
-            printf("\n");
-        }
+        showTestOutput(log_fd, stdout_fd, stderr_fd, show_color);
     }
 
     return ret;
+}
+
+static int
+makeTempFile(char *template)
+{
+    int fd;
+
+    fd = mkstemp(template);
+    if (fd < 0) {
+        printf("mkstemp: %s\n", strerror(errno));
+    }
+    else {
+        unlink(template);
+    }
+    return fd;
 }
 
 #if defined(ANDROID) || defined(__ANDROID__)
@@ -144,42 +165,34 @@ testSummarize(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
 scrTestCode
 testRun(const scrTestParam *param, bool show_color)
 {
-    int stdout_fd, stderr_fd = -1, log_fd = -1;
+    int stdout_fd, stderr_fd, log_fd = -1;
     scrTestCode ret = SCR_TEST_CODE_ERROR;
     pid_t child;
     char stdout_template[] = TEMPLATE(out), stderr_template[] = TEMPLATE(err), log_template[] = TEMPLATE(log);
 #undef TMP_PREFIX
 #undef TEMPLATE
 
-    stdout_fd = mkstemp(stdout_template);
+    stdout_fd = makeTempFile(stdout_template);
     if (stdout_fd < 0) {
-        perror("mkstemp");
         return SCR_TEST_CODE_ERROR;
     }
-    unlink(stdout_template);
-    stderr_fd = mkstemp(stderr_template);
+    stderr_fd = makeTempFile(stderr_template);
     if (stderr_fd < 0) {
-        perror("mkstemp");
         goto done;
     }
-    unlink(stderr_template);
-
-    log_fd = mkstemp(log_template);
+    log_fd = makeTempFile(log_template);
     if (log_fd < 0) {
-        perror("mkstemp");
         goto done;
     }
-    unlink(log_template);
 
     child = cleanFork();
     switch (child) {
-    case -1: perror("fork"); goto done;
-
+    case -1: printf("fork: %s\n", strerror(errno)); goto done;
     case 0: exit(testDo(stdout_fd, stderr_fd, log_fd, param));
     default: break;
     }
 
-    ret = testSummarize(param, stdout_fd, stderr_fd, log_fd, child, show_color);
+    ret = summarizeTest(param, stdout_fd, stderr_fd, log_fd, child, show_color);
 
 done:
     close(stdout_fd);

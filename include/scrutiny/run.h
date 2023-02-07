@@ -6,6 +6,7 @@
 #ifndef SCRUTINY_RUN_H
 #define SCRUTINY_RUN_H
 
+#include "definitions.h"
 #include "groups.h"
 
 /**
@@ -43,11 +44,7 @@ typedef struct scrStats {
  * @return  A runner handle.
  */
 scrRunner *
-scrRunnerCreate(void)
-#ifdef __GNUC__
-    __attribute__((malloc))
-#endif
-    ;
+scrRunnerCreate(void) SCR_MALLOC;
 
 /**
  * @brief Releases a runner's resources.
@@ -67,11 +64,7 @@ scrRunnerDestroy(scrRunner *runner);
  * @return              0 if all of the tests either passed or were skipped and 1 otherwise.
  */
 int
-scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats)
-#ifdef __GNUC__
-    __attribute__((nonnull(1)))
-#endif
-    ;
+scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats) SCR_NONNULL(1);
 
 /**
  * @brief Creates a new test group.
@@ -85,10 +78,7 @@ scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats)
  * @return  A group handle.
  */
 scrGroup *
-scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
-#ifdef __GNUC__
-    __attribute__((malloc)) __attribute__((nonnull(1)))
-#endif
-    ;
+scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_MALLOC
+    SCR_NONNULL(1);
 
 #endif  // SCRUTINY_RUN_H

@@ -6,6 +6,8 @@
 #ifndef SCRUTINY_GROUPS_H
 #define SCRUTINY_GROUPS_H
 
+#include "definitions.h"
+
 /**
  * @brief An opaque structure encapsulating each testing group.
  */
@@ -14,17 +16,20 @@ typedef struct scrGroup scrGroup;
 /**
  * @brief The signature for a group context creation function.
  */
-typedef void *(*scrCtxCreateFn)(void *);
+typedef void *
+scrCtxCreateFn(void *);
 
 /**
  * @brief The signature for a group context cleanup function.
  */
-typedef void (*scrCtxCleanupFn)(void *);
+typedef void
+scrCtxCleanupFn(void *);
 
 /**
  * @brief The signature for a test function.
  */
-typedef void (*scrTestFn)(void);
+typedef void
+scrTestFn(void);
 
 /**
  * @brief Indicates that a test is expected to fail.
@@ -42,10 +47,6 @@ typedef void (*scrTestFn)(void);
  */
 void
 scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
-                unsigned int flags)
-#ifdef __GNUC__
-    __attribute__((nonnull(1, 2, 3)))
-#endif
-    ;
+                unsigned int flags) SCR_NONNULL(1, 2, 3);
 
 #endif  // SCRUTINY_GROUPS_H
