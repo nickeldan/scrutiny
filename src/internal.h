@@ -54,6 +54,6 @@ void
 setLogFd(int fd);
 
 void
-waitForProcess(pid_t pid, int *status);
+waitForProcess(pid_t pid, unsigned int timeout, int *status, bool *timed_out);
 
 #endif  // SCRUTINY_INTERNAL_H

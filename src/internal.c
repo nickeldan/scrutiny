@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/syscall.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "internal.h"
@@ -29,7 +30,6 @@ pid_t
 cleanFork(void)
 {
     fflush(stdout);
-    fflush(stderr);
     return fork();
 }
 
@@ -83,10 +83,17 @@ showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
 #include <unistd.h>
 
 void
-waitForProcess(pid_t child, int *status)
+waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
 {
     struct pollfd pollers[2] = {{.events = POLLIN}, {.events = POLLIN}};
     sigset_t set;
+    struct timespec start_time;
+
+    *timed_out = false;
+
+    if (timeout > 0) {
+        clock_gettime(CLOCK_MONOTONIC_COARSE, &start_time);
+    }
 
     pollers[0].fd = syscall(SYS_pidfd_open, child, 0);
     if (pollers[0].fd < 0) {
@@ -102,12 +109,35 @@ waitForProcess(pid_t child, int *status)
         goto error;
     }
 
-    while (poll(pollers, 2, -1) < 0) {
-        int local_errno = errno;
+    while (1) {
+        int remaining = -1, res;
 
-        if (local_errno != EINTR) {
-            fprintf(stderr, "poll: %s\n", strerror(local_errno));
-            goto error;
+        if (timeout > 0 && !*timed_out) {
+            time_t elapsed;
+            struct timespec now;
+
+            clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
+            elapsed = now.tv_sec - start_time.tv_sec;
+            if (elapsed >= timeout) {
+                *timed_out = true;
+                kill(child, SIGKILL);
+            }
+            else {
+                remaining = timeout - elapsed;
+            }
+        }
+
+        res = poll(pollers, 2, remaining);
+        if (res > 0) {
+            break;
+        }
+        else if (res < 0) {
+            int local_errno = errno;
+
+            if (local_errno != EINTR) {
+                printf("poll: %s\n", strerror(local_errno));
+                goto error;
+            }
         }
     }
 
@@ -141,9 +171,14 @@ caughtSignal(void)
 }
 
 void
-waitForProcess(pid_t child, int *status)
+waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
 {
-    struct timespec spec = {.tv_nsec = 10000000};  // 1/100 of a second
+    struct timespec start_time, lapse = {.tv_nsec = 10000000};
+
+    *timed_out = false;
+    if (timeout > 0) {
+        clock_gettime(CLOCK_MOOTONIC_COARSE, &start_time);
+    }
 
     while (1) {
         if (caughtSignal()) {
@@ -155,6 +190,15 @@ waitForProcess(pid_t child, int *status)
         }
 
         nanosleep(&spec, NULL);
+        if (timeout > 0 && !*timed_out) {
+            struct timespec now;
+
+            clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
+            if (now.tv_sec - start_time.tv_sec >= timeout) {
+                *timed_out = true;
+                kill(child, SIGKILL);
+            }
+        }
     }
 }
 
