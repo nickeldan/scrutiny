@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "internal.h"
@@ -44,9 +45,6 @@ testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
 
     sigemptyset(&set);
     sigprocmask(SIG_SETMASK, &set, NULL);
-    if (param->timeout > 0) {
-        alarm(param->timeout);
-    }
 
     param->test_fn();
     return SCR_TEST_CODE_OK;
@@ -98,24 +96,21 @@ summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
 {
     scrTestCode ret;
     int status;
-    bool show_output = false;
+    bool timed_out, show_output = true;
 
-    waitForProcess(child, &status);
+    waitForProcess(child, param->timeout, &status, &timed_out);
 
-    if (WIFSIGNALED(status)) {
+    if (timed_out) {
+        printf("Test result (%s): %sFAIL%s: Timed out\n", param->name, show_color ? RED : "",
+               show_color ? RESET_COLOR : "");
+        ret = SCR_TEST_CODE_FAIL;
+    }
+    else if (WIFSIGNALED(status)) {
         int signum = WTERMSIG(status);
 
-        printf("Test result (%s): %s%s%s: ", param->name, show_color ? RED : "",
-               (signum == SIGALRM) ? "FAIL" : "ERROR", show_color ? RESET_COLOR : "");
-        if (signum == SIGALRM) {
-            printf("Timed out\n");
-            ret = SCR_TEST_CODE_FAIL;
-        }
-        else {
-            printf("Terminated by signal (%i): %s\n", signum, strsignal(signum));
-            ret = SCR_TEST_CODE_ERROR;
-        }
-        show_output = true;
+        printf("Test result (%s): %sERROR%s: Terminated by signal (%i): %s\n", param->name,
+               show_color ? RED : "", show_color ? RESET_COLOR : "", signum, strsignal(signum));
+        ret = SCR_TEST_CODE_ERROR;
     }
     else {
         ret = WEXITSTATUS(status);
@@ -127,8 +122,8 @@ summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
                 ret = SCR_TEST_CODE_OK;
             }
         }
-        if (ret != SCR_TEST_CODE_OK && ret != SCR_TEST_CODE_SKIP) {
-            show_output = true;
+        if (ret == SCR_TEST_CODE_OK || ret == SCR_TEST_CODE_SKIP) {
+            show_output = false;
         }
         showTestResult(param, ret, show_color);
     }
