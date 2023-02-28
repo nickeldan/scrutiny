@@ -18,7 +18,7 @@ static void
 signalHandler(int signum)
 {
     (void)signum;
-    kill(-1, SIGTERM);
+    kill(0, SIGTERM);
     while (waitpid(-1, NULL, 0) > 0) {}
     exit(1);
 }
