@@ -1,15 +1,16 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/syscall.h>
 #include <sys/wait.h>
-#include <time.h>
 #include <unistd.h>
 
 #include "internal.h"
 
+#ifndef ARRAY_LENGTH
+#define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
+#endif
+
 static const int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
-#define NUM_SIGNALS (sizeof(kill_signals) / sizeof(int))
 
 static void
 killAndExit(pid_t child)
@@ -22,7 +23,7 @@ killAndExit(pid_t child)
 const int *
 getKillSignals(unsigned int *count)
 {
-    *count = NUM_SIGNALS;
+    *count = ARRAY_LENGTH(kill_signals);
     return kill_signals;
 }
 
@@ -74,7 +75,7 @@ showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
     }
 }
 
-#if defined(__linux__) && defined(SYS_pidfd_open)
+#if defined(__linux__)
 
 #include <errno.h>
 #include <poll.h>
@@ -82,74 +83,87 @@ showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
 #include <sys/signalfd.h>
 #include <unistd.h>
 
+static void
+clearSignal(int signum)
+{
+    int dummy;
+    sigset_t set;
+
+    sigemptyset(&set);
+    sigaddset(&set, signum);
+    sigwait(&set, &dummy);
+}
+
+static void
+clearSignals(void)
+{
+    const int signals[] = {SIGCHLD, SIGALRM};
+    sigset_t set;
+
+    sigpending(&set);
+    for (unsigned int k = 0; k < ARRAY_LENGTH(signals); k++) {
+        if (sigismember(&set, signals[k])) {
+            clearSignal(signals[k]);
+        }
+    }
+}
+
 void
 waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
 {
-    struct pollfd pollers[2] = {{.events = POLLIN}, {.events = POLLIN}};
+    ssize_t num_read;
     sigset_t set;
-    struct timespec start_time;
-
-    *timed_out = false;
-
-    if (timeout > 0) {
-        clock_gettime(CLOCK_MONOTONIC_COARSE, &start_time);
-    }
-
-    pollers[0].fd = syscall(SYS_pidfd_open, child, 0);
-    if (pollers[0].fd < 0) {
-        perror("pidfd_open");
-        goto error;
-    }
+    struct pollfd poller = {.events = POLLIN};
+    struct signalfd_siginfo info[3];
 
     sigemptyset(&set);
     sigaddset(&set, SIGTERM);
-    pollers[1].fd = signalfd(-1, &set, 0);
-    if (pollers[1].fd < 0) {
+    sigaddset(&set, SIGCHLD);
+    if (timeout > 0) {
+        sigaddset(&set, SIGALRM);
+    }
+    poller.fd = signalfd(-1, &set, 0);
+    if (poller.fd < 0) {
         perror("signalfd");
         goto error;
     }
 
-    while (1) {
-        int remaining = -1, res;
+    if (timeout > 0) {
+        alarm(timeout);
+    }
 
-        if (timeout > 0 && !*timed_out) {
-            time_t elapsed;
-            struct timespec now;
-
-            clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
-            elapsed = now.tv_sec - start_time.tv_sec;
-            if (elapsed >= timeout) {
-                *timed_out = true;
-                kill(child, SIGKILL);
-            }
-            else {
-                remaining = timeout - elapsed;
-            }
-        }
-
-        res = poll(pollers, 2, remaining);
-        if (res > 0) {
-            break;
-        }
-        else if (res < 0) {
-            int local_errno = errno;
-
-            if (local_errno != EINTR) {
-                printf("poll: %s\n", strerror(local_errno));
-                goto error;
-            }
+    while (poll(&poller, 1, -1) < 0) {
+        if (errno != EINTR) {
+            perror("poll");
+            goto error;
         }
     }
 
-    for (int k = 0; k < 2; k++) {
-        close(pollers[k].fd);
-    }
-
-    if (pollers[1].revents & POLLIN) {
+    num_read = read(poller.fd, info, sizeof(info));
+    if (num_read < 0) {
+        perror("read");
         goto error;
     }
+    num_read /= sizeof(info[0]);
 
-    while (waitpid(child, status, 0) < 0) {}
+    for (int k = 0; k < num_read; k++) {
+        if (info[k].ssi_signo == SIGTERM) {
+            goto error;
+        }
+    }
+
+    for (int k = 0; k < num_read; k++) {
+        if (info[k].ssi_signo == SIGCHLD) {
+            *timed_out = false;
+            goto get_status;
+        }
+    }
+
+    *timed_out = true;
+
+get_status:
+    while (waitpid(child, status, 0) != child) {}
+    clearSignals();
     return;
 
 error:
@@ -158,7 +172,6 @@ error:
 
 #else  // no pidfd_open
 
-#include <stdbool.h>
 #include <time.h>
 
 static bool
