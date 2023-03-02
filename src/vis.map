@@ -1,13 +1,12 @@
 {
     global:
-        scrRunnerCreate;
-        scrRunnerDestroy;
-        scrRunnerRun;
+        scrInit;
+        scrRun;
         scrGroupCreate;
         scrGroupAddTest;
         scrGroupCtx;
         scrLog;
-        scrError;
+        scrFail;
         scrAssertEq;
         scrAssertNeq;
         scrAssertLt;

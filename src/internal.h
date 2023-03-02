@@ -21,13 +21,14 @@ struct scrGroup {
     gear params;
 };
 
+#ifndef ARRAY_LENGTH
+#define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
+#endif
+
 #define GREEN       "\x1b[0;32m"
 #define YELLOW      "\x1b[0;33m"
 #define RED         "\x1b[0;31m"
 #define RESET_COLOR "\x1b[0m"
-
-const int *
-getKillSignals(unsigned int *count);
 
 pid_t
 cleanFork(void);
@@ -37,6 +38,9 @@ dumpFd(int fd, bool show_color);
 
 int
 groupDo(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd, int pipe_fd);
+
+void
+groupFree(scrGroup *group);
 
 void
 showTestResult(const scrTestParam *param, scrTestCode result, bool show_color);

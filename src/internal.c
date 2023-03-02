@@ -8,22 +8,12 @@
 
 #include "internal.h"
 
-static const int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
-#define NUM_SIGNALS (sizeof(kill_signals) / sizeof(int))
-
 static void
 killAndExit(pid_t child)
 {
     kill(child, SIGKILL);
     while (waitpid(child, NULL, 0) < 0) {}
     exit(1);
-}
-
-const int *
-getKillSignals(unsigned int *count)
-{
-    *count = NUM_SIGNALS;
-    return kill_signals;
 }
 
 pid_t
@@ -127,7 +117,7 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
             }
         }
 
-        res = poll(pollers, 2, remaining);
+        res = poll(pollers, 2, remaining * 1000);
         if (res > 0) {
             break;
         }

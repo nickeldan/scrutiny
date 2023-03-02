@@ -1,4 +1,3 @@
-#include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,24 +8,15 @@
 static bool
 groupSetup(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd, void **group_ctx)
 {
-    unsigned num_signals;
-    const int *kill_signals;
     sigset_t set;
-    struct sigaction action = {.sa_handler = SIG_DFL};
 
     if (dup2(error_fd, STDERR_FILENO) < 0) {
-        dprintf(error_fd, "dup2: %s\n", strerror(errno));
+        perror("dup2");
         return false;
     }
 
     sigfillset(&set);
     sigprocmask(SIG_SETMASK, &set, NULL);
-
-    kill_signals = getKillSignals(&num_signals);
-
-    for (unsigned int k = 0; k < num_signals; k++) {
-        sigaction(kill_signals[k], &action, NULL);
-    }
 
     setShowColor(show_color);
 
@@ -100,4 +90,16 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
     if (gearAppend(&group->params, &param) != GEAR_RET_OK) {
         exit(1);
     }
+}
+
+void
+groupFree(scrGroup *group)
+{
+    scrTestParam *param;
+
+    GEAR_FOR_EACH(&group->params, param)
+    {
+        free(param->name);
+    }
+    gearReset(&group->params);
 }

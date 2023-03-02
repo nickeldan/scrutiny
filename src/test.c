@@ -59,7 +59,7 @@ scrLog(const char *format, ...)
 }
 
 void
-scrError(SCR_CONTEXT_DECL, const char *format, ...)
+scrFail(SCR_CONTEXT_DECL, const char *format, ...)
 {
     va_list args;
 
@@ -85,194 +85,194 @@ scrError(SCR_CONTEXT_DECL, const char *format, ...)
 SCR_ASSERT_FUNC(Eq, intmax_t)
 {
     if (value1 != value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%ji == %ji", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%ji == %ji", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(Neq, intmax_t)
 {
     if (value1 == value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%ji != %ji", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%ji != %ji", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(Lt, intmax_t)
 {
     if (value1 >= value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s < %s\n%s%ji < %ji", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s < %s\n%s%ji < %ji", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(Le, intmax_t)
 {
     if (value1 > value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s <= %s\n%s%ji <= %ji", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s <= %s\n%s%ji <= %ji", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(Gt, intmax_t)
 {
     if (value1 <= value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s > %s\n%s%ji > %ji", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s > %s\n%s%ji > %ji", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(Ge, intmax_t)
 {
     if (value1 < value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s >= %s\n%s%ji >= %ji", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s >= %s\n%s%ji >= %ji", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(EqUnsigned, uintmax_t)
 {
     if (value1 != value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%ju == %ju", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%ju == %ju", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(NeqUnsigned, uintmax_t)
 {
     if (value1 == value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%ju != %ju", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%ju != %ju", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(LtUnsigned, uintmax_t)
 {
     if (value1 >= value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s < %s\n%s%ju < %ju", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s < %s\n%s%ju < %ju", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(LeUnsigned, uintmax_t)
 {
     if (value1 > value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s <= %s\n%s%ju <= %ju", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s <= %s\n%s%ju <= %ju", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(GtUnsigned, uintmax_t)
 {
     if (value1 <= value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s > %s\n%s%ju > %ju", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s > %s\n%s%ju > %ju", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(GeUnsigned, uintmax_t)
 {
     if (value1 < value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s >= %s\n%s%ju >= %ju", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s >= %s\n%s%ju >= %ju", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(EqFloat, long double)
 {
     if (value1 != value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%Lg == %Lg", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%Lg == %Lg", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(NeqFloat, long double)
 {
     if (value1 == value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%Lg != %Lg", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%Lg != %Lg", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(LtFloat, long double)
 {
     if (value1 >= value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s < %s\n%s%Lg < %Lg", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s < %s\n%s%Lg < %Lg", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(LeFloat, long double)
 {
     if (value1 > value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s <= %s\n%s%Lg <= %Lg", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s <= %s\n%s%Lg <= %Lg", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(GtFloat, long double)
 {
     if (value1 <= value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s > %s\n%s%Lg > %Lg", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s > %s\n%s%Lg > %Lg", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(GeFloat, long double)
 {
     if (value1 < value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s >= %s\n%s%Lg >= %Lg", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s >= %s\n%s%Lg >= %Lg", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(PtrEq, const void *)
 {
     if (value1 != value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%p == %p", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s%p == %p", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(PtrNeq, const void *)
 {
     if (value1 == value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%p != %p", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s%p != %p", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(StrEq, const char *)
 {
     if (strcmp(value1, value2) != 0) {
-        scrError(file_name, function_name, line_no,
-                 "Assertion failed: strcmp(%s, %s) == 0\n%sstrcmp(\"%s\", \"%s\") == 0", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no,
+                "Assertion failed: strcmp(%s, %s) == 0\n%sstrcmp(\"%s\", \"%s\") == 0", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(StrNeq, const char *)
 {
     if (strcmp(value1, value2) == 0) {
-        scrError(file_name, function_name, line_no,
-                 "Assertion failed: strcmp(%s, %s) != 0\n%sstrcmp(\"%s\", \"%s\") != 0", expr1, expr2,
-                 ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no,
+                "Assertion failed: strcmp(%s, %s) != 0\n%sstrcmp(\"%s\", \"%s\") != 0", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(CharEq, char)
 {
     if (value1 != value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s'%c' == '%c'", expr1,
-                 expr2, ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s'%c' == '%c'", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
 SCR_ASSERT_FUNC(CharNeq, char)
 {
     if (value1 == value2) {
-        scrError(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s'%c' != '%c'", expr1,
-                 expr2, ERROR_NEW_LINE, value1, value2);
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s'%c' != '%c'", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
     }
 }
 
@@ -284,9 +284,9 @@ scrAssertMemEq(SCR_CONTEXT_DECL, const void *ptr1, const char *expr1, const void
 
     for (size_t k = 0; k < size; k++) {
         if (buffer1[k] != buffer2[k]) {
-            scrError(file_name, function_name, line_no,
-                     "Assertion failed: memcmp(%s, %s, %zu) == 0\n%sAt index %zu, %u != %u", expr1, expr2,
-                     size, ERROR_NEW_LINE, k, buffer1[k], buffer2[k]);
+            scrFail(file_name, function_name, line_no,
+                    "Assertion failed: memcmp(%s, %s, %zu) == 0\n%sAt index %zu, %u != %u", expr1, expr2,
+                    size, ERROR_NEW_LINE, k, buffer1[k], buffer2[k]);
         }
     }
 }

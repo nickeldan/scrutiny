@@ -42,20 +42,20 @@ scrLog(const char *format, ...) SCR_PRINTF(1);
 #define SCR_CONTEXT_PARAMS __FILE__, __func__, __LINE__
 
 void
-scrError(SCR_CONTEXT_DECL, const char *format, ...) SCR_PRINTF(4) SCR_NORETURN;
+scrFail(SCR_CONTEXT_DECL, const char *format, ...) SCR_PRINTF(4) SCR_NORETURN;
 /**
  * @brief Fails the current test with a message.
  */
-#define SCR_ERROR(...) scrError(SCR_CONTEXT_PARAMS, __VA_ARGS__)
+#define SCR_FAIL(...) scrFail(SCR_CONTEXT_PARAMS, __VA_ARGS__)
 
 /**
  * @brief Asserts that an expression is true and fails the test if it isn't.
  */
-#define SCR_ASSERT(expr)                              \
-    do {                                              \
-        if (!(expr)) {                                \
-            SCR_ERROR("Assertion failed: %s", #expr); \
-        }                                             \
+#define SCR_ASSERT(expr)                             \
+    do {                                             \
+        if (!(expr)) {                               \
+            SCR_FAIL("Assertion failed: %s", #expr); \
+        }                                            \
     } while (0)
 
 #define SCR_ASSERT_FUNC(func, type) \

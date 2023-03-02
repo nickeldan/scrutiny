@@ -1,3 +1,9 @@
+0.4.0:
+    - Removed the runner from the API.
+    - Fixed a bug where a keyboard interrupt would kill all of the user's processes.
+    - A SIGALRM raised in a test process is now registered as an error and not a time out.
+    - Renamed SCR_ERROR to SCR_FAIL.
+
 0.3.2:
     - Redirected some stderr output to stdout.
 

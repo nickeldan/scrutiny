@@ -7,12 +7,29 @@
 #define SCRUTINY_RUN_H
 
 #include "definitions.h"
-#include "groups.h"
 
 /**
- * @brief An opaque structure which runs all of the tests.
+ * @brief An opaque structure encapsulating each testing group.
  */
-typedef struct scrRunner scrRunner;
+typedef struct scrGroup scrGroup;
+
+/**
+ * @brief The signature for a group context creation function.
+ */
+typedef void *
+scrCtxCreateFn(void *);
+
+/**
+ * @brief The signature for a group context cleanup function.
+ */
+typedef void
+scrCtxCleanupFn(void *);
+
+/**
+ * @brief The signature for a test function.
+ */
+typedef void
+scrTestFn(void);
 
 /**
  * @brief Options to pass to scrRunnerRun.
@@ -34,42 +51,26 @@ typedef struct scrStats {
 } scrStats;
 
 /**
+ * @brief Indicates that a test is expected to fail.
+ */
+#define SCR_TEST_FLAG_XFAIL 0x00000001
+
+/**
  * @brief Instructs the runner to stop as soon as a test fails.
  */
 #define SCR_RUN_FLAG_FAIL_FAST 0x00000001
 
 /**
- * @brief Creates a runner.
+ * @brief Initializes the Scrutiny framework.
  *
- * @return  A runner handle.
- */
-scrRunner *
-scrRunnerCreate(void) SCR_MALLOC;
-
-/**
- * @brief Releases a runner's resources.
- *
- * @param runner    The runner handle.
+ * @note This function must be called before any other in the framework.
  */
 void
-scrRunnerDestroy(scrRunner *runner);
-
-/**
- * @brief Runs all of tests.
- *
- * @param runner        The runner handle.
- * @param options       A pointer to options to use.  If NULL, default options will be used.
- * @param[out] stats    If not NULL, then will be populated with the run's statistics.
- *
- * @return              0 if all of the tests either passed or were skipped and 1 otherwise.
- */
-int
-scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats) SCR_NONNULL(1);
+scrInit(void);
 
 /**
  * @brief Creates a new test group.
  *
- * @param runner        The runner handle.
  * @param create_fn     If not NULL, then a function that will create the group context from the global
  * context.
  * @param cleanup_fn    If not NULL, then a function that will be called with the group context after the
@@ -78,7 +79,30 @@ scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats) SCR_
  * @return  A group handle.
  */
 scrGroup *
-scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_MALLOC
-    SCR_NONNULL(1);
+scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_MALLOC;
+
+/**
+ * @brief Adds a test to a group.
+ *
+ * @param group     The group handle.
+ * @param name      The name of the test.
+ * @param test_fn   The test function.
+ * @param timeout   If positive, then the number of seconds the test has to finish.
+ * @param flags     Zero or more flags bitwise-or combined.
+ */
+void
+scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
+                unsigned int flags) SCR_NONNULL(1, 2, 3);
+
+/**
+ * @brief Runs all of tests.
+ *
+ * @param options       A pointer to options to use.  If NULL, default options will be used.
+ * @param[out] stats    If not NULL, then will be populated with the run's statistics.
+ *
+ * @return              0 if all of the tests either passed or were skipped and 1 otherwise.
+ */
+int
+scrRun(const scrOptions *options, scrStats *stats);
 
 #endif  // SCRUTINY_RUN_H
