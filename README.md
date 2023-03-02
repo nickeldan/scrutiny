@@ -12,12 +12,10 @@ All of the functionality can be accessed by
 #include <scrutiny/scrutiny.h>
 ```
 
-The fundamental object in the API is the runner:
+Before any other function is called, you must initialize the framework by
 
 ```c
-scrRunner *runner;
-
-runner = scrRunnerCreate();
+scrInit();
 ```
 
 Every test must be part of a group.  You can create a group by
@@ -25,7 +23,7 @@ Every test must be part of a group.  You can create a group by
 ```c
 scrGroup *group;
 
-group = scrGroupCreate(runner, NULL, NULL);
+group = scrGroupCreate(NULL, NULL);
 ```
 
 After that, you can define a test function:
@@ -45,17 +43,17 @@ scrGroupAddTest(group, "Test name", my_test, 0, 0);
 Once you have added all of the tests, you can run them by
 
 ```c
-scrRunnerRun(runner, NULL, NULL);
+scrRun(NULL, NULL);
 ```
 
 This function returns `0` if all of the tests pass (or are skipped) and `1` otherwise.  The function also summarizes the results in `stdout`.
 
-You can pass a `scrStats*` to `scrRunnerRun`:
+You can pass a `scrStats*` to `scrRun`:
 
 ```c
 scrStats stats;
 
-scrRunnerRun(runner, NULL, &stats);
+scrRun(NULL, &stats);
 ```
 
 where `scrStats` is defined as
@@ -67,12 +65,6 @@ typedef struct scrStats {
     unsigned int num_failed;
     unsigned int num_errored;
 } scrStats;
-```
-
-When done with the runner, you can free its resources by
-
-```c
-scrRunnerDestroy(runner);
 ```
 
 Writing tests
@@ -152,7 +144,7 @@ You can fail a test without any assertion by
 
 ```c
 void gonna_fail(void) {
-    SCR_ERROR("Failing this test for reasons");
+    SCR_FAIL("Failing this test for reasons");
 }
 ```
 
@@ -193,11 +185,11 @@ void my_test(void) {
 }
 ```
 
-The signature of `scrRunnerRun` is
+The signature of `scrRun` is
 
 ```c
 int
-scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats);
+scrRun(const scrOptions *options, scrStats *stats);
 ```
 
 where `scrOptions` is defined as
@@ -215,7 +207,7 @@ By default, each group context is equal to the global context.  However, you can
 
 ```c
 scrGroup *
-scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn);
+scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn);
 ```
 
 where
@@ -234,7 +226,7 @@ You can use the test macros in `create_fn`.  If any of the assertions fail, then
 Run flags
 ---------
 
-At the moment, the only valid value for `flags` in `scrOptions` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the runner to stop running tests as soon as any test either fails or encounters an error.
+At the moment, the only valid value for `flags` in `scrOptions` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the framework to stop running tests as soon as any test either fails or encounters an error.
 
 Building Scrutiny
 -----------------

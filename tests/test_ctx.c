@@ -47,7 +47,7 @@ static void *
 bad_setup(void *global_ctx)
 {
     (void)global_ctx;
-    SCR_ERROR("Intentionally failing in group setup");
+    SCR_FAIL("Intentionally failing in group setup");
 }
 
 static void
@@ -102,7 +102,6 @@ int
 main(int argc, char **argv)
 {
     unsigned int num_pass = 0, num_skip = 0, num_fail = 0, num_error = 0;
-    scrRunner *runner;
     scrGroup *group;
     scrOptions options = {.global_ctx = &global_num};
     scrStats stats;
@@ -110,25 +109,24 @@ main(int argc, char **argv)
 
     printf("\nRunning %s\n\n", argv[0]);
 
-    runner = scrRunnerCreate();
+    scrInit();
 
-    group = scrGroupCreate(runner, NULL, NULL);
+    group = scrGroupCreate(NULL, NULL);
     ADD_PASS(use_global_ctx);
 
-    group = scrGroupCreate(runner, setup_func, cleanup_func);
+    group = scrGroupCreate(setup_func, cleanup_func);
     ADD_PASS(read_from_pipe1);
     ADD_PASS(read_from_pipe2);
 
-    group = scrGroupCreate(runner, setup_skip, NULL);
+    group = scrGroupCreate(setup_skip, NULL);
     ADD_SKIP(skip_me1);
     ADD_SKIP(skip_me2);
 
-    group = scrGroupCreate(runner, bad_setup, NULL);
+    group = scrGroupCreate(bad_setup, NULL);
     ADD_FAIL(setup_fail1);
     ADD_FAIL(setup_fail2);
 
-    scrRunnerRun(runner, &options, &stats);
-    scrRunnerDestroy(runner);
+    scrRun(&options, &stats);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||
             stats.num_errored != num_error);

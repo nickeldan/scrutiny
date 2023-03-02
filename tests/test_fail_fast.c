@@ -5,7 +5,7 @@
 static void
 gonna_fail(void)
 {
-    SCR_ERROR("Failing");
+    SCR_FAIL("Failing");
 }
 
 static void
@@ -16,7 +16,6 @@ never_gonna_run(void)
 int
 main(int argc, char **argv)
 {
-    scrRunner *runner;
     scrGroup *group;
     scrOptions options = {.flags = SCR_RUN_FLAG_FAIL_FAST};
     scrStats stats;
@@ -24,14 +23,13 @@ main(int argc, char **argv)
 
     printf("\nRunning %s\n\n", argv[0]);
 
-    runner = scrRunnerCreate();
+    scrInit();
 
-    group = scrGroupCreate(runner, NULL, NULL);
+    group = scrGroupCreate(NULL, NULL);
     scrGroupAddTest(group, "gonna_fail", gonna_fail, 0, 0);
     scrGroupAddTest(group, "never_gonna_run", never_gonna_run, 0, 0);
 
-    scrRunnerRun(runner, &options, &stats);
-    scrRunnerDestroy(runner);
+    scrRun(&options, &stats);
 
     return !(stats.num_passed == 0 && stats.num_skipped == 0 && stats.num_failed == 1 &&
              stats.num_errored == 0);

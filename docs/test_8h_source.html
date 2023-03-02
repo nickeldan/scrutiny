@@ -102,14 +102,14 @@ $(function() {
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#define SCR_CONTEXT_PARAMS __FILE__, __func__, __LINE__</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;scrError(SCR_CONTEXT_DECL, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...) SCR_PRINTF(4) SCR_NORETURN;</div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="test_8h.html#ad2d2b657cc90742914179e263e5fb4a0">   49</a></span>&#160;<span class="preprocessor">#define SCR_ERROR(...) scrError(SCR_CONTEXT_PARAMS, __VA_ARGS__)</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;scrFail(SCR_CONTEXT_DECL, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...) SCR_PRINTF(4) SCR_NORETURN;</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="test_8h.html#a22ffada26b847fc05a9810a2fd3fce3e">   49</a></span>&#160;<span class="preprocessor">#define SCR_FAIL(...) scrFail(SCR_CONTEXT_PARAMS, __VA_ARGS__)</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="test_8h.html#a8182e2eedb3328de9215790842b34bcd">   54</a></span>&#160;<span class="preprocessor">#define SCR_ASSERT(expr)                              \</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">    do {                                              \</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">        if (!(expr)) {                                \</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">            SCR_ERROR(&quot;Assertion failed: %s&quot;</span>, #expr); \</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        }                                             \</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="test_8h.html#a8182e2eedb3328de9215790842b34bcd">   54</a></span>&#160;<span class="preprocessor">#define SCR_ASSERT(expr)                             \</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">    do {                                             \</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">        if (!(expr)) {                               \</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">            SCR_FAIL(&quot;Assertion failed: %s&quot;</span>, #expr); \</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        }                                            \</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    } while (0)</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#define SCR_ASSERT_FUNC(func, type) \</span></div>

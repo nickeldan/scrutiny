@@ -1,4 +1,3 @@
-#include <errno.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -10,9 +9,8 @@
 
 #include "internal.h"
 
-struct scrRunner {
-    gear groups;
-};
+static gear groups;
+static const int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
 
 static void
 signalHandler(int signum)
@@ -21,6 +19,16 @@ signalHandler(int signum)
     kill(0, SIGTERM);
     while (waitpid(-1, NULL, 0) > 0) {}
     exit(1);
+}
+
+static void
+removeSignalHandler(void)
+{
+    struct sigaction action = {.sa_handler = SIG_DFL};
+
+    for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
+        sigaction(kill_signals[k], &action, NULL);
+    }
 }
 
 static bool
@@ -34,7 +42,7 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_colo
     transmitted = read(pipe_fd, &stats_obj, sizeof(stats_obj));
     if (transmitted < (ssize_t)sizeof(stats_obj)) {
         if (transmitted < 0) {
-            printf("read: %s\n", strerror(errno));
+            perror("read");
         }
         else {
             printf("Failed to communicate with group runner\n");
@@ -67,16 +75,17 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
     scrTestParam *param;
 
     if (pipe(fds) != 0 || pipe(error_fds) != 0) {
-        printf("pipe: %s\n", strerror(errno));
+        perror("pipe");
         exit(1);
     }
 
     child = cleanFork();
     switch (child) {
-    case -1: printf("fork: %s\n", strerror(errno)); exit(1);
+    case -1: perror("fork"); exit(1);
     case 0:
         close(fds[0]);
         close(error_fds[0]);
+        removeSignalHandler();
         exit(groupDo(group, options, show_color, error_fds[1], fds[1]));
     default: break;
     }
@@ -130,67 +139,75 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
     return !(were_failures && (options->flags & SCR_RUN_FLAG_FAIL_FAST));
 }
 
-scrRunner *
-scrRunnerCreate(void)
+static void
+verifyInit(void)
 {
-    static bool initialized = false;
-    scrRunner *runner;
-
-    if (!initialized) {
-        unsigned int num_signals;
-        const int *kill_signals;
-        struct sigaction action = {.sa_handler = signalHandler};
-
-        kill_signals = getKillSignals(&num_signals);
-
-        sigfillset(&action.sa_mask);
-        for (unsigned int k = 0; k < num_signals; k++) {
-            sigaction(kill_signals[k], &action, NULL);
-        }
-
-        initialized = true;
-    }
-
-    runner = malloc(sizeof(*runner));
-    if (!runner) {
+    if (groups.item_size == 0) {
+        fprintf(stderr, "scrInit must be called first.\n");
         exit(1);
     }
-    gearInit(&runner->groups, sizeof(scrGroup));
-
-    return runner;
 }
 
-void
-scrRunnerDestroy(scrRunner *runner)
+static void
+freeResources(void)
 {
     scrGroup *group;
 
-    if (!runner) {
+    GEAR_FOR_EACH(&groups, group)
+    {
+        groupFree(group);
+    }
+    gearReset(&groups);
+}
+
+void
+scrInit(void)
+{
+    struct sigaction action = {.sa_handler = signalHandler};
+
+    if (groups.item_size != 0) {
         return;
     }
 
-    GEAR_FOR_EACH(&runner->groups, group)
-    {
-        scrTestParam *param;
+    gearInit(&groups, sizeof(scrGroup));
+    atexit(freeResources);
 
-        GEAR_FOR_EACH(&group->params, param)
-        {
-            free(param->name);
-        }
-        gearReset(&group->params);
+    sigfillset(&action.sa_mask);
+    for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
+        sigaction(kill_signals[k], &action, NULL);
     }
 
-    gearReset(&runner->groups);
-    free(runner);
+    if (dup2(STDOUT_FILENO, STDERR_FILENO) < 0) {
+        perror("dup2");
+        exit(1);
+    }
+}
+
+scrGroup *
+scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
+{
+    scrGroup group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
+
+    verifyInit();
+
+    gearInit(&group.params, sizeof(scrTestParam));
+    gearSetExpansion(&group.params, 5, 10);
+    if (gearAppend(&groups, &group) != GEAR_RET_OK) {
+        exit(1);
+    }
+
+    return GEAR_GET_ITEM(&groups, groups.length - 1);
 }
 
 int
-scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats)
+scrRun(const scrOptions *options, scrStats *stats)
 {
     bool show_color;
     scrGroup *group;
     const scrOptions options_obj = {0};
     scrStats stats_obj;
+
+    verifyInit();
 
     if (!options) {
         options = &options_obj;
@@ -205,7 +222,7 @@ scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats)
 
     printf("Scrutiny version " SCRUTINY_VERSION "\n\n");
 
-    GEAR_FOR_EACH(&runner->groups, group)
+    GEAR_FOR_EACH(&groups, group)
     {
         if (!groupRun(group, options, stats, show_color)) {
             break;
@@ -220,18 +237,4 @@ scrRunnerRun(scrRunner *runner, const scrOptions *options, scrStats *stats)
     printf("Errored: %u\n", stats->num_errored);
 
     return (stats->num_failed > 0 || stats->num_errored > 0);
-}
-
-scrGroup *
-scrGroupCreate(scrRunner *runner, scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
-{
-    scrGroup group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
-
-    gearInit(&group.params, sizeof(scrTestParam));
-    gearSetExpansion(&group.params, 5, 10);
-    if (gearAppend(&runner->groups, &group) != GEAR_RET_OK) {
-        exit(1);
-    }
-
-    return GEAR_GET_ITEM(&runner->groups, runner->groups.length - 1);
 }

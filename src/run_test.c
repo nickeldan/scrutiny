@@ -30,6 +30,7 @@ testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
     local_errno = errno;
     close(stdin_fd);
     if (!check) {
+        perror("dup2");
         fprintf(stderr, "dup2: %s\n", strerror(local_errno));
         goto error;
     }
@@ -142,7 +143,7 @@ makeTempFile(char *template)
 
     fd = mkstemp(template);
     if (fd < 0) {
-        printf("mkstemp: %s\n", strerror(errno));
+        perror("mkstemp");
     }
     else {
         unlink(template);
@@ -182,7 +183,7 @@ testRun(const scrTestParam *param, bool show_color)
 
     child = cleanFork();
     switch (child) {
-    case -1: printf("fork: %s\n", strerror(errno)); goto done;
+    case -1: perror("fork"); goto done;
     case 0: exit(testDo(stdout_fd, stderr_fd, log_fd, param));
     default: break;
     }

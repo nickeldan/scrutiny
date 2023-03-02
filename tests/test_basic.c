@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -424,7 +425,7 @@ fail_buffers_equal(void)
 static void
 fail_error_message(void)
 {
-    SCR_ERROR("This is an error message.");
+    SCR_FAIL("This is a failure message.");
 }
 
 static void
@@ -432,7 +433,7 @@ fail_with_output(void)
 {
     printf("Here's some stdout\n");
     fprintf(stderr, "Here's some stderr\n");
-    SCR_ERROR("Intentionally failing");
+    SCR_FAIL("Intentionally failing");
 }
 
 static void
@@ -445,6 +446,12 @@ static void
 error_segfault(void)
 {
     *(unsigned char *)SCR_GROUP_CTX() = 0;
+}
+
+static void
+error_not_timeout(void)
+{
+    raise(SIGALRM);
 }
 
 static void
@@ -468,15 +475,15 @@ int
 main(int argc, char **argv)
 {
     unsigned int num_pass = 0, num_fail = 0, num_error = 0, num_skip = 0;
-    scrRunner *runner;
     scrGroup *group;
     scrStats stats;
     (void)argc;
 
     printf("\nRunning %s\n\n", argv[0]);
 
-    runner = scrRunnerCreate();
-    group = scrGroupCreate(runner, NULL, NULL);
+    scrInit();
+
+    group = scrGroupCreate(NULL, NULL);
 
     ADD_PASS(do_nothing);
     ADD_PASS(integers_equal);
@@ -533,12 +540,12 @@ main(int argc, char **argv)
     ADD_FAIL(fail_with_output);
     ADD_TIMEOUT(fail_timeout, 1);
     ADD_ERROR(error_segfault);
+    ADD_ERROR(error_not_timeout);
     ADD_SKIP(skip_me);
     ADD_XFAIL(xfail_basic);
     ADD_XPASS(xpass_basic);
 
-    scrRunnerRun(runner, NULL, &stats);
-    scrRunnerDestroy(runner);
+    scrRun(NULL, &stats);
 
     return (stats.num_passed != num_pass || stats.num_skipped != num_skip || stats.num_failed != num_fail ||
             stats.num_errored != num_error);
