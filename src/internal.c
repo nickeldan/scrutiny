@@ -148,8 +148,13 @@ error:
 
 #else  // no pidfd_open
 
-#include <stdbool.h>
-#include <time.h>
+#ifdef CLOCK_MONOTONIC_COARSE
+#define SCR_CLOCK_TYPE CLOCK_MONOTONIC_COARSE
+#else
+#define SCR_CLOCK_TYPE CLOCK_MONOTONIC
+#endif
+
+#define ONE_TENTH_SECOND 10000000
 
 static bool
 caughtSignal(void)
@@ -163,11 +168,11 @@ caughtSignal(void)
 void
 waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
 {
-    struct timespec start_time, lapse = {.tv_nsec = 10000000};
+    struct timespec start_time, lapse = {.tv_nsec = ONE_TENTH_SECOND};
 
     *timed_out = false;
     if (timeout > 0) {
-        clock_gettime(CLOCK_MOOTONIC_COARSE, &start_time);
+        clock_gettime(SCR_CLOCK_TYPE, &start_time);
     }
 
     while (1) {
@@ -179,11 +184,11 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
             return;
         }
 
-        nanosleep(&spec, NULL);
+        nanosleep(&lapse, NULL);
         if (timeout > 0 && !*timed_out) {
             struct timespec now;
 
-            clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
+            clock_gettime(SCR_CLOCK_TYPE, &now);
             if (now.tv_sec - start_time.tv_sec >= timeout) {
                 *timed_out = true;
                 kill(child, SIGKILL);
