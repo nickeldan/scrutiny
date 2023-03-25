@@ -23,8 +23,6 @@ main(int argc, char **argv)
 
     printf("\nRunning %s\n\n", argv[0]);
 
-    scrInit();
-
     group = scrGroupCreate(NULL, NULL);
     scrGroupAddTest(group, "gonna_fail", gonna_fail, 0, 0);
     scrGroupAddTest(group, "never_gonna_run", never_gonna_run, 0, 0);

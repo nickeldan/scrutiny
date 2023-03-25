@@ -481,8 +481,6 @@ main(int argc, char **argv)
 
     printf("\nRunning %s\n\n", argv[0]);
 
-    scrInit();
-
     group = scrGroupCreate(NULL, NULL);
 
     ADD_PASS(do_nothing);

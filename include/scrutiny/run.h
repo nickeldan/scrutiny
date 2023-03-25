@@ -61,14 +61,6 @@ typedef struct scrStats {
 #define SCR_RUN_FLAG_FAIL_FAST 0x00000001
 
 /**
- * @brief Initializes the Scrutiny framework.
- *
- * @note This function must be called before any other in the framework.
- */
-void
-scrInit(void);
-
-/**
  * @brief Creates a new test group.
  *
  * @param create_fn     If not NULL, then a function that will create the group context from the global
