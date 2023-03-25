@@ -140,15 +140,6 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
 }
 
 static void
-verifyInit(void)
-{
-    if (groups.item_size == 0) {
-        fprintf(stderr, "scrInit must be called first.\n");
-        exit(1);
-    }
-}
-
-static void
 freeResources(void)
 {
     scrGroup *group;
@@ -160,35 +151,27 @@ freeResources(void)
     gearReset(&groups);
 }
 
-void
-scrInit(void)
-{
-    struct sigaction action = {.sa_handler = signalHandler};
-
-    if (groups.item_size != 0) {
-        return;
-    }
-
-    gearInit(&groups, sizeof(scrGroup));
-    atexit(freeResources);
-
-    sigfillset(&action.sa_mask);
-    for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
-        sigaction(kill_signals[k], &action, NULL);
-    }
-
-    if (dup2(STDOUT_FILENO, STDERR_FILENO) < 0) {
-        perror("dup2");
-        exit(1);
-    }
-}
-
 scrGroup *
 scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 {
     scrGroup group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
 
-    verifyInit();
+    if (groups.item_size == 0) {
+        struct sigaction action = {.sa_handler = signalHandler};
+
+        gearInit(&groups, sizeof(scrGroup));
+        atexit(freeResources);
+
+        sigfillset(&action.sa_mask);
+        for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
+            sigaction(kill_signals[k], &action, NULL);
+        }
+
+        if (dup2(STDOUT_FILENO, STDERR_FILENO) < 0) {
+            perror("dup2");
+            exit(1);
+        }
+    }
 
     gearInit(&group.params, sizeof(scrTestParam));
     gearSetExpansion(&group.params, 5, 10);
@@ -202,30 +185,31 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 int
 scrRun(const scrOptions *options, scrStats *stats)
 {
-    bool show_color;
-    scrGroup *group;
-    const scrOptions options_obj = {0};
     scrStats stats_obj;
-
-    verifyInit();
-
-    if (!options) {
-        options = &options_obj;
-    }
 
     if (!stats) {
         stats = &stats_obj;
     }
     memset(stats, 0, sizeof(*stats));
 
-    show_color = isatty(STDOUT_FILENO);
-
     printf("Scrutiny version " SCRUTINY_VERSION "\n\n");
 
-    GEAR_FOR_EACH(&groups, group)
-    {
-        if (!groupRun(group, options, stats, show_color)) {
-            break;
+    if (groups.item_size > 0) {
+        bool show_color;
+        const scrOptions options_obj = {0};
+        scrGroup *group;
+
+        if (!options) {
+            options = &options_obj;
+        }
+
+        show_color = isatty(STDOUT_FILENO);
+
+        GEAR_FOR_EACH(&groups, group)
+        {
+            if (!groupRun(group, options, stats, show_color)) {
+                break;
+            }
         }
     }
 

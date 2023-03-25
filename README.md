@@ -12,12 +12,6 @@ All of the functionality can be accessed by
 #include <scrutiny/scrutiny.h>
 ```
 
-Before any other function is called, you must initialize the framework by
-
-```c
-scrInit();
-```
-
 Every test must be part of a group.  You can create a group by
 
 ```c
