@@ -99,12 +99,21 @@ You can compare strings (i.e., `char` arrays) by
 
 ```c
 void string_test(void) {
+    size_t idx;
     const char *word = "hello";
 
     SCR_ASSERT_STR_EQ(word, "hello");
     SCR_ASSERT_STR_NEQ(word, "goodbye");
+    SCR_ASSERT_STR_BEGINS_WITH(word, "hel");
+    SCR_ASSERT_STR_NBEGINS_WITH(word, "hellp");
+
+    idx = SCR_ASSERT_STR_CONTAINS(word, "ll");
+    SCR_ASSERT_EQ(idx, 2);
+    SCR_ASSERT_STR_NCONTAINS(word, "elp");
 }
 ```
+
+As you can see, `SCR_ASSERT_STR_CONTAINS` is a special in macro in that, if it succeeds, it returns the index where the substring starts.
 
 Please note that you cannot use the string macros with `NULL` pointers.
 
@@ -230,7 +239,7 @@ Scrutiny has a submodule so you'll need to add `--recurse-submodules` to your `g
 You can build and install Scrutiny by
 
 ```sh
-$ sudo make install
+make install
 ```
 
 After that, you can link your test program to Scrutiny with `-lscrutiny`.
@@ -238,5 +247,5 @@ After that, you can link your test program to Scrutiny with `-lscrutiny`.
 Scrutiny can be uninstalled by
 
 ```sh
-$ sudo make uninstall
+make uninstall
 ```
