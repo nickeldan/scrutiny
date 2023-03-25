@@ -260,6 +260,34 @@ SCR_ASSERT_FUNC(StrNeq, const char *)
     }
 }
 
+SCR_ASSERT_FUNC(StrBeginsWith, const char *)
+{
+    size_t len1, len2;
+
+    len1 = strlen(value1);
+    len2 = strlen(value2);
+
+    if (len2 > len1 || memcmp(value1, value2, len2) != 0) {
+        scrFail(file_name, function_name, line_no,
+                "Assertion failed: %s starts with %s\n%s\"%s\" starts with \"%s\"", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
+    }
+}
+
+SCR_ASSERT_FUNC(StrNBeginsWith, const char *)
+{
+    size_t len1, len2;
+
+    len1 = strlen(value1);
+    len2 = strlen(value2);
+
+    if (len2 <= len1 && memcmp(value1, value2, len2) == 0) {
+        scrFail(file_name, function_name, line_no,
+                "Assertion failed: %s doesn't start with %s\n%s\"%s\" doesn't start with \"%s\"", expr1,
+                expr2, ERROR_NEW_LINE, value1, value2);
+    }
+}
+
 SCR_ASSERT_FUNC(CharEq, char)
 {
     if (value1 != value2) {

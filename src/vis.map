@@ -28,6 +28,8 @@
         scrAssertPtrNeq;
         scrAssertStrEq;
         scrAssertStrNeq;
+        scrAssertStrBeginsWith;
+        scrAssertStrNBeginsWith;
         scrAssertCharEq;
         scrAssertCharNeq;
         scrAssertMemEq;

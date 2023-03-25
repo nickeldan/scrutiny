@@ -103,6 +103,8 @@ void string_test(void) {
 
     SCR_ASSERT_STR_EQ(word, "hello");
     SCR_ASSERT_STR_NEQ(word, "goodbye");
+    SCR_ASSERT_STR_BEGINS_WITH(word, "hel");
+    SCR_ASSERT_STR_NBEGINS_WITH(word, "hellp");
 }
 ```
 
@@ -230,7 +232,7 @@ Scrutiny has a submodule so you'll need to add `--recurse-submodules` to your `g
 You can build and install Scrutiny by
 
 ```sh
-$ sudo make install
+make install
 ```
 
 After that, you can link your test program to Scrutiny with `-lscrutiny`.
@@ -238,5 +240,5 @@ After that, you can link your test program to Scrutiny with `-lscrutiny`.
 Scrutiny can be uninstalled by
 
 ```sh
-$ sudo make uninstall
+make uninstall
 ```

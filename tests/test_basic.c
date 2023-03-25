@@ -196,6 +196,23 @@ strings_not_equal(void)
 }
 
 static void
+string_begins_with(void)
+{
+    const char *x = "foobar", *y = "foo";
+
+    SCR_ASSERT_STR_BEGINS_WITH(x, y);
+}
+
+static void
+string_nbegins_with(void)
+{
+    const char *x = "foobar", *y = "foz", *z = "foobars";
+
+    SCR_ASSERT_STR_NBEGINS_WITH(x, y);
+    SCR_ASSERT_STR_NBEGINS_WITH(x, z);
+}
+
+static void
 chars_equal(void)
 {
     char x = 'a', y = 'a';
@@ -399,6 +416,30 @@ fail_strings_not_equal(void)
 }
 
 static void
+fail_string_begins_with(void)
+{
+    const char *x = "foobar", *y = "foz";
+
+    SCR_ASSERT_STR_BEGINS_WITH(x, y);
+}
+
+static void
+fail_string_begins_with2(void)
+{
+    const char *x = "foobar", *y = "foobars";
+
+    SCR_ASSERT_STR_BEGINS_WITH(x, y);
+}
+
+static void
+fail_string_nbegins_with(void)
+{
+    const char *x = "foobar", *y = "foo";
+
+    SCR_ASSERT_STR_NBEGINS_WITH(x, y);
+}
+
+static void
 fail_chars_equal(void)
 {
     char x = 'a', y = 'b';
@@ -506,6 +547,8 @@ main(int argc, char **argv)
     ADD_PASS(pointers_not_equal);
     ADD_PASS(strings_equal);
     ADD_PASS(strings_not_equal);
+    ADD_PASS(string_begins_with);
+    ADD_PASS(string_nbegins_with);
     ADD_PASS(chars_equal);
     ADD_PASS(chars_not_equal);
     ADD_PASS(buffers_equal);
@@ -531,6 +574,9 @@ main(int argc, char **argv)
     ADD_FAIL(fail_pointers_not_equal);
     ADD_FAIL(fail_strings_equal);
     ADD_FAIL(fail_strings_not_equal);
+    ADD_FAIL(fail_string_begins_with);
+    ADD_FAIL(fail_string_begins_with2);
+    ADD_FAIL(fail_string_nbegins_with);
     ADD_FAIL(fail_chars_equal);
     ADD_FAIL(fail_chars_not_equal);
     ADD_FAIL(fail_buffers_equal);

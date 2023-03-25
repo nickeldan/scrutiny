@@ -194,6 +194,18 @@ SCR_ASSERT_FUNC(StrNeq, const char *);
  */
 #define SCR_ASSERT_STR_NEQ(expr1, expr2) SCR_ASSERT_MACRO(StrNeq, expr1, expr2)
 
+SCR_ASSERT_FUNC(StrBeginsWith, const char *);
+/**
+ * @brief Asserts that one string starts with another.
+ */
+#define SCR_ASSERT_STR_BEGINS_WITH(expr1, expr2) SCR_ASSERT_MACRO(StrBeginsWith, expr1, expr2)
+
+SCR_ASSERT_FUNC(StrNBeginsWith, const char *);
+/**
+ * @brief Asserts that one string doesn't start with another.
+ */
+#define SCR_ASSERT_STR_NBEGINS_WITH(expr1, expr2) SCR_ASSERT_MACRO(StrNBeginsWith, expr1, expr2)
+
 SCR_ASSERT_FUNC(CharEq, char);
 /**
  * @brief Asserts that two characters are equal.
