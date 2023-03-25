@@ -1,3 +1,6 @@
+0.5.0:
+    - Added SCR_BEGINS_WITH, SCR_NBEGINS_WITH, SCR_CONTAINS, and SCR_NCONTAINS macros.
+
 0.4.0:
     - Removed the runner from the API.
     - Fixed a bug where a keyboard interrupt would kill all of the user's processes.
