@@ -20,6 +20,7 @@ pid_t
 cleanFork(void)
 {
     fflush(stdout);
+    fflush(stderr);
     return fork();
 }
 
