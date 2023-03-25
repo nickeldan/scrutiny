@@ -30,6 +30,8 @@
         scrAssertStrNeq;
         scrAssertStrBeginsWith;
         scrAssertStrNBeginsWith;
+        scrAssertStrContains;
+        scrAssertStrNContains;
         scrAssertCharEq;
         scrAssertCharNeq;
         scrAssertMemEq;

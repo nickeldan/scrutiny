@@ -206,6 +206,23 @@ SCR_ASSERT_FUNC(StrNBeginsWith, const char *);
  */
 #define SCR_ASSERT_STR_NBEGINS_WITH(expr1, expr2) SCR_ASSERT_MACRO(StrNBeginsWith, expr1, expr2)
 
+size_t
+scrAssertStrContains(SCR_CONTEXT_DECL, const char *value1, const char *expr1, const char *value2,
+                     const char *expr2);
+/**
+ * @brief Asserts that one string contains another.
+ *
+ * @return  If successful, the offset in the first string where the second string begins.
+ */
+#define SCR_ASSERT_STR_CONTAINS(expr1, expr2) \
+    scrAssertStrContains(SCR_CONTEXT_PARAMS, expr1, #expr1, expr2, #expr2)
+
+SCR_ASSERT_FUNC(StrNContains, const char *);
+/**
+ * @brief Asserts that one string doesn't contain another.
+ */
+#define SCR_ASSERT_STR_NCONTAINS(expr1, expr2) SCR_ASSERT_MACRO(StrNContains, expr1, expr2)
+
 SCR_ASSERT_FUNC(CharEq, char);
 /**
  * @brief Asserts that two characters are equal.

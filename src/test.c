@@ -288,6 +288,30 @@ SCR_ASSERT_FUNC(StrNBeginsWith, const char *)
     }
 }
 
+size_t
+scrAssertStrContains(SCR_CONTEXT_DECL, const char *value1, const char *expr1, const char *value2,
+                     const char *expr2)
+{
+    char *loc;
+
+    loc = strstr(value1, value2);
+    if (!loc) {
+        scrFail(file_name, function_name, line_no,
+                "Assertion failed: %s contains %s\n%s\"%s\" contains \"%s\"", expr1, expr2, ERROR_NEW_LINE,
+                value1, value2);
+    }
+    return loc - value1;
+}
+
+SCR_ASSERT_FUNC(StrNContains, const char *)
+{
+    if (strstr(value1, value2)) {
+        scrFail(file_name, function_name, line_no,
+                "Assertion failed: %s doesn't contain %s\n%s\"%s\" doesn't contain \"%s\"", expr1, expr2,
+                ERROR_NEW_LINE, value1, value2);
+    }
+}
+
 SCR_ASSERT_FUNC(CharEq, char)
 {
     if (value1 != value2) {

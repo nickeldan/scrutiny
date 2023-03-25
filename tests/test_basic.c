@@ -213,6 +213,24 @@ string_nbegins_with(void)
 }
 
 static void
+string_contains(void)
+{
+    size_t idx;
+    const char *x = "foobar", *y = "oba";
+
+    idx = SCR_ASSERT_STR_CONTAINS(x, y);
+    SCR_ASSERT_EQ(idx, 2);
+}
+
+static void
+string_ncontains(void)
+{
+    const char *x = "foobar", *y = "baz";
+
+    SCR_ASSERT_STR_NCONTAINS(x, y);
+}
+
+static void
 chars_equal(void)
 {
     char x = 'a', y = 'a';
@@ -440,6 +458,22 @@ fail_string_nbegins_with(void)
 }
 
 static void
+fail_string_contains(void)
+{
+    const char *x = "foobar", *y = "baz";
+
+    SCR_ASSERT_STR_CONTAINS(x, y);
+}
+
+static void
+fail_string_ncontains(void)
+{
+    const char *x = "foobar", *y = "oba";
+
+    SCR_ASSERT_STR_NCONTAINS(x, y);
+}
+
+static void
 fail_chars_equal(void)
 {
     char x = 'a', y = 'b';
@@ -549,6 +583,8 @@ main(int argc, char **argv)
     ADD_PASS(strings_not_equal);
     ADD_PASS(string_begins_with);
     ADD_PASS(string_nbegins_with);
+    ADD_PASS(string_contains);
+    ADD_PASS(string_ncontains);
     ADD_PASS(chars_equal);
     ADD_PASS(chars_not_equal);
     ADD_PASS(buffers_equal);
@@ -577,6 +613,8 @@ main(int argc, char **argv)
     ADD_FAIL(fail_string_begins_with);
     ADD_FAIL(fail_string_begins_with2);
     ADD_FAIL(fail_string_nbegins_with);
+    ADD_FAIL(fail_string_contains);
+    ADD_FAIL(fail_string_ncontains);
     ADD_FAIL(fail_chars_equal);
     ADD_FAIL(fail_chars_not_equal);
     ADD_FAIL(fail_buffers_equal);
