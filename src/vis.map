@@ -1,6 +1,5 @@
 {
     global:
-        scrInit;
         scrRun;
         scrGroupCreate;
         scrGroupAddTest;
