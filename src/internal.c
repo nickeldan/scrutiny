@@ -8,6 +8,12 @@
 
 #include "internal.h"
 
+#ifdef CLOCK_MONOTONIC_COARSE
+#define SCR_CLOCK_TYPE CLOCK_MONOTONIC_COARSE
+#else
+#define SCR_CLOCK_TYPE CLOCK_MONOTONIC
+#endif
+
 static void
 killAndExit(pid_t child)
 {
@@ -65,13 +71,12 @@ showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
     }
 }
 
-#if defined(__linux__) && defined(SYS_pidfd_open)
+#ifdef SYS_pidfd_open
 
 #include <errno.h>
 #include <poll.h>
 #include <string.h>
 #include <sys/signalfd.h>
-#include <unistd.h>
 
 void
 waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
@@ -83,7 +88,7 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
     *timed_out = false;
 
     if (timeout > 0) {
-        clock_gettime(CLOCK_MONOTONIC_COARSE, &start_time);
+        clock_gettime(SCR_CLOCK_TYPE, &start_time);
     }
 
     pollers[0].fd = syscall(SYS_pidfd_open, child, 0);
@@ -147,13 +152,7 @@ error:
     killAndExit(child);
 }
 
-#else  // no pidfd_open
-
-#ifdef CLOCK_MONOTONIC_COARSE
-#define SCR_CLOCK_TYPE CLOCK_MONOTONIC_COARSE
-#else
-#define SCR_CLOCK_TYPE CLOCK_MONOTONIC
-#endif
+#else  // SYS_pidfd_open
 
 #define ONE_TENTH_SECOND 10000000
 
@@ -198,4 +197,4 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
     }
 }
 
-#endif
+#endif  // SYS_pidfd_open

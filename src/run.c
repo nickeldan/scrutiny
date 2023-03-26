@@ -185,34 +185,36 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 int
 scrRun(const scrOptions *options, scrStats *stats)
 {
+    bool show_color;
     scrStats stats_obj;
+    const scrOptions options_obj = {0};
+    scrGroup *group;
 
     if (!stats) {
         stats = &stats_obj;
     }
     memset(stats, 0, sizeof(*stats));
 
-    printf("Scrutiny version " SCRUTINY_VERSION "\n\n");
+    printf("Scrutiny version %s\n\n", SCRUTINY_VERSION);
 
-    if (groups.item_size > 0) {
-        bool show_color;
-        const scrOptions options_obj = {0};
-        scrGroup *group;
+    if (groups.item_size == 0) {
+        goto show_summary;
+    }
 
-        if (!options) {
-            options = &options_obj;
-        }
+    if (!options) {
+        options = &options_obj;
+    }
 
-        show_color = isatty(STDOUT_FILENO);
+    show_color = isatty(STDOUT_FILENO);
 
-        GEAR_FOR_EACH(&groups, group)
-        {
-            if (!groupRun(group, options, stats, show_color)) {
-                break;
-            }
+    GEAR_FOR_EACH(&groups, group)
+    {
+        if (!groupRun(group, options, stats, show_color)) {
+            break;
         }
     }
 
+show_summary:
     printf("\n\nTests run: %u\n",
            stats->num_passed + stats->num_failed + stats->num_errored + stats->num_skipped);
     printf("Passed: %u\n", stats->num_passed);

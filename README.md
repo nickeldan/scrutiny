@@ -113,7 +113,7 @@ void string_test(void) {
 }
 ```
 
-As you can see, `SCR_ASSERT_STR_CONTAINS` is a special in macro in that, if it succeeds, it returns the index where the substring starts.
+As you can see, `SCR_ASSERT_STR_CONTAINS` is a special macro in that, if it succeeds, it returns the index where the substring starts.
 
 Please note that you cannot use the string macros with `NULL` pointers.
 
