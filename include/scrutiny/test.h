@@ -6,6 +6,7 @@
 #ifndef SCRUTINY_TEST_H
 #define SCRUTINY_TEST_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "definitions.h"

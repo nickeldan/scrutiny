@@ -1,3 +1,6 @@
+0.5.2:
+    - Added missing include in test.h.
+
 0.5.1:
     - Improved the display of chars and bytes when an assertion fails.
     - Made SCR_TEST_SKIP an alias for a function.
