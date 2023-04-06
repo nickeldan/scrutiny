@@ -7,16 +7,8 @@
 #define SCRUTINY_TEST_H
 
 #include <stdint.h>
-#include <stdlib.h>
 
 #include "definitions.h"
-
-typedef enum scrTestCode {
-    SCR_TEST_CODE_OK = 0,
-    SCR_TEST_CODE_FAIL,
-    SCR_TEST_CODE_ERROR,
-    SCR_TEST_CODE_SKIP,
-} scrTestCode;
 
 void *
 scrGroupCtx(void) SCR_PURE;
@@ -26,10 +18,12 @@ scrGroupCtx(void) SCR_PURE;
  */
 #define SCR_GROUP_CTX() scrGroupCtx()
 
+void
+scrTestSkip(void) SCR_NORETURN;
 /**
  * @brief Skips the current test.
  */
-#define SCR_TEST_SKIP() exit(SCR_TEST_CODE_SKIP)
+#define SCR_TEST_SKIP() scrTestSkip()
 
 void
 scrLog(const char *format, ...) SCR_PRINTF(1);

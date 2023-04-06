@@ -8,6 +8,13 @@
 
 #include <scrutiny/scrutiny.h>
 
+typedef enum scrTestCode {
+    SCR_TEST_CODE_OK = 0,
+    SCR_TEST_CODE_FAIL,
+    SCR_TEST_CODE_ERROR,
+    SCR_TEST_CODE_SKIP,
+} scrTestCode;
+
 typedef struct scrTestParam {
     scrTestFn *test_fn;
     char *name;

@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,6 +20,28 @@ static bool show_color;
 
 //                        Assertion failed:
 #define ERROR_NEW_LINE "\t                  "
+
+static char *
+displayChar(char c, char *dst)
+{
+    if (isprint(c)) {
+        dst[0] = c;
+    }
+    else if (c == '\0' || c == '\t' || c == '\n' || c == '\r') {
+        dst[0] = '\\';
+        switch (c) {
+        case '\0': dst[1] = '0'; break;
+        case '\t': dst[1] = 't'; break;
+        case '\n': dst[1] = 'n'; break;
+        default: dst[1] = 'r'; break;
+        }
+    }
+    else {
+        sprintf(dst, "\\x%02x", (int)c);
+    }
+
+    return dst;
+}
 
 void
 setGroupCtx(void *ctx)
@@ -42,6 +65,12 @@ void *
 scrGroupCtx(void)
 {
     return group_ctx;
+}
+
+void
+scrTestSkip(void)
+{
+    exit(SCR_TEST_CODE_SKIP);
 }
 
 void
@@ -315,16 +344,20 @@ SCR_ASSERT_FUNC(StrNContains, const char *)
 SCR_ASSERT_FUNC(CharEq, char)
 {
     if (value1 != value2) {
-        scrFail(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s'%c' == '%c'", expr1, expr2,
-                ERROR_NEW_LINE, value1, value2);
+        char display1[5] = {0}, display2[5] = {0};
+
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s == %s\n%s'%s' == '%s'", expr1, expr2,
+                ERROR_NEW_LINE, displayChar(value1, display1), displayChar(value2, display2));
     }
 }
 
 SCR_ASSERT_FUNC(CharNeq, char)
 {
     if (value1 == value2) {
-        scrFail(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s'%c' != '%c'", expr1, expr2,
-                ERROR_NEW_LINE, value1, value2);
+        char display1[5] = {0}, display2[5] = {0};
+
+        scrFail(file_name, function_name, line_no, "Assertion failed: %s != %s\n%s'%s' != '%s'", expr1, expr2,
+                ERROR_NEW_LINE, displayChar(value1, display1), displayChar(value2, display2));
     }
 }
 
@@ -337,8 +370,8 @@ scrAssertMemEq(SCR_CONTEXT_DECL, const void *ptr1, const char *expr1, const void
     for (size_t k = 0; k < size; k++) {
         if (buffer1[k] != buffer2[k]) {
             scrFail(file_name, function_name, line_no,
-                    "Assertion failed: memcmp(%s, %s, %zu) == 0\n%sAt index %zu, %u != %u", expr1, expr2,
-                    size, ERROR_NEW_LINE, k, buffer1[k], buffer2[k]);
+                    "Assertion failed: memcmp(%s, %s, %zu) == 0\n%sAt index %zu, 0x%02x != 0x%02x", expr1,
+                    expr2, size, ERROR_NEW_LINE, k, buffer1[k], buffer2[k]);
         }
     }
 }

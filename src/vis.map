@@ -4,6 +4,7 @@
         scrGroupCreate;
         scrGroupAddTest;
         scrGroupCtx;
+        scrTestSkip;
         scrLog;
         scrFail;
         scrAssertEq;
