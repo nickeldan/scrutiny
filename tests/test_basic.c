@@ -476,7 +476,7 @@ fail_string_ncontains(void)
 static void
 fail_chars_equal(void)
 {
-    char x = 'a', y = 'b';
+    char x = '\n', y = 127;
 
     SCR_ASSERT_CHAR_EQ(x, y);
 }
@@ -484,7 +484,7 @@ fail_chars_equal(void)
 static void
 fail_chars_not_equal(void)
 {
-    char x = 'a', y = 'a';
+    char x = '\t', y = '\t';
 
     SCR_ASSERT_CHAR_NEQ(x, y);
 }
