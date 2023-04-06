@@ -1,3 +1,7 @@
+0.5.1:
+    - Improved the display of chars and bytes when an assertion fails.
+    - Made SCR_TEST_SKIP an alias for a function.
+
 0.5.0:
     - Removed scrInit.
     - Added SCR_BEGINS_WITH, SCR_NBEGINS_WITH, SCR_CONTAINS, and SCR_NCONTAINS macros.

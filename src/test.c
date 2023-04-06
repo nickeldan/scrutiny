@@ -68,6 +68,12 @@ scrGroupCtx(void)
 }
 
 void
+scrTestSkip(void)
+{
+    exit(SCR_TEST_CODE_SKIP);
+}
+
+void
 scrLog(const char *format, ...)
 {
     va_list args;
