@@ -9,7 +9,7 @@
 /**
  * @brief Scrutiny's version.
  */
-#define SCRUTINY_VERSION "0.5.1"
+#define SCRUTINY_VERSION "0.5.2"
 
 #include "run.h"
 #include "test.h"
