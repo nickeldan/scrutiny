@@ -1,4 +1,4 @@
-name: check_visibility
+name: Check symbol visibility
 
 on:
   push:
