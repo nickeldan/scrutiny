@@ -10,6 +10,7 @@ all: _all
 BUILD_DEPS :=
 ifeq ($(MAKECMDGOALS),clean)
 else ifeq ($(MAKECMDGOALS),format)
+else ifeq ($(MAKECMDGOALS),uninstall)
 else
     BUILD_DEPS := yes
 endif
