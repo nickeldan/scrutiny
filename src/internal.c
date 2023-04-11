@@ -112,7 +112,7 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
             time_t elapsed;
             struct timespec now;
 
-            clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
+            clock_gettime(SCR_CLOCK_TYPE, &now);
             elapsed = now.tv_sec - start_time.tv_sec;
             if (elapsed >= timeout) {
                 *timed_out = true;
