@@ -1,4 +1,5 @@
 test_basic
 test_ctx
 test_fail_fast
+test_no_tests
 test_check_include
