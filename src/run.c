@@ -17,7 +17,7 @@ signalHandler(int signum)
 {
     (void)signum;
     kill(0, SIGTERM);
-    while (waitpid(-1, NULL, 0) > 0) {}
+    while (wait(NULL) > 0) {}
     exit(1);
 }
 
@@ -34,7 +34,7 @@ removeSignalHandler(void)
 static bool
 receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_color)
 {
-    bool were_failures = true;
+    bool were_failures;
     ssize_t transmitted;
     scrStats stats_obj;
     scrTestParam *param;
@@ -47,11 +47,13 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_colo
         else {
             printf("Failed to communicate with group runner\n");
         }
-        stats->num_errored = group->params.length;
+        stats->num_errored += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
         {
             showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
         }
+
+        were_failures = true;
     }
     else {
         stats->num_passed += stats_obj.num_passed;
@@ -73,6 +75,10 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
     pid_t child;
     int fds[2], error_fds[2];
     scrTestParam *param;
+
+    if (group->params.length == 0) {
+        return true;
+    }
 
     if (pipe(fds) != 0 || pipe(error_fds) != 0) {
         perror("pipe");
