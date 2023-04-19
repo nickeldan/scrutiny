@@ -45,7 +45,7 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_colo
             perror("read");
         }
         else {
-            printf("Failed to communicate with group runner\n");
+            fprintf(stderr, "Failed to communicate with group runner\n");
         }
         stats->num_errored += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
@@ -105,7 +105,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
 
     if (WIFSIGNALED(status)) {
         were_failures = true;
-        printf("Group runner was terminated by a signal: %i\n", WTERMSIG(status));
+        fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
         stats->num_errored += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
         {
@@ -126,7 +126,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
             stats->num_failed += group->params.length;
         }
         else {
-            printf("Group runner exited with an error\n");
+            fprintf(stderr, "Group runner exited with an error\n");
             stats->num_errored += group->params.length;
         }
         GEAR_FOR_EACH(&group->params, param)
@@ -171,11 +171,6 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
         sigfillset(&action.sa_mask);
         for (unsigned int k = 0; k < ARRAY_LENGTH(kill_signals); k++) {
             sigaction(kill_signals[k], &action, NULL);
-        }
-
-        if (dup2(STDOUT_FILENO, STDERR_FILENO) < 0) {
-            perror("dup2");
-            exit(1);
         }
     }
 
