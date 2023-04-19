@@ -131,7 +131,7 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
             int local_errno = errno;
 
             if (local_errno != EINTR) {
-                printf("poll: %s\n", strerror(local_errno));
+                fprintf(stderr, "poll: %s\n", strerror(local_errno));
                 goto error;
             }
         }
