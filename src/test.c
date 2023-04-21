@@ -98,7 +98,8 @@ scrLog(SCR_CONTEXT_DECL, const char *format, ...)
 {
     va_list args;
 
-    dprintf(log_fd, "[INFO] (%s:%s:%u) ", getBaseFileName(file_name), function_name, line_no);
+    dprintf(log_fd, "[%sINFO%s] (%s:%s:%u) ", show_color ? GREEN : "", show_color ? RESET_COLOR : "",
+            getBaseFileName(file_name), function_name, line_no);
 
     va_start(args, format);
     vdprintf(log_fd, format, args);

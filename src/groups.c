@@ -48,15 +48,12 @@ groupDo(const scrGroup *group, const scrOptions *options, bool show_color, int e
     {
         int result;
 
-        result = testRun(param, show_color);
+        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE, show_color);
 
         switch (result) {
         case SCR_TEST_CODE_OK: stats_obj.num_passed++; break;
-
         case SCR_TEST_CODE_SKIP: stats_obj.num_skipped++; break;
-
         case SCR_TEST_CODE_FAIL: stats_obj.num_failed++; break;
-
         default: stats_obj.num_errored++; break;
         }
 

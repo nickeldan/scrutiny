@@ -76,8 +76,8 @@ $(function() {
 
 <p>Defines the test macros.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;stddef.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
 <code>#include &quot;definitions.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for test.h:</div>
@@ -202,6 +202,21 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#a4d95d598f8a621211c54d7f2236487cf">SCR_ASSERT_STR_NEQ</a>(expr1,  expr2)</td></tr>
 <tr class="memdesc:a4d95d598f8a621211c54d7f2236487cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asserts that two strings are not equal. <br /></td></tr>
 <tr class="separator:a4d95d598f8a621211c54d7f2236487cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39eef24b315ddacca2232de858ea969e"><td class="memItemLeft" align="right" valign="top"><a id="a39eef24b315ddacca2232de858ea969e"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#a39eef24b315ddacca2232de858ea969e">SCR_ASSERT_STR_BEGINS_WITH</a>(expr1,  expr2)</td></tr>
+<tr class="memdesc:a39eef24b315ddacca2232de858ea969e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asserts that one string starts with another. <br /></td></tr>
+<tr class="separator:a39eef24b315ddacca2232de858ea969e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab70473c511963eb76a38b37546432d3f"><td class="memItemLeft" align="right" valign="top"><a id="ab70473c511963eb76a38b37546432d3f"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#ab70473c511963eb76a38b37546432d3f">SCR_ASSERT_STR_NBEGINS_WITH</a>(expr1,  expr2)</td></tr>
+<tr class="memdesc:ab70473c511963eb76a38b37546432d3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asserts that one string doesn't start with another. <br /></td></tr>
+<tr class="separator:ab70473c511963eb76a38b37546432d3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18ae7190d4af69a80069a641605842c4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#a18ae7190d4af69a80069a641605842c4">SCR_ASSERT_STR_CONTAINS</a>(expr1,  expr2)</td></tr>
+<tr class="memdesc:a18ae7190d4af69a80069a641605842c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asserts that one string contains another.  <a href="test_8h.html#a18ae7190d4af69a80069a641605842c4">More...</a><br /></td></tr>
+<tr class="separator:a18ae7190d4af69a80069a641605842c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a133372b2f3aaee0a7238d4dfb8b909ad"><td class="memItemLeft" align="right" valign="top"><a id="a133372b2f3aaee0a7238d4dfb8b909ad"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#a133372b2f3aaee0a7238d4dfb8b909ad">SCR_ASSERT_STR_NCONTAINS</a>(expr1,  expr2)</td></tr>
+<tr class="memdesc:a133372b2f3aaee0a7238d4dfb8b909ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asserts that one string doesn't contain another. <br /></td></tr>
+<tr class="separator:a133372b2f3aaee0a7238d4dfb8b909ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3ccf966884e68b34fc36d86974a6272"><td class="memItemLeft" align="right" valign="top"><a id="ae3ccf966884e68b34fc36d86974a6272"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#ae3ccf966884e68b34fc36d86974a6272">SCR_ASSERT_CHAR_EQ</a>(expr1,  expr2)</td></tr>
 <tr class="memdesc:ae3ccf966884e68b34fc36d86974a6272"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asserts that two characters are equal. <br /></td></tr>
@@ -217,7 +232,39 @@ Macros</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the test macros. </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a18ae7190d4af69a80069a641605842c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18ae7190d4af69a80069a641605842c4">&#9670;&nbsp;</a></span>SCR_ASSERT_STR_CONTAINS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SCR_ASSERT_STR_CONTAINS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">expr1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">expr2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Asserts that one string contains another. </p>
+<dl class="section return"><dt>Returns</dt><dd>If successful, the offset in the first string where the second string begins. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1

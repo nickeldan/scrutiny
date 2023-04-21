@@ -216,8 +216,8 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn);
 where
 
 ```c
-typedef void *(*scrCtxCreateFn)(void *);
-typedef void (*scrCtxCleanupFn)(void *);
+typedef void *scrCtxCreateFn(void *);
+typedef void scrCtxCleanupFn(void *);
 ```
 
 If specified, then `create_fn` will be called with the global context as the argument.  The pointer returned will be the group context.
@@ -229,7 +229,10 @@ You can use the test macros in `create_fn`.  If any of the assertions fail, then
 Run flags
 ---------
 
-At the moment, the only valid value for `flags` in `scrOptions` other than `0` is `SCR_RUN_FLAG_FAIL_FAST`.  This tells the framework to stop running tests as soon as any test either fails or encounters an error.
+The `flags` field in `scrOptions` is some bitwise-or combination of any or none of the following:
+
+* `SCR_RUN_FLAG_FAIL_FAST`: Causes the framework to stop running tests as soon as any test either fails or encounters an error.
+* `SCR_RUN_FLAG_VERBOSE`: Show logging messages as well as `stdout`/`stderr` even when tests pass or are skipped.
 
 Building Scrutiny
 -----------------

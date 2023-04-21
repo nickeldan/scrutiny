@@ -3,4 +3,5 @@ test_ctx
 test_fail_fast
 test_no_tests
 test_no_groups
+test_verbose
 test_check_include

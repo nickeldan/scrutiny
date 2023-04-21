@@ -112,6 +112,10 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a4701a8c215ac188f58bead0aaaa2e12d">SCR_RUN_FLAG_FAIL_FAST</a></td></tr>
 <tr class="memdesc:a4701a8c215ac188f58bead0aaaa2e12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instructs the runner to stop as soon as a test fails. <br /></td></tr>
 <tr class="separator:a4701a8c215ac188f58bead0aaaa2e12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b3a445133640032f798960de6d2d413"><td class="memItemLeft" align="right" valign="top"><a id="a2b3a445133640032f798960de6d2d413"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a2b3a445133640032f798960de6d2d413">SCR_RUN_FLAG_VERBOSE</a></td></tr>
+<tr class="memdesc:a2b3a445133640032f798960de6d2d413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays output even when tests pass. <br /></td></tr>
+<tr class="separator:a2b3a445133640032f798960de6d2d413"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -142,9 +146,6 @@ typedef struct <a class="el" href="structscrStats.html">scrStats</a>&#160;</td><
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6fdaf1408da474235996acc20eca8412"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a6fdaf1408da474235996acc20eca8412">scrInit</a> (void)</td></tr>
-<tr class="memdesc:a6fdaf1408da474235996acc20eca8412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the Scrutiny framework.  <a href="run_8h.html#a6fdaf1408da474235996acc20eca8412">More...</a><br /></td></tr>
-<tr class="separator:a6fdaf1408da474235996acc20eca8412"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61148607b35f203d6ff0c289ad8ea347"><td class="memItemLeft" align="right" valign="top"><a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a61148607b35f203d6ff0c289ad8ea347">scrGroupCreate</a> (<a class="el" href="run_8h.html#a87f79c85e6288d77ac18d7b16ba5de00">scrCtxCreateFn</a> create_fn, <a class="el" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a> cleanup_fn) SCR_MALLOC</td></tr>
 <tr class="memdesc:a61148607b35f203d6ff0c289ad8ea347"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new test group.  <a href="run_8h.html#a61148607b35f203d6ff0c289ad8ea347">More...</a><br /></td></tr>
 <tr class="separator:a61148607b35f203d6ff0c289ad8ea347"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,27 +159,6 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the runner functionality. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a6fdaf1408da474235996acc20eca8412"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6fdaf1408da474235996acc20eca8412">&#9670;&nbsp;</a></span>scrInit()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void scrInit </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Initializes the Scrutiny framework. </p>
-<dl class="section note"><dt>Note</dt><dd>This function must be called before any other in the framework. </dd></dl>
-
-</div>
-</div>
 <a id="a61148607b35f203d6ff0c289ad8ea347"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a61148607b35f203d6ff0c289ad8ea347">&#9670;&nbsp;</a></span>scrGroupCreate()</h2>
 
