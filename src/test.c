@@ -43,6 +43,26 @@ displayChar(char c, char *dst)
     return dst;
 }
 
+static const char *
+getBaseFileName(const char *file_name)
+{
+    size_t idx;
+
+    for (idx = strlen(file_name) - 1; idx > 0; idx--) {
+        if (file_name[idx] == '/') {
+            idx++;
+            goto found_slash;
+        }
+    }
+
+    if (file_name[0] == '/') {
+        idx = 1;
+    }
+
+found_slash:
+    return file_name + idx;
+}
+
 void
 setGroupCtx(void *ctx)
 {
@@ -74,11 +94,11 @@ scrTestSkip(void)
 }
 
 void
-scrLog(const char *format, ...)
+scrLog(SCR_CONTEXT_DECL, const char *format, ...)
 {
     va_list args;
 
-    LOG_STRING("[INFO] ");
+    dprintf(log_fd, "[INFO] (%s:%s:%u) ", getBaseFileName(file_name), function_name, line_no);
 
     va_start(args, format);
     vdprintf(log_fd, format, args);
@@ -96,7 +116,8 @@ scrFail(SCR_CONTEXT_DECL, const char *format, ...)
         LOG_STRING(RED);
     }
 
-    dprintf(log_fd, "[ERROR] On line %u of %s in %s:\n\t", line_no, function_name, file_name);
+    dprintf(log_fd, "[ERROR] On line %u of %s in %s:\n\t", line_no, function_name,
+            getBaseFileName(file_name));
 
     va_start(args, format);
     vdprintf(log_fd, format, args);
