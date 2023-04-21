@@ -26,15 +26,15 @@ scrTestSkip(void) SCR_NORETURN;
  */
 #define SCR_TEST_SKIP() scrTestSkip()
 
+#define SCR_CONTEXT_DECL   const char *file_name, const char *function_name, unsigned int line_no
+#define SCR_CONTEXT_PARAMS __FILE__, __func__, __LINE__
+
 void
-scrLog(const char *format, ...) SCR_PRINTF(1);
+scrLog(SCR_CONTEXT_DECL, const char *format, ...) SCR_PRINTF(4);
 /**
  * @brief Logs a message.
  */
-#define SCR_LOG(...) scrLog(__VA_ARGS__)
-
-#define SCR_CONTEXT_DECL   const char *file_name, const char *function_name, unsigned int line_no
-#define SCR_CONTEXT_PARAMS __FILE__, __func__, __LINE__
+#define SCR_LOG(...) scrLog(SCR_CONTEXT_PARAMS, __VA_ARGS__)
 
 void
 scrFail(SCR_CONTEXT_DECL, const char *format, ...) SCR_PRINTF(4) SCR_NORETURN;
