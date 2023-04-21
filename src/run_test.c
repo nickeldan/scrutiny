@@ -92,7 +92,7 @@ showTestOutput(int log_fd, int stdout_fd, int stderr_fd, bool show_color)
 }
 
 static scrTestCode
-summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_fd, pid_t child,
+summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_fd, pid_t child, bool verbose,
               bool show_color)
 {
     scrTestCode ret;
@@ -129,7 +129,7 @@ summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
         showTestResult(param, ret, show_color);
     }
 
-    if (show_output) {
+    if (show_output || verbose) {
         showTestOutput(log_fd, stdout_fd, stderr_fd, show_color);
     }
 
@@ -159,7 +159,7 @@ makeTempFile(char *template)
 #define TEMPLATE(fmt) TMP_PREFIX "/tmp/scrutiny_" #fmt "_XXXXXX"
 
 scrTestCode
-testRun(const scrTestParam *param, bool show_color)
+testRun(const scrTestParam *param, bool verbose, bool show_color)
 {
     int stdout_fd, stderr_fd, log_fd = -1;
     scrTestCode ret = SCR_TEST_CODE_ERROR;
@@ -188,7 +188,7 @@ testRun(const scrTestParam *param, bool show_color)
     default: break;
     }
 
-    ret = summarizeTest(param, stdout_fd, stderr_fd, log_fd, child, show_color);
+    ret = summarizeTest(param, stdout_fd, stderr_fd, log_fd, child, verbose, show_color);
 
 done:
     close(stdout_fd);

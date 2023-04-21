@@ -59,6 +59,10 @@ typedef struct scrStats {
  * @brief Instructs the runner to stop as soon as a test fails.
  */
 #define SCR_RUN_FLAG_FAIL_FAST 0x00000001
+/**
+ * @brief Displays output even when tests pass.
+ */
+#define SCR_RUN_FLAG_VERBOSE 0x00000002
 
 /**
  * @brief Creates a new test group.

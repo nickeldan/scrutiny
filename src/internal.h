@@ -53,7 +53,7 @@ void
 showTestResult(const scrTestParam *param, scrTestCode result, bool show_color);
 
 scrTestCode
-testRun(const scrTestParam *param, bool show_color);
+testRun(const scrTestParam *param, bool verbose, bool show_color);
 
 void
 setGroupCtx(void *ctx);
