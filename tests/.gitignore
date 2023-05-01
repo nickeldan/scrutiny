@@ -5,3 +5,4 @@ test_no_tests
 test_no_groups
 test_verbose
 test_check_include
+test_monkeypatch

@@ -12,14 +12,57 @@
 
 #include "internal.h"
 
+struct testFds {
+    int stdout_fd;
+    int stderr_fd;
+    int log_fd;
+};
+
+#ifdef SCR_MONKEYPATCH
+
+#include <sys/ptrace.h>
+
+static bool
+applyPatches(pid_t child, const gear *patch_goals, int *status)
+{
+    scrPatchGoal *goal;
+
+    while (waitpid(child, status, 0) < 0) {}
+
+    if (!WIFSTOPPED(*status)) {
+        return false;
+    }
+
+    GEAR_FOR_EACH(patch_goals, goal)
+    {
+        void **got_entry;
+
+        GEAR_FOR_EACH(&goal->got_entries, got_entry)
+        {
+            if (ptrace(PTRACE_POKEDATA, child, *got_entry, goal->func_ptr) == -1) {
+                perror("ptrace (POKEDATA)");
+                kill(child, SIGKILL);
+                ptrace(PTRACE_DETACH, child, NULL, NULL);
+                while (waitpid(child, status, 0) < 0 && !(WIFEXITED(*status) || WIFSIGNALED(*status))) {}
+                return false;
+            }
+        }
+    }
+
+    ptrace(PTRACE_DETACH, child, NULL, NULL);
+    return true;
+}
+
+#endif  // SCR_MONKEYPATCH
+
 static int
-testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
+testDo(const struct testFds *fds, const scrTestParam *param)
 {
     int stdin_fd, local_errno;
     bool check;
     sigset_t set;
 
-    setLogFd(log_fd);
+    setLogFd(fds->log_fd);
 
     stdin_fd = open("/dev/null", O_RDONLY);
     if (stdin_fd < 0) {
@@ -31,14 +74,13 @@ testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
     close(stdin_fd);
     if (!check) {
         perror("dup2");
-        fprintf(stderr, "dup2: %s\n", strerror(local_errno));
         goto error;
     }
 
-    check = (dup2(stdout_fd, STDOUT_FILENO) >= 0 && dup2(stderr_fd, STDERR_FILENO) >= 0);
+    check = (dup2(fds->stdout_fd, STDOUT_FILENO) >= 0 && dup2(fds->stderr_fd, STDERR_FILENO) >= 0);
     local_errno = errno;
-    close(stdout_fd);
-    close(stderr_fd);
+    close(fds->stdout_fd);
+    close(fds->stderr_fd);
     if (!check) {
         fprintf(stderr, "dup2: %s\n", strerror(local_errno));
         return SCR_TEST_CODE_ERROR;
@@ -47,12 +89,20 @@ testDo(int stdout_fd, int stderr_fd, int log_fd, const scrTestParam *param)
     sigemptyset(&set);
     sigprocmask(SIG_SETMASK, &set, NULL);
 
+#ifdef SCR_MONKEYPATCH
+    if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1) {
+        perror("ptrace (TRACEME)");
+        return SCR_TEST_CODE_ERROR;
+    }
+    raise(SIGSTOP);
+#endif
+
     param->test_fn();
     return SCR_TEST_CODE_OK;
 
 error:
-    close(stdout_fd);
-    close(stderr_fd);
+    close(fds->stdout_fd);
+    close(fds->stderr_fd);
     return SCR_TEST_CODE_ERROR;
 }
 
@@ -63,25 +113,25 @@ hasData(int fd)
 }
 
 static void
-showTestOutput(int log_fd, int stdout_fd, int stderr_fd, bool show_color)
+showTestOutput(const struct testFds *fds, bool show_color)
 {
     bool some_output = false;
 
-    if (hasData(log_fd)) {
-        dumpFd(log_fd, show_color);
+    if (hasData(fds->log_fd)) {
+        dumpFd(fds->log_fd, show_color);
         some_output = true;
     }
 
-    if (hasData(stdout_fd)) {
+    if (hasData(fds->stdout_fd)) {
         printf("\n-------- stdout --------\n");
-        dumpFd(stdout_fd, show_color);
+        dumpFd(fds->stdout_fd, show_color);
         printf("\n------------------------\n");
         some_output = true;
     }
 
-    if (hasData(stderr_fd)) {
+    if (hasData(fds->stderr_fd)) {
         printf("\n-------- stderr --------\n");
-        dumpFd(stderr_fd, show_color);
+        dumpFd(fds->stderr_fd, show_color);
         printf("\n------------------------\n");
         some_output = true;
     }
@@ -92,14 +142,19 @@ showTestOutput(int log_fd, int stdout_fd, int stderr_fd, bool show_color)
 }
 
 static scrTestCode
-summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_fd, pid_t child, bool verbose,
-              bool show_color)
+summarizeTest(const scrTestParam *param, const struct testFds *fds, pid_t child, const int *status_ptr,
+              bool verbose, bool show_color)
 {
     scrTestCode ret;
     int status;
     bool timed_out, show_output = true;
 
-    waitForProcess(child, param->timeout, &status, &timed_out);
+    if (status_ptr) {
+        status = *status_ptr;
+    }
+    else {
+        waitForProcess(child, param->timeout, &status, &timed_out);
+    }
 
     if (timed_out) {
         printf("Test result (%s): %sFAIL%s: Timed out\n", param->name, show_color ? RED : "",
@@ -130,7 +185,7 @@ summarizeTest(const scrTestParam *param, int stdout_fd, int stderr_fd, int log_f
     }
 
     if (show_output || verbose) {
-        showTestOutput(log_fd, stdout_fd, stderr_fd, show_color);
+        showTestOutput(fds, show_color);
     }
 
     return ret;
@@ -159,40 +214,54 @@ makeTempFile(char *template)
 #define TEMPLATE(fmt) TMP_PREFIX "/tmp/scrutiny_" #fmt "_XXXXXX"
 
 scrTestCode
+#ifdef SCR_MONKEYPATCH
+testRun(const scrTestParam *param, bool verbose, bool show_color, const gear *patch_goals)
+#else
 testRun(const scrTestParam *param, bool verbose, bool show_color)
+#endif
 {
-    int stdout_fd, stderr_fd, log_fd = -1;
+#ifdef SCR_MONKEYPATCH
+    int status;
+#endif
+    int *status_ptr = NULL;
     scrTestCode ret = SCR_TEST_CODE_ERROR;
     pid_t child;
+    struct testFds fds = {.log_fd = -1};
     char stdout_template[] = TEMPLATE(out), stderr_template[] = TEMPLATE(err), log_template[] = TEMPLATE(log);
 #undef TMP_PREFIX
 #undef TEMPLATE
 
-    stdout_fd = makeTempFile(stdout_template);
-    if (stdout_fd < 0) {
+    fds.stdout_fd = makeTempFile(stdout_template);
+    if (fds.stdout_fd < 0) {
         return SCR_TEST_CODE_ERROR;
     }
-    stderr_fd = makeTempFile(stderr_template);
-    if (stderr_fd < 0) {
+    fds.stderr_fd = makeTempFile(stderr_template);
+    if (fds.stderr_fd < 0) {
         goto done;
     }
-    log_fd = makeTempFile(log_template);
-    if (log_fd < 0) {
+    fds.log_fd = makeTempFile(log_template);
+    if (fds.log_fd < 0) {
         goto done;
     }
 
     child = cleanFork();
     switch (child) {
     case -1: perror("fork"); goto done;
-    case 0: exit(testDo(stdout_fd, stderr_fd, log_fd, param));
+    case 0: exit(testDo(&fds, param));
     default: break;
     }
 
-    ret = summarizeTest(param, stdout_fd, stderr_fd, log_fd, child, verbose, show_color);
+#ifdef SCR_MONKEYPATCH
+    if (!applyPatches(child, patch_goals, &status)) {
+        status_ptr = &status;
+    }
+#endif
+
+    ret = summarizeTest(param, &fds, child, status_ptr, verbose, show_color);
 
 done:
-    close(stdout_fd);
-    close(stderr_fd);
-    close(log_fd);
+    close(fds.stdout_fd);
+    close(fds.stderr_fd);
+    close(fds.log_fd);
     return ret;
 }

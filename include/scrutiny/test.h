@@ -15,6 +15,16 @@ void *
 scrGroupCtx(void) SCR_PURE;
 
 /**
+ * @brief Gets the real pointer to a monkeypatched function.
+ *
+ * @param func_name     The name of the function that was monkeypatched.
+ *
+ * @return              The real pointer to the function or NULL if the function wasn't patched.
+ */
+void *
+scrPatchedFunction(const char *func_name) SCR_NONNULL(1);
+
+/**
  * @brief Returns the group context in the form of a void*.
  */
 #define SCR_GROUP_CTX() scrGroupCtx()

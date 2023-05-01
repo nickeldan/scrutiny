@@ -22,10 +22,23 @@ typedef struct scrTestParam {
     unsigned int flags;
 } scrTestParam;
 
+#ifdef SCR_MONKEYPATCH
+
+typedef struct scrPatchGoal {
+    char *func_name;
+    void *func_ptr;
+    gear got_entries;
+} scrPatchGoal;
+
+#endif
+
 struct scrGroup {
     scrCtxCreateFn *create_fn;
     scrCtxCleanupFn *cleanup_fn;
     gear params;
+#ifdef SCR_MONKEYPATCH
+    gear patch_goals;
+#endif
 };
 
 #ifndef ARRAY_LENGTH
@@ -52,8 +65,13 @@ groupFree(scrGroup *group);
 void
 showTestResult(const scrTestParam *param, scrTestCode result, bool show_color);
 
+#ifdef SCR_MONKEYPATCH
+scrTestCode
+testRun(const scrTestParam *param, bool verbose, bool show_color, const gear *patch_goals);
+#else
 scrTestCode
 testRun(const scrTestParam *param, bool verbose, bool show_color);
+#endif
 
 void
 setGroupCtx(void *ctx);

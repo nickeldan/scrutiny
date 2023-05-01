@@ -3,7 +3,9 @@
         scrRun;
         scrGroupCreate;
         scrGroupAddTest;
+        scrGroupPatchFunction;
         scrGroupCtx;
+        scrPatchedFunction;
         scrTestSkip;
         scrLog;
         scrFail;
