@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "internal.h"
+#include "monkeypatch.h"
 
 static gear groups;
 static const int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
@@ -176,6 +177,11 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 
     gearInit(&group.params, sizeof(scrTestParam));
     gearSetExpansion(&group.params, 5, 10);
+
+#ifdef SCR_MONKEYPATCH
+    gearInit(&group.patch_goals, sizeof(scrPatchGoal));
+#endif
+
     if (gearAppend(&groups, &group) != GEAR_RET_OK) {
         exit(1);
     }
@@ -196,7 +202,7 @@ scrRun(const scrOptions *options, scrStats *stats)
     }
     memset(stats, 0, sizeof(*stats));
 
-    printf("Scrutiny version %s\n\n", SCRUTINY_VERSION);
+    printf("Scrutiny %s\n\n", SCRUTINY_VERSION);
 
     if (groups.item_size == 0) {
         goto show_summary;

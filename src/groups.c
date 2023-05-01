@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "internal.h"
+#include "monkeypatch.h"
 
 static bool
 groupSetup(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd, void **group_ctx)
@@ -48,7 +49,11 @@ groupDo(const scrGroup *group, const scrOptions *options, bool show_color, int e
     {
         int result;
 
+#ifdef SCR_MONKEYPATCH
+        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE, show_color, &group->patch_goals);
+#else
         result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE, show_color);
+#endif
 
         switch (result) {
         case SCR_TEST_CODE_OK: stats_obj.num_passed++; break;
@@ -90,14 +95,62 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
     }
 }
 
+bool
+scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func)
+{
+#ifdef SCR_MONKEYPATCH
+    scrPatchGoal goal = {.func_ptr = new_func};
+    scrPatchGoal *ptr;
+
+    GEAR_FOR_EACH(&group->patch_goals, ptr)
+    {
+        if (strcmp(ptr->func_name, func_name) == 0) {
+            fprintf(stderr, "A patch has already been registered for %s\n", func_name);
+            return false;
+        }
+    }
+
+    gearInit(&goal.got_entries, sizeof(void *));
+    if (!findFunction(func_name, &goal.got_entries)) {
+        fprintf(stderr, "%s not found\n", func_name);
+        return false;
+    }
+
+    goal.func_name = strdup(func_name);
+    if (!goal.func_name || gearAppend(&group->patch_goals, &goal) != GEAR_RET_OK) {
+        exit(1);
+    }
+
+    return true;
+#else  // SCR_MONKEYPATCH
+    (void)group;
+    (void)func_name;
+    (void)new_func;
+    fprintf(stderr, "Monkeypatching is not available\n");
+    return false;
+#endif
+}
+
 void
 groupFree(scrGroup *group)
 {
     scrTestParam *param;
+#ifdef SCR_MONKEYPATCH
+    scrPatchGoal *goal;
+#endif
 
     GEAR_FOR_EACH(&group->params, param)
     {
         free(param->name);
     }
     gearReset(&group->params);
+
+#ifdef SCR_MONKEYPATCH
+    GEAR_FOR_EACH(&group->patch_goals, goal)
+    {
+        free(goal->func_name);
+        gearReset(&goal->got_entries);
+    }
+    gearReset(&group->patch_goals);
+#endif
 }
