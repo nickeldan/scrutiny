@@ -42,11 +42,13 @@ var searchData=
   ['scrgroup_46',['scrGroup',['../run_8h.html#ac6666827e21523e7bc29f69e17650ef9',1,'run.h']]],
   ['scrgroupaddtest_47',['scrGroupAddTest',['../run_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412',1,'run.h']]],
   ['scrgroupcreate_48',['scrGroupCreate',['../run_8h.html#a61148607b35f203d6ff0c289ad8ea347',1,'run.h']]],
-  ['scroptions_49',['scrOptions',['../run_8h.html#a86df619ddcdab198dd59ea817de931e6',1,'scrOptions():&#160;run.h'],['../structscrOptions.html',1,'scrOptions']]],
-  ['scrrun_50',['scrRun',['../run_8h.html#a6f2787ea057f782ad094ded3ba7e5cf8',1,'run.h']]],
-  ['scrstats_51',['scrStats',['../run_8h.html#a0ab54a6f620fd8de5f8f12228a905406',1,'scrStats():&#160;run.h'],['../structscrStats.html',1,'scrStats']]],
-  ['scrtestfn_52',['scrTestFn',['../run_8h.html#a78714973fe7a20ca16e1cf263d6035e4',1,'run.h']]],
-  ['scrutiny_53',['Scrutiny',['../index.html',1,'']]],
-  ['scrutiny_2eh_54',['scrutiny.h',['../scrutiny_8h.html',1,'']]],
-  ['scrutiny_5fversion_55',['SCRUTINY_VERSION',['../scrutiny_8h.html#af8d9e35da7f9738df5ec67f565a96e13',1,'scrutiny.h']]]
+  ['scrgrouppatchfunction_49',['scrGroupPatchFunction',['../run_8h.html#aa7519f93e21645afc07aecc576bc5a95',1,'run.h']]],
+  ['scroptions_50',['scrOptions',['../run_8h.html#a86df619ddcdab198dd59ea817de931e6',1,'scrOptions():&#160;run.h'],['../structscrOptions.html',1,'scrOptions']]],
+  ['scrpatchedfunction_51',['scrPatchedFunction',['../test_8h.html#a72a19de93858c80c043c9f526cf07444',1,'test.h']]],
+  ['scrrun_52',['scrRun',['../run_8h.html#acdbc6432d0ab6a9421fb09350916632b',1,'run.h']]],
+  ['scrstats_53',['scrStats',['../run_8h.html#a0ab54a6f620fd8de5f8f12228a905406',1,'scrStats():&#160;run.h'],['../structscrStats.html',1,'scrStats']]],
+  ['scrtestfn_54',['scrTestFn',['../run_8h.html#a78714973fe7a20ca16e1cf263d6035e4',1,'run.h']]],
+  ['scrutiny_55',['Scrutiny',['../index.html',1,'']]],
+  ['scrutiny_2eh_56',['scrutiny.h',['../scrutiny_8h.html',1,'']]],
+  ['scrutiny_5fversion_57',['SCRUTINY_VERSION',['../scrutiny_8h.html#af8d9e35da7f9738df5ec67f565a96e13',1,'scrutiny.h']]]
 ];

@@ -68,7 +68,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a>  </div>
+<a href="#define-members">Macros</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">test.h File Reference</div>  </div>
 </div><!--header-->
@@ -229,6 +230,12 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#a14f7268efc079f06e57959b605b8c861">SCR_ASSERT_MEM_EQ</a>(expr1,  expr2,  size)</td></tr>
 <tr class="memdesc:a14f7268efc079f06e57959b605b8c861"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asserts that two memory regions are equal. <br /></td></tr>
 <tr class="separator:a14f7268efc079f06e57959b605b8c861"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a72a19de93858c80c043c9f526cf07444"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test_8h.html#a72a19de93858c80c043c9f526cf07444">scrPatchedFunction</a> (const char *func_name) SCR_NONNULL(1)</td></tr>
+<tr class="memdesc:a72a19de93858c80c043c9f526cf07444"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the real pointer to a monkeypatched function.  <a href="test_8h.html#a72a19de93858c80c043c9f526cf07444">More...</a><br /></td></tr>
+<tr class="separator:a72a19de93858c80c043c9f526cf07444"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the test macros. </p>
@@ -261,6 +268,34 @@ Macros</h2></td></tr>
 
 <p>Asserts that one string contains another. </p>
 <dl class="section return"><dt>Returns</dt><dd>If successful, the offset in the first string where the second string begins. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a72a19de93858c80c043c9f526cf07444"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72a19de93858c80c043c9f526cf07444">&#9670;&nbsp;</a></span>scrPatchedFunction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* scrPatchedFunction </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>func_name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the real pointer to a monkeypatched function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">func_name</td><td>The name of the function that was monkeypatched.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The real pointer to the function or NULL if the function wasn't patched. </dd></dl>
 
 </div>
 </div>
