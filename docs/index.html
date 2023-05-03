@@ -79,7 +79,7 @@ Testing basics</h1>
 <div class="line"> </div>
 <div class="line">group = <a class="code" href="run_8h.html#a61148607b35f203d6ff0c289ad8ea347">scrGroupCreate</a>(NULL, NULL);</div>
 <div class="ttc" id="arun_8h_html_a61148607b35f203d6ff0c289ad8ea347"><div class="ttname"><a href="run_8h.html#a61148607b35f203d6ff0c289ad8ea347">scrGroupCreate</a></div><div class="ttdeci">scrGroup * scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_MALLOC</div><div class="ttdoc">Creates a new test group.</div></div>
-<div class="ttc" id="arun_8h_html_ac6666827e21523e7bc29f69e17650ef9"><div class="ttname"><a href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a></div><div class="ttdeci">struct scrGroup scrGroup</div><div class="ttdoc">An opaque structure encapsulating each testing group.</div><div class="ttdef"><b>Definition:</b> run.h:14</div></div>
+<div class="ttc" id="arun_8h_html_ac6666827e21523e7bc29f69e17650ef9"><div class="ttname"><a href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a></div><div class="ttdeci">struct scrGroup scrGroup</div><div class="ttdoc">An opaque structure encapsulating each testing group.</div><div class="ttdef"><b>Definition:</b> run.h:16</div></div>
 </div><!-- fragment --><p>After that, you can define a test function:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> my_test(<span class="keywordtype">void</span>) {</div>
 <div class="line">    ...</div>
@@ -88,14 +88,14 @@ Testing basics</h1>
 <div class="fragment"><div class="line"><a class="code" href="run_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412">scrGroupAddTest</a>(group, <span class="stringliteral">&quot;Test name&quot;</span>, my_test, 0, 0);</div>
 <div class="ttc" id="arun_8h_html_aa599672b6e584eb5be7f0f3e0bb0d412"><div class="ttname"><a href="run_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412">scrGroupAddTest</a></div><div class="ttdeci">void scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout, unsigned int flags) SCR_NONNULL(1</div><div class="ttdoc">Adds a test to a group.</div></div>
 </div><!-- fragment --><p>Once you have added all of the tests, you can run them by</p>
-<div class="fragment"><div class="line"><a class="code" href="run_8h.html#a6f2787ea057f782ad094ded3ba7e5cf8">scrRun</a>(NULL, NULL);</div>
-<div class="ttc" id="arun_8h_html_a6f2787ea057f782ad094ded3ba7e5cf8"><div class="ttname"><a href="run_8h.html#a6f2787ea057f782ad094ded3ba7e5cf8">scrRun</a></div><div class="ttdeci">void int scrRun(const scrOptions *options, scrStats *stats)</div><div class="ttdoc">Runs all of tests.</div></div>
+<div class="fragment"><div class="line"><a class="code" href="run_8h.html#acdbc6432d0ab6a9421fb09350916632b">scrRun</a>(NULL, NULL);</div>
+<div class="ttc" id="arun_8h_html_acdbc6432d0ab6a9421fb09350916632b"><div class="ttname"><a href="run_8h.html#acdbc6432d0ab6a9421fb09350916632b">scrRun</a></div><div class="ttdeci">void bool int scrRun(const scrOptions *options, scrStats *stats)</div><div class="ttdoc">Runs all of the tests.</div></div>
 </div><!-- fragment --><p>This function returns <code>0</code> if all of the tests pass (or are skipped) and <code>1</code> otherwise. The function also summarizes the results in <code>stdout</code>.</p>
 <p>You can pass a <code>scrStats*</code> to <code>scrRun</code>:</p>
 <div class="fragment"><div class="line"><a class="code" href="structscrStats.html">scrStats</a> stats;</div>
 <div class="line"> </div>
-<div class="line"><a class="code" href="run_8h.html#a6f2787ea057f782ad094ded3ba7e5cf8">scrRun</a>(NULL, &amp;stats);</div>
-<div class="ttc" id="astructscrStats_html"><div class="ttname"><a href="structscrStats.html">scrStats</a></div><div class="ttdoc">Holds the test results.</div><div class="ttdef"><b>Definition:</b> run.h:45</div></div>
+<div class="line"><a class="code" href="run_8h.html#acdbc6432d0ab6a9421fb09350916632b">scrRun</a>(NULL, &amp;stats);</div>
+<div class="ttc" id="astructscrStats_html"><div class="ttname"><a href="structscrStats.html">scrStats</a></div><div class="ttdoc">Holds the test results.</div><div class="ttdef"><b>Definition:</b> run.h:47</div></div>
 </div><!-- fragment --><p>where <code><a class="el" href="structscrStats.html" title="Holds the test results.">scrStats</a></code> is defined as</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structscrStats.html">scrStats</a> {</div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="structscrStats.html#ae1897529c0e662fd86856911a88c6b8b">num_passed</a>;</div>
@@ -104,10 +104,10 @@ Testing basics</h1>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="structscrStats.html#a32944f34261641031f5a06f51f786065">num_errored</a>;</div>
 <div class="line">} <a class="code" href="run_8h.html#a0ab54a6f620fd8de5f8f12228a905406">scrStats</a>;</div>
 <div class="ttc" id="arun_8h_html_a0ab54a6f620fd8de5f8f12228a905406"><div class="ttname"><a href="run_8h.html#a0ab54a6f620fd8de5f8f12228a905406">scrStats</a></div><div class="ttdeci">struct scrStats scrStats</div><div class="ttdoc">Holds the test results.</div></div>
-<div class="ttc" id="astructscrStats_html_a2cab04795b417dacc314938b25a6f89b"><div class="ttname"><a href="structscrStats.html#a2cab04795b417dacc314938b25a6f89b">scrStats::num_failed</a></div><div class="ttdeci">unsigned int num_failed</div><div class="ttdef"><b>Definition:</b> run.h:48</div></div>
-<div class="ttc" id="astructscrStats_html_a32944f34261641031f5a06f51f786065"><div class="ttname"><a href="structscrStats.html#a32944f34261641031f5a06f51f786065">scrStats::num_errored</a></div><div class="ttdeci">unsigned int num_errored</div><div class="ttdef"><b>Definition:</b> run.h:50</div></div>
-<div class="ttc" id="astructscrStats_html_ad3370711e149678702e565fc920133a0"><div class="ttname"><a href="structscrStats.html#ad3370711e149678702e565fc920133a0">scrStats::num_skipped</a></div><div class="ttdeci">unsigned int num_skipped</div><div class="ttdef"><b>Definition:</b> run.h:47</div></div>
-<div class="ttc" id="astructscrStats_html_ae1897529c0e662fd86856911a88c6b8b"><div class="ttname"><a href="structscrStats.html#ae1897529c0e662fd86856911a88c6b8b">scrStats::num_passed</a></div><div class="ttdeci">unsigned int num_passed</div><div class="ttdef"><b>Definition:</b> run.h:46</div></div>
+<div class="ttc" id="astructscrStats_html_a2cab04795b417dacc314938b25a6f89b"><div class="ttname"><a href="structscrStats.html#a2cab04795b417dacc314938b25a6f89b">scrStats::num_failed</a></div><div class="ttdeci">unsigned int num_failed</div><div class="ttdef"><b>Definition:</b> run.h:50</div></div>
+<div class="ttc" id="astructscrStats_html_a32944f34261641031f5a06f51f786065"><div class="ttname"><a href="structscrStats.html#a32944f34261641031f5a06f51f786065">scrStats::num_errored</a></div><div class="ttdeci">unsigned int num_errored</div><div class="ttdef"><b>Definition:</b> run.h:52</div></div>
+<div class="ttc" id="astructscrStats_html_ad3370711e149678702e565fc920133a0"><div class="ttname"><a href="structscrStats.html#ad3370711e149678702e565fc920133a0">scrStats::num_skipped</a></div><div class="ttdeci">unsigned int num_skipped</div><div class="ttdef"><b>Definition:</b> run.h:49</div></div>
+<div class="ttc" id="astructscrStats_html_ae1897529c0e662fd86856911a88c6b8b"><div class="ttname"><a href="structscrStats.html#ae1897529c0e662fd86856911a88c6b8b">scrStats::num_passed</a></div><div class="ttdeci">unsigned int num_passed</div><div class="ttdef"><b>Definition:</b> run.h:48</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md1"></a>
 Writing tests</h1>
 <p>Various macros are provided in order to test various conditions. For example, for integers,</p>
@@ -121,12 +121,12 @@ Writing tests</h1>
 <div class="line">    <a class="code" href="test_8h.html#a4449890abbb1b76b2fcef486f37ca064">SCR_ASSERT_GE</a>(z, x); <span class="comment">// greater than or equal to</span></div>
 <div class="line">    <a class="code" href="test_8h.html#a97f86f6c3e2a18432d1d245aeae9bc62">SCR_ASSERT_GT</a>(z, x); <span class="comment">// greater than</span></div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_a2ed59b1922622a7807f184c82e062488"><div class="ttname"><a href="test_8h.html#a2ed59b1922622a7807f184c82e062488">SCR_ASSERT_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_EQ(expr1, expr2)</div><div class="ttdoc">Asserts that two integers are equal.</div><div class="ttdef"><b>Definition:</b> test.h:64</div></div>
-<div class="ttc" id="atest_8h_html_a4449890abbb1b76b2fcef486f37ca064"><div class="ttname"><a href="test_8h.html#a4449890abbb1b76b2fcef486f37ca064">SCR_ASSERT_GE</a></div><div class="ttdeci">#define SCR_ASSERT_GE(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is greater than or equal to another.</div><div class="ttdef"><b>Definition:</b> test.h:94</div></div>
-<div class="ttc" id="atest_8h_html_a77a8e6f4038cf67f7e3deeaa216cde1b"><div class="ttname"><a href="test_8h.html#a77a8e6f4038cf67f7e3deeaa216cde1b">SCR_ASSERT_LT</a></div><div class="ttdeci">#define SCR_ASSERT_LT(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is less than another.</div><div class="ttdef"><b>Definition:</b> test.h:76</div></div>
-<div class="ttc" id="atest_8h_html_a97f86f6c3e2a18432d1d245aeae9bc62"><div class="ttname"><a href="test_8h.html#a97f86f6c3e2a18432d1d245aeae9bc62">SCR_ASSERT_GT</a></div><div class="ttdeci">#define SCR_ASSERT_GT(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is greater than another.</div><div class="ttdef"><b>Definition:</b> test.h:88</div></div>
-<div class="ttc" id="atest_8h_html_aad2c5b73ab0f0d41037435c11e6d5bd1"><div class="ttname"><a href="test_8h.html#aad2c5b73ab0f0d41037435c11e6d5bd1">SCR_ASSERT_NEQ</a></div><div class="ttdeci">#define SCR_ASSERT_NEQ(expr1, expr2)</div><div class="ttdoc">Asserts that two integers are not equal.</div><div class="ttdef"><b>Definition:</b> test.h:70</div></div>
-<div class="ttc" id="atest_8h_html_acaf753aac51eae598d867c923c17ef68"><div class="ttname"><a href="test_8h.html#acaf753aac51eae598d867c923c17ef68">SCR_ASSERT_LE</a></div><div class="ttdeci">#define SCR_ASSERT_LE(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is less than or equal to another.</div><div class="ttdef"><b>Definition:</b> test.h:82</div></div>
+<div class="ttc" id="atest_8h_html_a2ed59b1922622a7807f184c82e062488"><div class="ttname"><a href="test_8h.html#a2ed59b1922622a7807f184c82e062488">SCR_ASSERT_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_EQ(expr1, expr2)</div><div class="ttdoc">Asserts that two integers are equal.</div><div class="ttdef"><b>Definition:</b> test.h:74</div></div>
+<div class="ttc" id="atest_8h_html_a4449890abbb1b76b2fcef486f37ca064"><div class="ttname"><a href="test_8h.html#a4449890abbb1b76b2fcef486f37ca064">SCR_ASSERT_GE</a></div><div class="ttdeci">#define SCR_ASSERT_GE(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is greater than or equal to another.</div><div class="ttdef"><b>Definition:</b> test.h:104</div></div>
+<div class="ttc" id="atest_8h_html_a77a8e6f4038cf67f7e3deeaa216cde1b"><div class="ttname"><a href="test_8h.html#a77a8e6f4038cf67f7e3deeaa216cde1b">SCR_ASSERT_LT</a></div><div class="ttdeci">#define SCR_ASSERT_LT(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is less than another.</div><div class="ttdef"><b>Definition:</b> test.h:86</div></div>
+<div class="ttc" id="atest_8h_html_a97f86f6c3e2a18432d1d245aeae9bc62"><div class="ttname"><a href="test_8h.html#a97f86f6c3e2a18432d1d245aeae9bc62">SCR_ASSERT_GT</a></div><div class="ttdeci">#define SCR_ASSERT_GT(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is greater than another.</div><div class="ttdef"><b>Definition:</b> test.h:98</div></div>
+<div class="ttc" id="atest_8h_html_aad2c5b73ab0f0d41037435c11e6d5bd1"><div class="ttname"><a href="test_8h.html#aad2c5b73ab0f0d41037435c11e6d5bd1">SCR_ASSERT_NEQ</a></div><div class="ttdeci">#define SCR_ASSERT_NEQ(expr1, expr2)</div><div class="ttdoc">Asserts that two integers are not equal.</div><div class="ttdef"><b>Definition:</b> test.h:80</div></div>
+<div class="ttc" id="atest_8h_html_acaf753aac51eae598d867c923c17ef68"><div class="ttname"><a href="test_8h.html#acaf753aac51eae598d867c923c17ef68">SCR_ASSERT_LE</a></div><div class="ttdeci">#define SCR_ASSERT_LE(expr1, expr2)</div><div class="ttdoc">Asserts that one integer is less than or equal to another.</div><div class="ttdef"><b>Definition:</b> test.h:92</div></div>
 </div><!-- fragment --><p>All integer values are upgraded to <code>intmax_t</code>. If you need to use <code>uintmax_t</code>, use the <code>UNSIGNED</code> macros like <code>SCR_ASSERT_UNSIGNED_LT</code>. For floating-point values, use macros like <code>SCR_ASSERT_FLOAT_LT</code>.</p>
 <p>Though <code>char</code> variables are also integer variables, you should use the <code>SCR_ASSERT_CHAR_EQ</code> and <code>SCR_ASSERT_CHAR_NEQ</code> macros to compare them.</p>
 <p>You can compare pointers by</p>
@@ -137,8 +137,8 @@ Writing tests</h1>
 <div class="line">    <a class="code" href="test_8h.html#a427bd9ff6c7b1318747ec7f1a812117f">SCR_ASSERT_PTR_EQ</a>(p, NULL);</div>
 <div class="line">    <a class="code" href="test_8h.html#a889e5650ed4f9a009121d9aa48ddfc2c">SCR_ASSERT_PTR_NEQ</a>(&amp;x, p);</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_a427bd9ff6c7b1318747ec7f1a812117f"><div class="ttname"><a href="test_8h.html#a427bd9ff6c7b1318747ec7f1a812117f">SCR_ASSERT_PTR_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_PTR_EQ(expr1, expr2)</div><div class="ttdoc">Asserts that two pointers are equal.</div><div class="ttdef"><b>Definition:</b> test.h:172</div></div>
-<div class="ttc" id="atest_8h_html_a889e5650ed4f9a009121d9aa48ddfc2c"><div class="ttname"><a href="test_8h.html#a889e5650ed4f9a009121d9aa48ddfc2c">SCR_ASSERT_PTR_NEQ</a></div><div class="ttdeci">#define SCR_ASSERT_PTR_NEQ(expr1, expr2)</div><div class="ttdoc">Asserts that two pointers are not equal.</div><div class="ttdef"><b>Definition:</b> test.h:178</div></div>
+<div class="ttc" id="atest_8h_html_a427bd9ff6c7b1318747ec7f1a812117f"><div class="ttname"><a href="test_8h.html#a427bd9ff6c7b1318747ec7f1a812117f">SCR_ASSERT_PTR_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_PTR_EQ(expr1, expr2)</div><div class="ttdoc">Asserts that two pointers are equal.</div><div class="ttdef"><b>Definition:</b> test.h:182</div></div>
+<div class="ttc" id="atest_8h_html_a889e5650ed4f9a009121d9aa48ddfc2c"><div class="ttname"><a href="test_8h.html#a889e5650ed4f9a009121d9aa48ddfc2c">SCR_ASSERT_PTR_NEQ</a></div><div class="ttdeci">#define SCR_ASSERT_PTR_NEQ(expr1, expr2)</div><div class="ttdoc">Asserts that two pointers are not equal.</div><div class="ttdef"><b>Definition:</b> test.h:188</div></div>
 </div><!-- fragment --><p>You can compare strings (i.e., <code>char</code> arrays) by</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> string_test(<span class="keywordtype">void</span>) {</div>
 <div class="line">    <span class="keywordtype">size_t</span> idx;</div>
@@ -153,50 +153,50 @@ Writing tests</h1>
 <div class="line">    <a class="code" href="test_8h.html#a2ed59b1922622a7807f184c82e062488">SCR_ASSERT_EQ</a>(idx, 2);</div>
 <div class="line">    <a class="code" href="test_8h.html#a133372b2f3aaee0a7238d4dfb8b909ad">SCR_ASSERT_STR_NCONTAINS</a>(word, <span class="stringliteral">&quot;elp&quot;</span>);</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_a133372b2f3aaee0a7238d4dfb8b909ad"><div class="ttname"><a href="test_8h.html#a133372b2f3aaee0a7238d4dfb8b909ad">SCR_ASSERT_STR_NCONTAINS</a></div><div class="ttdeci">#define SCR_ASSERT_STR_NCONTAINS(expr1, expr2)</div><div class="ttdoc">Asserts that one string doesn't contain another.</div><div class="ttdef"><b>Definition:</b> test.h:219</div></div>
-<div class="ttc" id="atest_8h_html_a18ae7190d4af69a80069a641605842c4"><div class="ttname"><a href="test_8h.html#a18ae7190d4af69a80069a641605842c4">SCR_ASSERT_STR_CONTAINS</a></div><div class="ttdeci">#define SCR_ASSERT_STR_CONTAINS(expr1, expr2)</div><div class="ttdoc">Asserts that one string contains another.</div><div class="ttdef"><b>Definition:</b> test.h:212</div></div>
-<div class="ttc" id="atest_8h_html_a39eef24b315ddacca2232de858ea969e"><div class="ttname"><a href="test_8h.html#a39eef24b315ddacca2232de858ea969e">SCR_ASSERT_STR_BEGINS_WITH</a></div><div class="ttdeci">#define SCR_ASSERT_STR_BEGINS_WITH(expr1, expr2)</div><div class="ttdoc">Asserts that one string starts with another.</div><div class="ttdef"><b>Definition:</b> test.h:196</div></div>
-<div class="ttc" id="atest_8h_html_a45568516c9629692ed95eee3353aa268"><div class="ttname"><a href="test_8h.html#a45568516c9629692ed95eee3353aa268">SCR_ASSERT_STR_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_STR_EQ(expr1, expr2)</div><div class="ttdoc">Asserts that two strings are equal.</div><div class="ttdef"><b>Definition:</b> test.h:184</div></div>
-<div class="ttc" id="atest_8h_html_a4d95d598f8a621211c54d7f2236487cf"><div class="ttname"><a href="test_8h.html#a4d95d598f8a621211c54d7f2236487cf">SCR_ASSERT_STR_NEQ</a></div><div class="ttdeci">#define SCR_ASSERT_STR_NEQ(expr1, expr2)</div><div class="ttdoc">Asserts that two strings are not equal.</div><div class="ttdef"><b>Definition:</b> test.h:190</div></div>
-<div class="ttc" id="atest_8h_html_ab70473c511963eb76a38b37546432d3f"><div class="ttname"><a href="test_8h.html#ab70473c511963eb76a38b37546432d3f">SCR_ASSERT_STR_NBEGINS_WITH</a></div><div class="ttdeci">#define SCR_ASSERT_STR_NBEGINS_WITH(expr1, expr2)</div><div class="ttdoc">Asserts that one string doesn't start with another.</div><div class="ttdef"><b>Definition:</b> test.h:202</div></div>
+<div class="ttc" id="atest_8h_html_a133372b2f3aaee0a7238d4dfb8b909ad"><div class="ttname"><a href="test_8h.html#a133372b2f3aaee0a7238d4dfb8b909ad">SCR_ASSERT_STR_NCONTAINS</a></div><div class="ttdeci">#define SCR_ASSERT_STR_NCONTAINS(expr1, expr2)</div><div class="ttdoc">Asserts that one string doesn't contain another.</div><div class="ttdef"><b>Definition:</b> test.h:229</div></div>
+<div class="ttc" id="atest_8h_html_a18ae7190d4af69a80069a641605842c4"><div class="ttname"><a href="test_8h.html#a18ae7190d4af69a80069a641605842c4">SCR_ASSERT_STR_CONTAINS</a></div><div class="ttdeci">#define SCR_ASSERT_STR_CONTAINS(expr1, expr2)</div><div class="ttdoc">Asserts that one string contains another.</div><div class="ttdef"><b>Definition:</b> test.h:222</div></div>
+<div class="ttc" id="atest_8h_html_a39eef24b315ddacca2232de858ea969e"><div class="ttname"><a href="test_8h.html#a39eef24b315ddacca2232de858ea969e">SCR_ASSERT_STR_BEGINS_WITH</a></div><div class="ttdeci">#define SCR_ASSERT_STR_BEGINS_WITH(expr1, expr2)</div><div class="ttdoc">Asserts that one string starts with another.</div><div class="ttdef"><b>Definition:</b> test.h:206</div></div>
+<div class="ttc" id="atest_8h_html_a45568516c9629692ed95eee3353aa268"><div class="ttname"><a href="test_8h.html#a45568516c9629692ed95eee3353aa268">SCR_ASSERT_STR_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_STR_EQ(expr1, expr2)</div><div class="ttdoc">Asserts that two strings are equal.</div><div class="ttdef"><b>Definition:</b> test.h:194</div></div>
+<div class="ttc" id="atest_8h_html_a4d95d598f8a621211c54d7f2236487cf"><div class="ttname"><a href="test_8h.html#a4d95d598f8a621211c54d7f2236487cf">SCR_ASSERT_STR_NEQ</a></div><div class="ttdeci">#define SCR_ASSERT_STR_NEQ(expr1, expr2)</div><div class="ttdoc">Asserts that two strings are not equal.</div><div class="ttdef"><b>Definition:</b> test.h:200</div></div>
+<div class="ttc" id="atest_8h_html_ab70473c511963eb76a38b37546432d3f"><div class="ttname"><a href="test_8h.html#ab70473c511963eb76a38b37546432d3f">SCR_ASSERT_STR_NBEGINS_WITH</a></div><div class="ttdeci">#define SCR_ASSERT_STR_NBEGINS_WITH(expr1, expr2)</div><div class="ttdoc">Asserts that one string doesn't start with another.</div><div class="ttdef"><b>Definition:</b> test.h:212</div></div>
 </div><!-- fragment --><p>As you can see, <code>SCR_ASSERT_STR_CONTAINS</code> is a special macro in that, if it succeeds, it returns the index where the substring starts.</p>
 <p>Please note that you cannot use the string macros with <code>NULL</code> pointers.</p>
 <p>You can test that two memory regions are equal (essentially, running <code>memcmp</code>) by</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> buffers_equal(<span class="keywordtype">void</span>) {</div>
 <div class="line">    <a class="code" href="test_8h.html#a14f7268efc079f06e57959b605b8c861">SCR_ASSERT_MEM_EQ</a>(<span class="stringliteral">&quot;help&quot;</span>, <span class="stringliteral">&quot;hello&quot;</span>, 3);</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_a14f7268efc079f06e57959b605b8c861"><div class="ttname"><a href="test_8h.html#a14f7268efc079f06e57959b605b8c861">SCR_ASSERT_MEM_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_MEM_EQ(expr1, expr2, size)</div><div class="ttdoc">Asserts that two memory regions are equal.</div><div class="ttdef"><b>Definition:</b> test.h:239</div></div>
+<div class="ttc" id="atest_8h_html_a14f7268efc079f06e57959b605b8c861"><div class="ttname"><a href="test_8h.html#a14f7268efc079f06e57959b605b8c861">SCR_ASSERT_MEM_EQ</a></div><div class="ttdeci">#define SCR_ASSERT_MEM_EQ(expr1, expr2, size)</div><div class="ttdoc">Asserts that two memory regions are equal.</div><div class="ttdef"><b>Definition:</b> test.h:249</div></div>
 </div><!-- fragment --><p>You can skip a test by</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> skip_me(<span class="keywordtype">void</span>) {</div>
 <div class="line">    <a class="code" href="test_8h.html#ae7db7254ee93c4f067e45085a2f0eb7d">SCR_TEST_SKIP</a>();</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_ae7db7254ee93c4f067e45085a2f0eb7d"><div class="ttname"><a href="test_8h.html#ae7db7254ee93c4f067e45085a2f0eb7d">SCR_TEST_SKIP</a></div><div class="ttdeci">#define SCR_TEST_SKIP()</div><div class="ttdoc">Skips the current test.</div><div class="ttdef"><b>Definition:</b> test.h:27</div></div>
+<div class="ttc" id="atest_8h_html_ae7db7254ee93c4f067e45085a2f0eb7d"><div class="ttname"><a href="test_8h.html#ae7db7254ee93c4f067e45085a2f0eb7d">SCR_TEST_SKIP</a></div><div class="ttdeci">#define SCR_TEST_SKIP()</div><div class="ttdoc">Skips the current test.</div><div class="ttdef"><b>Definition:</b> test.h:37</div></div>
 </div><!-- fragment --><p>In addition, you can make general assertions by</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> my_test(<span class="keywordtype">void</span>) {</div>
 <div class="line">    <span class="keywordtype">int</span> x = 5, y = 5;</div>
 <div class="line"> </div>
 <div class="line">    <a class="code" href="test_8h.html#a8182e2eedb3328de9215790842b34bcd">SCR_ASSERT</a>(x + y == 10);</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_a8182e2eedb3328de9215790842b34bcd"><div class="ttname"><a href="test_8h.html#a8182e2eedb3328de9215790842b34bcd">SCR_ASSERT</a></div><div class="ttdeci">#define SCR_ASSERT(expr)</div><div class="ttdoc">Asserts that an expression is true and fails the test if it isn't.</div><div class="ttdef"><b>Definition:</b> test.h:49</div></div>
+<div class="ttc" id="atest_8h_html_a8182e2eedb3328de9215790842b34bcd"><div class="ttname"><a href="test_8h.html#a8182e2eedb3328de9215790842b34bcd">SCR_ASSERT</a></div><div class="ttdeci">#define SCR_ASSERT(expr)</div><div class="ttdoc">Asserts that an expression is true and fails the test if it isn't.</div><div class="ttdef"><b>Definition:</b> test.h:59</div></div>
 </div><!-- fragment --><p>You can fail a test without any assertion by</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> gonna_fail(<span class="keywordtype">void</span>) {</div>
 <div class="line">    <a class="code" href="test_8h.html#a22ffada26b847fc05a9810a2fd3fce3e">SCR_FAIL</a>(<span class="stringliteral">&quot;Failing this test for reasons&quot;</span>);</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_a22ffada26b847fc05a9810a2fd3fce3e"><div class="ttname"><a href="test_8h.html#a22ffada26b847fc05a9810a2fd3fce3e">SCR_FAIL</a></div><div class="ttdeci">#define SCR_FAIL(...)</div><div class="ttdoc">Fails the current test with a message.</div><div class="ttdef"><b>Definition:</b> test.h:44</div></div>
+<div class="ttc" id="atest_8h_html_a22ffada26b847fc05a9810a2fd3fce3e"><div class="ttname"><a href="test_8h.html#a22ffada26b847fc05a9810a2fd3fce3e">SCR_FAIL</a></div><div class="ttdeci">#define SCR_FAIL(...)</div><div class="ttdoc">Fails the current test with a message.</div><div class="ttdef"><b>Definition:</b> test.h:54</div></div>
 </div><!-- fragment --><p>You can emit logging statements by</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> my_test(<span class="keywordtype">void</span>) {</div>
 <div class="line">    <span class="keywordtype">int</span> x = 5;</div>
 <div class="line"> </div>
 <div class="line">    <a class="code" href="test_8h.html#ad9fd77add8be18fc2d8737516e209125">SCR_LOG</a>(<span class="stringliteral">&quot;x is %i&quot;</span>, x);</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_ad9fd77add8be18fc2d8737516e209125"><div class="ttname"><a href="test_8h.html#ad9fd77add8be18fc2d8737516e209125">SCR_LOG</a></div><div class="ttdeci">#define SCR_LOG(...)</div><div class="ttdoc">Logs a message.</div><div class="ttdef"><b>Definition:</b> test.h:37</div></div>
+<div class="ttc" id="atest_8h_html_ad9fd77add8be18fc2d8737516e209125"><div class="ttname"><a href="test_8h.html#ad9fd77add8be18fc2d8737516e209125">SCR_LOG</a></div><div class="ttdeci">#define SCR_LOG(...)</div><div class="ttdoc">Logs a message.</div><div class="ttdef"><b>Definition:</b> test.h:47</div></div>
 </div><!-- fragment --><p>Note that such statements will only be displayed if the test fails.</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Test parameters</h1>
 <p>The signature of <code>scrGroupAddTest</code> is</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span></div>
 <div class="line"><a class="code" href="run_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412">scrGroupAddTest</a>(<a class="code" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, <a class="code" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> timeout, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> flags);</div>
-<div class="ttc" id="arun_8h_html_a78714973fe7a20ca16e1cf263d6035e4"><div class="ttname"><a href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a></div><div class="ttdeci">void scrTestFn(void)</div><div class="ttdoc">The signature for a test function.</div><div class="ttdef"><b>Definition:</b> run.h:32</div></div>
+<div class="ttc" id="arun_8h_html_a78714973fe7a20ca16e1cf263d6035e4"><div class="ttname"><a href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a></div><div class="ttdeci">void scrTestFn(void)</div><div class="ttdoc">The signature for a test function.</div><div class="ttdef"><b>Definition:</b> run.h:34</div></div>
 </div><!-- fragment --><p>If <code>timeout</code> is positive, then the test will fail if not completed within that many seconds.</p>
 <p>At the moment, the only valid value for <code>flags</code> other than <code>0</code> is <code>SCR_TEST_FLAG_XFAIL</code>. If this value is passed, then success/failure will be inverted. That is, the test will be expected to fail and a failure will be counted if the test passes.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
@@ -205,25 +205,25 @@ Global/group context</h1>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> my_test(<span class="keywordtype">void</span>) {</div>
 <div class="line">    <span class="keywordtype">void</span> *ctx = <a class="code" href="test_8h.html#a6798a5522104cae2a2588ae48f5fe47f">SCR_GROUP_CTX</a>();</div>
 <div class="line">}</div>
-<div class="ttc" id="atest_8h_html_a6798a5522104cae2a2588ae48f5fe47f"><div class="ttname"><a href="test_8h.html#a6798a5522104cae2a2588ae48f5fe47f">SCR_GROUP_CTX</a></div><div class="ttdeci">#define SCR_GROUP_CTX()</div><div class="ttdoc">Returns the group context in the form of a void*.</div><div class="ttdef"><b>Definition:</b> test.h:20</div></div>
+<div class="ttc" id="atest_8h_html_a6798a5522104cae2a2588ae48f5fe47f"><div class="ttname"><a href="test_8h.html#a6798a5522104cae2a2588ae48f5fe47f">SCR_GROUP_CTX</a></div><div class="ttdeci">#define SCR_GROUP_CTX()</div><div class="ttdoc">Returns the group context in the form of a void*.</div><div class="ttdef"><b>Definition:</b> test.h:30</div></div>
 </div><!-- fragment --><p>The signature of <code>scrRun</code> is</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span></div>
-<div class="line"><a class="code" href="run_8h.html#a6f2787ea057f782ad094ded3ba7e5cf8">scrRun</a>(<span class="keyword">const</span> <a class="code" href="structscrOptions.html">scrOptions</a> *options, <a class="code" href="structscrStats.html">scrStats</a> *stats);</div>
-<div class="ttc" id="astructscrOptions_html"><div class="ttname"><a href="structscrOptions.html">scrOptions</a></div><div class="ttdoc">Options to pass to scrRunnerRun.</div><div class="ttdef"><b>Definition:</b> run.h:37</div></div>
+<div class="line"><a class="code" href="run_8h.html#acdbc6432d0ab6a9421fb09350916632b">scrRun</a>(<span class="keyword">const</span> <a class="code" href="structscrOptions.html">scrOptions</a> *options, <a class="code" href="structscrStats.html">scrStats</a> *stats);</div>
+<div class="ttc" id="astructscrOptions_html"><div class="ttname"><a href="structscrOptions.html">scrOptions</a></div><div class="ttdoc">Options to pass to scrRunnerRun.</div><div class="ttdef"><b>Definition:</b> run.h:39</div></div>
 </div><!-- fragment --><p>where <code><a class="el" href="structscrOptions.html" title="Options to pass to scrRunnerRun.">scrOptions</a></code> is defined as</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structscrOptions.html">scrOptions</a> {</div>
 <div class="line">    <span class="keywordtype">void</span> *<a class="code" href="structscrOptions.html#a2a2eee9cdea6949ae9b6db842eaf3c09">global_ctx</a>;</div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44">flags</a>;</div>
 <div class="line">} <a class="code" href="run_8h.html#a86df619ddcdab198dd59ea817de931e6">scrOptions</a>;</div>
 <div class="ttc" id="arun_8h_html_a86df619ddcdab198dd59ea817de931e6"><div class="ttname"><a href="run_8h.html#a86df619ddcdab198dd59ea817de931e6">scrOptions</a></div><div class="ttdeci">struct scrOptions scrOptions</div><div class="ttdoc">Options to pass to scrRunnerRun.</div></div>
-<div class="ttc" id="astructscrOptions_html_a2a2eee9cdea6949ae9b6db842eaf3c09"><div class="ttname"><a href="structscrOptions.html#a2a2eee9cdea6949ae9b6db842eaf3c09">scrOptions::global_ctx</a></div><div class="ttdeci">void * global_ctx</div><div class="ttdef"><b>Definition:</b> run.h:38</div></div>
-<div class="ttc" id="astructscrOptions_html_a8467b749302edfa3c9edbba81ad66c44"><div class="ttname"><a href="structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44">scrOptions::flags</a></div><div class="ttdeci">unsigned int flags</div><div class="ttdef"><b>Definition:</b> run.h:39</div></div>
+<div class="ttc" id="astructscrOptions_html_a2a2eee9cdea6949ae9b6db842eaf3c09"><div class="ttname"><a href="structscrOptions.html#a2a2eee9cdea6949ae9b6db842eaf3c09">scrOptions::global_ctx</a></div><div class="ttdeci">void * global_ctx</div><div class="ttdef"><b>Definition:</b> run.h:40</div></div>
+<div class="ttc" id="astructscrOptions_html_a8467b749302edfa3c9edbba81ad66c44"><div class="ttname"><a href="structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44">scrOptions::flags</a></div><div class="ttdeci">unsigned int flags</div><div class="ttdef"><b>Definition:</b> run.h:41</div></div>
 </div><!-- fragment --><p>If the <code>options</code> argument is <code>NULL</code>, then default values will be used (i.e., <code>NULL</code> and <code>0</code>).</p>
 <p>By default, each group context is equal to the global context. However, you can pass function pointers to <code>scrGroupCreate</code> which can set up and tear down a group context. The signature of <code>scrGroupCreate</code> is</p>
 <div class="fragment"><div class="line"><a class="code" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *</div>
 <div class="line"><a class="code" href="run_8h.html#a61148607b35f203d6ff0c289ad8ea347">scrGroupCreate</a>(<a class="code" href="run_8h.html#a87f79c85e6288d77ac18d7b16ba5de00">scrCtxCreateFn</a> create_fn, <a class="code" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a> cleanup_fn);</div>
-<div class="ttc" id="arun_8h_html_a0ddbd6caab0df72aea82c68428d9578a"><div class="ttname"><a href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a></div><div class="ttdeci">void scrCtxCleanupFn(void *)</div><div class="ttdoc">The signature for a group context cleanup function.</div><div class="ttdef"><b>Definition:</b> run.h:26</div></div>
-<div class="ttc" id="arun_8h_html_a87f79c85e6288d77ac18d7b16ba5de00"><div class="ttname"><a href="run_8h.html#a87f79c85e6288d77ac18d7b16ba5de00">scrCtxCreateFn</a></div><div class="ttdeci">void * scrCtxCreateFn(void *)</div><div class="ttdoc">The signature for a group context creation function.</div><div class="ttdef"><b>Definition:</b> run.h:20</div></div>
+<div class="ttc" id="arun_8h_html_a0ddbd6caab0df72aea82c68428d9578a"><div class="ttname"><a href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a></div><div class="ttdeci">void scrCtxCleanupFn(void *)</div><div class="ttdoc">The signature for a group context cleanup function.</div><div class="ttdef"><b>Definition:</b> run.h:28</div></div>
+<div class="ttc" id="arun_8h_html_a87f79c85e6288d77ac18d7b16ba5de00"><div class="ttname"><a href="run_8h.html#a87f79c85e6288d77ac18d7b16ba5de00">scrCtxCreateFn</a></div><div class="ttdeci">void * scrCtxCreateFn(void *)</div><div class="ttdoc">The signature for a group context creation function.</div><div class="ttdef"><b>Definition:</b> run.h:22</div></div>
 </div><!-- fragment --><p>where</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keywordtype">void</span> *<a class="code" href="run_8h.html#a87f79c85e6288d77ac18d7b16ba5de00">scrCtxCreateFn</a>(<span class="keywordtype">void</span> *);</div>
 <div class="line"><span class="keyword">typedef</span> <span class="keywordtype">void</span> <a class="code" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a>(<span class="keywordtype">void</span> *);</div>
@@ -238,8 +238,45 @@ Run flags</h1>
 <li><code>SCR_RUN_FLAG_VERBOSE</code>: Show logging messages as well as <code>stdout</code>/<code>stderr</code> even when tests pass or are skipped.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md5"></a>
+Monkeypatching</h1>
+<p>When building for Linux, you can add, at compile time, the ability to monkeypatch functions. To enable monkeypatching, add <code>monkeypatch=yes</code> to your <code>make</code> invocation.</p>
+<p>Suppose, for example, you wanted <code>malloc</code> to always return <code>NULL</code> during testing. You could create the fake function</p>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> *</div>
+<div class="line">fake_malloc(<span class="keywordtype">size_t</span> size)</div>
+<div class="line">{</div>
+<div class="line">    (void)size;</div>
+<div class="line">    <span class="keywordflow">return</span> NULL;</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>and then patch <code>malloc</code> with</p>
+<div class="fragment"><div class="line"><span class="keywordtype">bool</span></div>
+<div class="line"><a class="code" href="run_8h.html#aa7519f93e21645afc07aecc576bc5a95">scrGroupPatchFunction</a>(<a class="code" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, <span class="keyword">const</span> <span class="keywordtype">char</span> *func_name, <span class="keywordtype">void</span> *new_func);</div>
+<div class="ttc" id="arun_8h_html_aa7519f93e21645afc07aecc576bc5a95"><div class="ttname"><a href="run_8h.html#aa7519f93e21645afc07aecc576bc5a95">scrGroupPatchFunction</a></div><div class="ttdeci">void bool scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func) SCR_NONNULL(1</div><div class="ttdoc">Enables monkeypatching of a function for all of a group's tests.</div></div>
+</div><!-- fragment --><p>Here, <code>new_func</code> would be a function pointer to <code>fake_malloc</code>. E.g.,</p>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> ( !<a class="code" href="run_8h.html#aa7519f93e21645afc07aecc576bc5a95">scrGroupPatchFunction</a>(group, <span class="stringliteral">&quot;malloc&quot;</span>, fake_malloc) ) {</div>
+<div class="line">    <span class="comment">// handle the error</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><p>This test would then pass:</p>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span></div>
+<div class="line">malloc_fail(<span class="keywordtype">void</span>)</div>
+<div class="line">{</div>
+<div class="line">    <a class="code" href="test_8h.html#a427bd9ff6c7b1318747ec7f1a812117f">SCR_ASSERT_PTR_EQ</a>(malloc(1), NULL);</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>When you attempt to patch a function, Scrutiny will walk your the process' maps file in procfs and identify any ELF files (libscrutiny.so is skipped). If any of them contain a global offset table (GOT) entry for the specified function, the address of the entry will be recorded. When a process running one of the tests in the group is started, it will be ptraced and those GOT entries will be altered to point to the interposed function. If no GOT entries are found, then <code>scrGroupPatchFunction</code> will return <code>false</code>.</p>
+<p>During testing, you may acquire a pointer to the original function (e.g., the true <code>malloc</code>) by</p>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span></div>
+<div class="line">some_test(<span class="keywordtype">void</span>)</div>
+<div class="line">{</div>
+<div class="line">    <span class="keywordtype">void</span> *(*true_malloc)(size_t);</div>
+<div class="line"> </div>
+<div class="line">    true_malloc = <a class="code" href="test_8h.html#a72a19de93858c80c043c9f526cf07444">scrPatchedFunction</a>(<span class="stringliteral">&quot;malloc&quot;</span>);</div>
+<div class="line">    ...</div>
+<div class="line">}</div>
+<div class="ttc" id="atest_8h_html_a72a19de93858c80c043c9f526cf07444"><div class="ttname"><a href="test_8h.html#a72a19de93858c80c043c9f526cf07444">scrPatchedFunction</a></div><div class="ttdeci">void * scrPatchedFunction(const char *func_name) SCR_NONNULL(1)</div><div class="ttdoc">Gets the real pointer to a monkeypatched function.</div></div>
+</div><!-- fragment --><p><code>scrPatchedFunction</code> will return <code>NULL</code> if a patch for the function was never registered.</p>
+<p>This feature is highly experimental and will probably not work in the presence of certain link-time optimizations.</p>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Building Scrutiny</h1>
-<p>Scrutiny has a submodule so you'll need to add <code>--recurse-submodules</code> to your <code>git clone</code> invocation.</p>
+<p>Scrutiny has submodules so you'll need to add <code>--recurse-submodules</code> to your <code>git clone</code> invocation.</p>
 <p>You can build and install Scrutiny by</p>
 <div class="fragment"><div class="line">make install</div>
 </div><!-- fragment --><p>After that, you can link your test program to Scrutiny with <code>-lscrutiny</code>.</p>

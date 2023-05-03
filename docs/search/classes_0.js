@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['scroptions_57',['scrOptions',['../structscrOptions.html',1,'']]],
-  ['scrstats_58',['scrStats',['../structscrStats.html',1,'']]]
+  ['scroptions_59',['scrOptions',['../structscrOptions.html',1,'']]],
+  ['scrstats_60',['scrStats',['../structscrStats.html',1,'']]]
 ];

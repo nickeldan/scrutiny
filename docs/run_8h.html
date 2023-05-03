@@ -79,7 +79,8 @@ $(function() {
 
 <p>Defines the runner functionality.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;definitions.h&quot;</code><br />
+<div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &quot;definitions.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for run.h:</div>
 <div class="dyncontent">
@@ -152,9 +153,12 @@ Functions</h2></td></tr>
 <tr class="memitem:aa599672b6e584eb5be7f0f3e0bb0d412"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412">scrGroupAddTest</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *name, <a class="el" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, unsigned int timeout, unsigned int flags) SCR_NONNULL(1</td></tr>
 <tr class="memdesc:aa599672b6e584eb5be7f0f3e0bb0d412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="run_8h.html#aa599672b6e584eb5be7f0f3e0bb0d412">More...</a><br /></td></tr>
 <tr class="separator:aa599672b6e584eb5be7f0f3e0bb0d412"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f2787ea057f782ad094ded3ba7e5cf8"><td class="memItemLeft" align="right" valign="top">void int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a6f2787ea057f782ad094ded3ba7e5cf8">scrRun</a> (const <a class="el" href="structscrOptions.html">scrOptions</a> *options, <a class="el" href="structscrStats.html">scrStats</a> *stats)</td></tr>
-<tr class="memdesc:a6f2787ea057f782ad094ded3ba7e5cf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs all of tests.  <a href="run_8h.html#a6f2787ea057f782ad094ded3ba7e5cf8">More...</a><br /></td></tr>
-<tr class="separator:a6f2787ea057f782ad094ded3ba7e5cf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7519f93e21645afc07aecc576bc5a95"><td class="memItemLeft" align="right" valign="top">void bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#aa7519f93e21645afc07aecc576bc5a95">scrGroupPatchFunction</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *func_name, void *new_func) SCR_NONNULL(1</td></tr>
+<tr class="memdesc:aa7519f93e21645afc07aecc576bc5a95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables monkeypatching of a function for all of a group's tests.  <a href="run_8h.html#aa7519f93e21645afc07aecc576bc5a95">More...</a><br /></td></tr>
+<tr class="separator:aa7519f93e21645afc07aecc576bc5a95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdbc6432d0ab6a9421fb09350916632b"><td class="memItemLeft" align="right" valign="top">void bool int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#acdbc6432d0ab6a9421fb09350916632b">scrRun</a> (const <a class="el" href="structscrOptions.html">scrOptions</a> *options, <a class="el" href="structscrStats.html">scrStats</a> *stats)</td></tr>
+<tr class="memdesc:acdbc6432d0ab6a9421fb09350916632b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs all of the tests.  <a href="run_8h.html#acdbc6432d0ab6a9421fb09350916632b">More...</a><br /></td></tr>
+<tr class="separator:acdbc6432d0ab6a9421fb09350916632b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the runner functionality. </p>
@@ -255,14 +259,60 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6f2787ea057f782ad094ded3ba7e5cf8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f2787ea057f782ad094ded3ba7e5cf8">&#9670;&nbsp;</a></span>scrRun()</h2>
+<a id="aa7519f93e21645afc07aecc576bc5a95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7519f93e21645afc07aecc576bc5a95">&#9670;&nbsp;</a></span>scrGroupPatchFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void int scrRun </td>
+          <td class="memname">void bool scrGroupPatchFunction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *&#160;</td>
+          <td class="paramname"><em>group</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>func_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>new_func</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enables monkeypatching of a function for all of a group's tests. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">group</td><td>The group handle. </td></tr>
+    <tr><td class="paramname">func_name</td><td>The name of the function to patch. </td></tr>
+    <tr><td class="paramname">new_func</td><td>The new function to use.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if successful and false otherwise. If monkeypatching was not enabled at compile time, then this function will always return false.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Functions within libscrutiny.so cannot be monkeypatched. </dd></dl>
+
+</div>
+</div>
+<a id="acdbc6432d0ab6a9421fb09350916632b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdbc6432d0ab6a9421fb09350916632b">&#9670;&nbsp;</a></span>scrRun()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void bool int scrRun </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structscrOptions.html">scrOptions</a> *&#160;</td>
           <td class="paramname"><em>options</em>, </td>
@@ -281,7 +331,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Runs all of tests. </p>
+<p>Runs all of the tests. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>A pointer to options to use. If NULL, default options will be used. </td></tr>

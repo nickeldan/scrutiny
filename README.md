@@ -234,10 +234,70 @@ The `flags` field in `scrOptions` is some bitwise-or combination of any or none 
 * `SCR_RUN_FLAG_FAIL_FAST`: Causes the framework to stop running tests as soon as any test either fails or encounters an error.
 * `SCR_RUN_FLAG_VERBOSE`: Show logging messages as well as `stdout`/`stderr` even when tests pass or are skipped.
 
+Monkeypatching
+--------------
+
+When building for Linux, you can add, at compile time, the ability to monkeypatch functions.  To enable monkeypatching, add `monkeypatch=yes` to your `make` invocation.
+
+Suppose, for example, you wanted `malloc` to always return `NULL` during testing.  You could create the fake function
+
+```c
+void *
+fake_malloc(size_t size)
+{
+    (void)size;
+    return NULL;
+}
+```
+
+and then patch `malloc` with
+
+```c
+bool
+scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func);
+```
+
+Here, `new_func` would be a function pointer to `fake_malloc`.  E.g.,
+
+```c
+if ( !scrGroupPatchFunction(group, "malloc", fake_malloc) ) {
+    // handle the error
+}
+```
+
+This test would then pass:
+
+```c
+void
+malloc_fail(void)
+{
+    SCR_ASSERT_PTR_EQ(malloc(1), NULL);
+}
+```
+
+When you attempt to patch a function, Scrutiny will walk your the process' maps file in procfs and identify any ELF files (libscrutiny.so is skipped).  If any of them contain a global offset table (GOT) entry for the specified function, the address of the entry will be recorded.  When a process running one of the tests in the group is started, it will be ptraced and those GOT entries will be altered to point to the interposed function.  If no GOT entries are found, then `scrGroupPatchFunction` will return `false`.
+
+During testing, you may acquire a pointer to the original function (e.g., the true `malloc`) by
+
+```c
+void
+some_test(void)
+{
+    void *(*true_malloc)(size_t);
+
+    true_malloc = scrPatchedFunction("malloc");
+    ...
+}
+```
+
+`scrPatchedFunction` will return `NULL` if a patch for the function was never registered.
+
+This feature is highly experimental and will probably not work in the presence of certain link-time optimizations.
+
 Building Scrutiny
 -----------------
 
-Scrutiny has a submodule so you'll need to add `--recurse-submodules` to your `git clone` invocation.
+Scrutiny has submodules so you'll need to add `--recurse-submodules` to your `git clone` invocation.
 
 You can build and install Scrutiny by
 
