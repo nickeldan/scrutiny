@@ -1,3 +1,5 @@
+#include "monkeypatch.h"
+
 #ifdef SCR_MONKEYPATCH
 
 #ifndef __linux__
@@ -13,10 +15,6 @@
 
 #include <elfjack/elfjack.h>
 #include <reap/reap.h>
-
-#include "monkeypatch.h"
-
-#include <sys/mman.h>
 
 struct fileRecord {
     char *path;

@@ -77,7 +77,7 @@ typedef struct scrStats {
  * @return  A group handle.
  */
 scrGroup *
-scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_MALLOC;
+scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT SCR_MALLOC;
 
 /**
  * @brief Adds a test to a group.
@@ -90,7 +90,7 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_MALLOC;
  */
 void
 scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
-                unsigned int flags) SCR_NONNULL(1, 2, 3);
+                unsigned int flags) SCR_EXPORT SCR_NONNULL(1, 2, 3);
 
 /**
  * @brief Enables monkeypatching of a function for all of a group's tests.
@@ -105,7 +105,7 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned i
  * @note                Functions within libscrutiny.so cannot be monkeypatched.
  */
 bool
-scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func) SCR_NONNULL(1, 2, 3);
+scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func) SCR_EXPORT SCR_NONNULL(1, 2, 3);
 
 /**
  * @brief Runs all of the tests.
@@ -116,6 +116,6 @@ scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func) SC
  * @return              0 if all of the tests either passed or were skipped and 1 otherwise.
  */
 int
-scrRun(const scrOptions *options, scrStats *stats);
+scrRun(const scrOptions *options, scrStats *stats) SCR_EXPORT;
 
 #endif  // SCRUTINY_RUN_H
