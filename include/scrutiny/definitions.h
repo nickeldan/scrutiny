@@ -3,6 +3,7 @@
 
 #ifdef __GNUC__
 
+#define SCR_EXPORT       __attribute__((visibility("default")))
 #define SCR_MALLOC       __attribute__((malloc))
 #define SCR_NONNULL(...) __attribute__((nonnull(__VA_ARGS__)))
 #define SCR_PURE         __attribute__((pure))
@@ -11,6 +12,7 @@
 
 #else
 
+#define SCR_EXPORT
 #define SCR_MALLOC
 #define SCR_NONNULL(...)
 #define SCR_PURE

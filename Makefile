@@ -1,4 +1,4 @@
-CFLAGS := -std=gnu99 -fdiagnostics-color -Wall -Wextra -Wshadow -Werror
+CFLAGS := -std=gnu99 -fdiagnostics-color -Wall -Wextra -Werror -fvisibility=hidden -DGEAR_NO_EXPORT
 ifeq ($(debug),yes)
     CFLAGS += -O0 -g -DDEBUG
 else
@@ -27,7 +27,7 @@ SCR_HEADER_FILES := $(SCR_ONLY_HEADER_FILES) $(GEAR_HEADER_FILES)
 SCR_INCLUDE_FLAGS := -Iinclude $(GEAR_INCLUDE_FLAGS)
 
 ifeq ($(monkeypatch),yes)
-CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_PROC -DREAP_NO_ITERATE_FD -DREAP_NO_ITERATE_NET -DREAP_NO_ITERATE_THREAD
+CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_PROC -DREAP_NO_ITERATE_FD -DREAP_NO_ITERATE_NET -DREAP_NO_ITERATE_THREAD -DREAP_NO_EXPORT -DEJ_NO_EXPORT
 endif
 
 REAP_DIR := packages/reap
@@ -62,15 +62,16 @@ include $(SCR_DEPS_FILE)
 
 endif
 
-$(SCR_SHARED_LIBRARY): $(SCR_OBJECT_FILES) src/vis.map
+$(SCR_SHARED_LIBRARY): $(SCR_OBJECT_FILES)
 	@mkdir -p $(@D)
-	$(CC) $(LDFLAGS) -Wl,--version-script,src/vis.map -Wl,--gc-sections -shared -o $@ $(filter %.o,$^)
+	$(CC) $(LDFLAGS) -Wl,--gc-sections -shared -o $@ $(filter %.o,$^)
 
 scr_clean:
 	@rm -f $(SCR_SHARED_LIBRARY) $(SCR_OBJECT_FILES)
 
 CLEAN_TARGETS += scr_clean
 TEST_DIR := tests
+
 include $(TEST_DIR)/make.mk
 
 .PHONY: all _all format install uninstall clean tests $(CLEAN_TARGETS)
