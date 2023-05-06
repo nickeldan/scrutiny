@@ -1,4 +1,4 @@
-FROM debian:9
+FROM debian:latest
 
 RUN apt -y update && \
     apt -y install build-essential
@@ -6,6 +6,6 @@ RUN apt -y update && \
 COPY ./ /scrutiny/
 
 RUN cd /scrutiny && \
-    make install
+    make monkeypatch=yes install
 
 RUN rm -rf /scrutiny
