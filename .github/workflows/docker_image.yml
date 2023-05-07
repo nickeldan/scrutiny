@@ -4,8 +4,6 @@ on:
   release:
     types: [published]
 
-  workflow_dispatch:
-
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -26,7 +24,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/i386
           push: true
           tags: |
             nickeldan/scrutiny:latest
