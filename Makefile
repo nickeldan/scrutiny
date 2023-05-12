@@ -5,6 +5,10 @@ else
     CFLAGS += -O2 -DNDEBUG
 endif
 
+ifeq ($(monkeypatch),yes)
+CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_PROC -DREAP_NO_ITERATE_FD -DREAP_NO_ITERATE_NET -DREAP_NO_ITERATE_THREAD -DREAP_NO_EXPORT -DEJ_NO_EXPORT
+endif
+
 all: _all
 
 BUILD_DEPS :=
@@ -26,10 +30,6 @@ SCR_ONLY_HEADER_FILES := $(wildcard include/scrutiny/*.h)
 SCR_HEADER_FILES := $(SCR_ONLY_HEADER_FILES) $(GEAR_HEADER_FILES)
 SCR_INCLUDE_FLAGS := -Iinclude $(GEAR_INCLUDE_FLAGS)
 
-ifeq ($(monkeypatch),yes)
-CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_PROC -DREAP_NO_ITERATE_FD -DREAP_NO_ITERATE_NET -DREAP_NO_ITERATE_THREAD -DREAP_NO_EXPORT -DEJ_NO_EXPORT
-endif
-
 REAP_DIR := packages/reap
 include $(REAP_DIR)/make.mk
 
@@ -37,11 +37,9 @@ EJ_DIR := packages/elfjack
 include $(EJ_DIR)/make.mk
 
 ifeq ($(monkeypatch),yes)
-
 SCR_OBJECT_FILES += $(REAP_OBJECT_FILES) $(EJ_OBJECT_FILES)
 SCR_HEADER_FILES += $(REAP_HEADER_FILES) $(EJ_HEADER_FILES)
 SCR_INCLUDE_FLAGS += $(REAP_INCLUDE_FLAGS) $(EJ_INCLUDE_FLAGS)
-
 endif
 
 SCR_DEPS_FILE := src/deps.mk
@@ -70,9 +68,11 @@ scr_clean:
 	@rm -f $(SCR_SHARED_LIBRARY) $(SCR_OBJECT_FILES)
 
 CLEAN_TARGETS += scr_clean
-TEST_DIR := tests
 
+ifneq ($(docker_build),yes)
+TEST_DIR := tests
 include $(TEST_DIR)/make.mk
+endif
 
 .PHONY: all _all format install uninstall clean tests $(CLEAN_TARGETS)
 
