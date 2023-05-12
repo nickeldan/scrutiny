@@ -90,7 +90,7 @@ scrGroupCtx(void)
 void
 scrTestSkip(void)
 {
-    exit(SCR_TEST_CODE_SKIP);
+    _exit(SCR_TEST_CODE_SKIP);
 }
 
 void
@@ -130,7 +130,7 @@ scrFail(SCR_CONTEXT_DECL, const char *format, ...)
         LOG_STRING(RESET_COLOR);
     }
 
-    exit(SCR_TEST_CODE_FAIL);
+    _exit(SCR_TEST_CODE_FAIL);
 }
 
 SCR_ASSERT_FUNC(Eq, intmax_t)
