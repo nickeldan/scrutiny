@@ -19,7 +19,7 @@ signalHandler(int signum)
     (void)signum;
     kill(0, SIGTERM);
     while (wait(NULL) > 0) {}
-    exit(1);
+    _exit(1);
 }
 
 static void
@@ -93,7 +93,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         close(fds[0]);
         close(error_fds[0]);
         removeSignalHandler();
-        exit(groupDo(group, options, show_color, error_fds[1], fds[1]));
+        _exit(groupDo(group, options, show_color, error_fds[1], fds[1]));
     default: break;
     }
 

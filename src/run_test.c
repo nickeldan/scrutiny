@@ -247,7 +247,7 @@ testRun(const scrTestParam *param, bool verbose, bool show_color)
     child = cleanFork();
     switch (child) {
     case -1: perror("fork"); goto done;
-    case 0: exit(testDo(&fds, param));
+    case 0: _exit(testDo(&fds, param));
     default: break;
     }
 
