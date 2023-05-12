@@ -6,6 +6,6 @@ RUN apt -y update && \
 COPY ./ /scrutiny/
 
 RUN cd /scrutiny && \
-    make monkeypatch=yes install
+    make docker_build=yes monkeypatch=yes install
 
 RUN rm -rf /scrutiny

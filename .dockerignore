@@ -1,0 +1,17 @@
+*.o
+*.so
+deps.mk
+changelog
+Dockerfile
+.dockerignore
+docs/
+Doxyfile
+LICENSE
+README.md
+scripts/
+tests/
+.git/
+.github/
+.gitignore
+.gitmodules
+.clang-format
