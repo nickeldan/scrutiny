@@ -109,7 +109,7 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
         int remaining = -1, res;
 
         if (timeout > 0 && !*timed_out) {
-            time_t elapsed;
+            unsigned long elapsed;
             struct timespec now;
 
             clock_gettime(SCR_CLOCK_TYPE, &now);

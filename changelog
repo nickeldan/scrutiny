@@ -1,3 +1,6 @@
+0.6.2:
+    - Fixed an integer comparison error for i386 builds.
+
 0.6.1:
     - Replaced some calls to exit with _exit.
 
