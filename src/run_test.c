@@ -113,25 +113,25 @@ hasData(int fd)
 }
 
 static void
-showTestOutput(const struct testFds *fds, bool show_color)
+showTestOutput(const struct testFds *fds)
 {
     bool some_output = false;
 
     if (hasData(fds->log_fd)) {
-        dumpFd(fds->log_fd, show_color);
+        dumpFd(fds->log_fd);
         some_output = true;
     }
 
     if (hasData(fds->stdout_fd)) {
         printf("\n-------- stdout --------\n");
-        dumpFd(fds->stdout_fd, show_color);
+        dumpFd(fds->stdout_fd);
         printf("\n------------------------\n");
         some_output = true;
     }
 
     if (hasData(fds->stderr_fd)) {
         printf("\n-------- stderr --------\n");
-        dumpFd(fds->stderr_fd, show_color);
+        dumpFd(fds->stderr_fd);
         printf("\n------------------------\n");
         some_output = true;
     }
@@ -143,7 +143,7 @@ showTestOutput(const struct testFds *fds, bool show_color)
 
 static scrTestCode
 summarizeTest(const scrTestParam *param, const struct testFds *fds, pid_t child, const int *status_ptr,
-              bool verbose, bool show_color)
+              bool verbose)
 {
     scrTestCode ret;
     int status;
@@ -181,11 +181,11 @@ summarizeTest(const scrTestParam *param, const struct testFds *fds, pid_t child,
         if (ret == SCR_TEST_CODE_OK || ret == SCR_TEST_CODE_SKIP) {
             show_output = false;
         }
-        showTestResult(param, ret, show_color);
+        showTestResult(param, ret);
     }
 
     if (show_output || verbose) {
-        showTestOutput(fds, show_color);
+        showTestOutput(fds);
     }
 
     return ret;
@@ -215,9 +215,9 @@ makeTempFile(char *template)
 
 scrTestCode
 #ifdef SCR_MONKEYPATCH
-testRun(const scrTestParam *param, bool verbose, bool show_color, const gear *patch_goals)
+testRun(const scrTestParam *param, bool verbose, const gear *patch_goals)
 #else
-testRun(const scrTestParam *param, bool verbose, bool show_color)
+testRun(const scrTestParam *param, bool verbose)
 #endif
 {
 #ifdef SCR_MONKEYPATCH
@@ -257,7 +257,7 @@ testRun(const scrTestParam *param, bool verbose, bool show_color)
     }
 #endif
 
-    ret = summarizeTest(param, &fds, child, status_ptr, verbose, show_color);
+    ret = summarizeTest(param, &fds, child, status_ptr, verbose);
 
 done:
     close(fds.stdout_fd);

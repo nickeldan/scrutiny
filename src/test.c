@@ -11,7 +11,6 @@
 
 static void *group_ctx;
 static int log_fd;
-static bool show_color;
 
 #define LOG_STRING(str)                                 \
     do {                                                \
@@ -67,12 +66,6 @@ void
 setGroupCtx(void *ctx)
 {
     group_ctx = ctx;
-}
-
-void
-setShowColor(bool should_show_color)
-{
-    show_color = should_show_color;
 }
 
 void
