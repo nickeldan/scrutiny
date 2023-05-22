@@ -33,7 +33,7 @@ removeSignalHandler(void)
 }
 
 static bool
-receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_color)
+receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats)
 {
     bool were_failures;
     ssize_t transmitted;
@@ -51,7 +51,7 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_colo
         stats->num_errored += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
         {
-            showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
+            showTestResult(param, SCR_TEST_CODE_ERROR);
         }
 
         were_failures = true;
@@ -69,7 +69,7 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats, bool show_colo
 }
 
 static bool
-groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool show_color)
+groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
 {
     bool were_failures;
     int status, exit_code;
@@ -93,7 +93,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         close(fds[0]);
         close(error_fds[0]);
         removeSignalHandler();
-        _exit(groupDo(group, options, show_color, error_fds[1], fds[1]));
+        _exit(groupDo(group, options, error_fds[1], fds[1]));
     default: break;
     }
 
@@ -110,7 +110,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         stats->num_errored += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
         {
-            showTestResult(param, SCR_TEST_CODE_ERROR, show_color);
+            showTestResult(param, SCR_TEST_CODE_ERROR);
         }
     }
     else if (exit_code == SCR_TEST_CODE_SKIP) {
@@ -118,7 +118,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         stats->num_skipped += group->params.length;
         GEAR_FOR_EACH(&group->params, param)
         {
-            showTestResult(param, SCR_TEST_CODE_SKIP, show_color);
+            showTestResult(param, SCR_TEST_CODE_SKIP);
         }
     }
     else if (exit_code != SCR_TEST_CODE_OK) {
@@ -132,12 +132,12 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats, bool
         }
         GEAR_FOR_EACH(&group->params, param)
         {
-            showTestResult(param, exit_code, show_color);
+            showTestResult(param, exit_code);
         }
-        dumpFd(error_fds[0], show_color);
+        dumpFd(error_fds[0]);
     }
     else {
-        were_failures = receiveStats(fds[0], group, stats, show_color);
+        were_failures = receiveStats(fds[0], group, stats);
     }
 
     close(fds[0]);
@@ -192,7 +192,6 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 int
 scrRun(const scrOptions *options, scrStats *stats)
 {
-    bool show_color;
     scrStats stats_obj;
     const scrOptions options_obj = {0};
     scrGroup *group;
@@ -216,7 +215,7 @@ scrRun(const scrOptions *options, scrStats *stats)
 
     GEAR_FOR_EACH(&groups, group)
     {
-        if (!groupRun(group, options, stats, show_color)) {
+        if (!groupRun(group, options, stats)) {
             break;
         }
     }

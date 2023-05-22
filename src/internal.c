@@ -14,12 +14,14 @@
 #define SCR_CLOCK_TYPE CLOCK_MONOTONIC
 #endif
 
+bool show_color;
+
 static void
 killAndExit(pid_t child)
 {
     kill(child, SIGKILL);
     while (waitpid(child, NULL, 0) < 0) {}
-    exit(1);
+    _exit(1);
 }
 
 pid_t
@@ -31,7 +33,7 @@ cleanFork(void)
 }
 
 void
-dumpFd(int fd, bool show_color)
+dumpFd(int fd)
 {
     ssize_t transmitted;
     char buffer[1024];
@@ -47,7 +49,7 @@ dumpFd(int fd, bool show_color)
 }
 
 void
-showTestResult(const scrTestParam *param, scrTestCode result, bool show_color)
+showTestResult(const scrTestParam *param, scrTestCode result)
 {
     bool xfail = (param->flags & SCR_TEST_FLAG_XFAIL);
 

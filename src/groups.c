@@ -8,7 +8,7 @@
 #include "monkeypatch.h"
 
 static bool
-groupSetup(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd, void **group_ctx)
+groupSetup(const scrGroup *group, const scrOptions *options, int error_fd, void **group_ctx)
 {
     sigset_t set;
 
@@ -19,8 +19,6 @@ groupSetup(const scrGroup *group, const scrOptions *options, bool show_color, in
 
     sigfillset(&set);
     sigprocmask(SIG_SETMASK, &set, NULL);
-
-    setShowColor(show_color);
 
     if (group->create_fn) {
         setLogFd(error_fd);
@@ -35,13 +33,13 @@ groupSetup(const scrGroup *group, const scrOptions *options, bool show_color, in
 }
 
 int
-groupDo(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd, int pipe_fd)
+groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe_fd)
 {
     void *group_ctx;
     scrStats stats_obj = {0};
     scrTestParam *param;
 
-    if (!groupSetup(group, options, show_color, error_fd, &group_ctx)) {
+    if (!groupSetup(group, options, error_fd, &group_ctx)) {
         return SCR_TEST_CODE_ERROR;
     }
 
@@ -50,9 +48,9 @@ groupDo(const scrGroup *group, const scrOptions *options, bool show_color, int e
         int result;
 
 #ifdef SCR_MONKEYPATCH
-        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE, show_color, &group->patch_goals);
+        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE, &group->patch_goals);
 #else
-        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE, show_color);
+        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE);
 #endif
 
         switch (result) {

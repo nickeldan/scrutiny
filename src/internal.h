@@ -54,35 +54,34 @@ pid_t
 cleanFork(void);
 
 void
-dumpFd(int fd, bool show_color);
+dumpFd(int fd);
 
 int
-groupDo(const scrGroup *group, const scrOptions *options, bool show_color, int error_fd, int pipe_fd);
+groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe_fd);
 
 void
 groupFree(scrGroup *group);
 
 void
-showTestResult(const scrTestParam *param, scrTestCode result, bool show_color);
+showTestResult(const scrTestParam *param, scrTestCode result);
 
 #ifdef SCR_MONKEYPATCH
 scrTestCode
-testRun(const scrTestParam *param, bool verbose, bool show_color, const gear *patch_goals);
+testRun(const scrTestParam *param, bool verbose, const gear *patch_goals);
 #else
 scrTestCode
-testRun(const scrTestParam *param, bool verbose, bool show_color);
+testRun(const scrTestParam *param, bool verbose);
 #endif
 
 void
 setGroupCtx(void *ctx);
 
 void
-setShowColor(bool should_show_color);
-
-void
 setLogFd(int fd);
 
 void
 waitForProcess(pid_t pid, unsigned int timeout, int *status, bool *timed_out);
+
+extern bool show_color;
 
 #endif  // SCRUTINY_INTERNAL_H
