@@ -9,4 +9,4 @@
 [submodule "packages/elfjack"]
 	path = packages/elfjack
 	url = https://github.com/nickeldan/elfjack
-    tag = 0.1.3
+    tag = 0.1.4
