@@ -17,6 +17,7 @@
 #include <reap/reap.h>
 
 struct fileRecord {
+    linkedListNode node;
     char *path;
     ejAddr file_start;
     ino_t inode;
@@ -25,31 +26,36 @@ struct fileRecord {
 };
 
 struct patchInfo {
+    linkedListNode node;
     char *func_name;
     void *real_addr;
 };
 
-static gear file_records;
-static gear patched_functions;
-static size_t scrutiny_idx;
+static linkedList file_records;
+static linkedList patched_functions;
+static struct fileRecord *scrutiny_record;
+
+static void
+fileRecordFree(void *item)
+{
+    struct fileRecord *record = item;
+
+    free(record->path);
+}
+
+static void
+patchInfoFree(void *item)
+{
+    struct patchInfo *info = item;
+
+    free(info->func_name);
+}
 
 static void
 freeMonkeypatchData(void)
 {
-    struct fileRecord *record;
-    struct patchInfo *info;
-
-    GEAR_FOR_EACH(&file_records, record)
-    {
-        free(record->path);
-    }
-    gearReset(&file_records);
-
-    GEAR_FOR_EACH(&patched_functions, info)
-    {
-        free(info->func_name);
-    }
-    gearReset(&patched_functions);
+    linkedListFree(&file_records, fileRecordFree);
+    linkedListFree(&patched_functions, patchInfoFree);
 }
 
 static bool
@@ -57,7 +63,7 @@ haveSeen(dev_t device, ino_t inode)
 {
     struct fileRecord *record;
 
-    GEAR_FOR_EACH(&file_records, record)
+    LINKED_LIST_ITERATE(&file_records, record)
     {
         if (record->inode == inode && record->device == device) {
             return true;
@@ -68,59 +74,52 @@ haveSeen(dev_t device, ino_t inode)
 }
 
 static void
-searchForGotEntry(const ejElfInfo *info, const char *func_name, gear *got_entries, ejAddr file_start)
+searchForGotEntry(const ejElfInfo *info, const char *func_name, linkedList *got_entries, ejAddr file_start)
 {
-    ejAddr entry;
-    void *ptr;
+    scrGotEntry *entry;
+    ejAddr addr;
 
-    entry = ejFindGotEntry(info, func_name);
-    if (entry == EJ_ADDR_NOT_FOUND) {
+    addr = ejFindGotEntry(info, func_name);
+    if (addr == EJ_ADDR_NOT_FOUND) {
         return;
     }
 
-    ptr = (void *)(intptr_t)ejResolveAddress(info, entry, file_start);
-    if (gearAppend(got_entries, &ptr) != GEAR_RET_OK) {
-        exit(1);
-    }
+    entry = linkedListNodeNew(sizeof(*entry));
+    entry->entry = (void *)(uintptr_t)ejResolveAddress(info, addr, file_start);
+    linkedListAppend(got_entries, &entry->node);
 }
 
 static void
 addPatchInfo(const char *func_name, ejAddr addr)
 {
-    struct patchInfo info;
-    struct patchInfo *ptr;
+    struct patchInfo *info;
 
-    GEAR_FOR_EACH(&patched_functions, ptr)
+    LINKED_LIST_ITERATE(&patched_functions, info)
     {
-        if (strcmp(ptr->func_name, func_name) == 0) {
+        if (strcmp(info->func_name, func_name) == 0) {
             return;
         }
     }
 
-    info.func_name = strdup(func_name);
-    if (!info.func_name) {
+    info = linkedListNodeNew(sizeof(*info));
+    info->func_name = strdup(func_name);
+    if (!info->func_name) {
         exit(1);
     }
-    info.real_addr = (void *)(uintptr_t)addr;
+    info->real_addr = (void *)(uintptr_t)addr;
 
-    if (gearAppend(&patched_functions, &info) != GEAR_RET_OK) {
-        exit(1);
-    }
+    linkedListAppend(&patched_functions, &info->node);
 }
 
 static bool
-populateRecords(const char *func_name, gear *got_entries)
+populateRecords(const char *func_name, linkedList *got_entries)
 {
     int ret;
-    bool found_scrutiny = false;
     ejAddr addr = EJ_ADDR_NOT_FOUND;
     char path[PATH_MAX];
     reapMapIterator *iterator;
     reapMapResult result;
 
-    gearInit(&file_records, sizeof(struct fileRecord));
-    gearSetExpansion(&file_records, 5, 5);
-    gearInit(&patched_functions, sizeof(struct patchInfo));
     atexit(freeMonkeypatchData);
 
     if (reapMapIteratorCreate(getpid(), &iterator) != REAP_RET_OK) {
@@ -129,27 +128,27 @@ populateRecords(const char *func_name, gear *got_entries)
     }
 
     while ((ret = reapMapIteratorNext(iterator, &result, path, sizeof(path))) == REAP_RET_OK) {
-        struct fileRecord record = {0};
+        struct fileRecord *record;
         ejElfInfo info;
 
         if (path[0] != '/' || haveSeen(result.device, result.inode)) {
             continue;
         }
 
-        record.device = result.device;
-        record.inode = result.inode;
+        record = linkedListNodeNew(sizeof(*record));
+        record->device = result.device;
+        record->inode = result.inode;
 
         if (ejParseElf(path, &info) == EJ_RET_OK) {
-            record.is_elf = true;
-            record.file_start = result.start;
-            record.path = strdup(path);
-            if (!record.path) {
+            record->is_elf = true;
+            record->file_start = result.start;
+            record->path = strdup(path);
+            if (!record->path) {
                 exit(1);
             }
 
-            if (!found_scrutiny && ejFindFunction(&info, "scrRun") != EJ_ADDR_NOT_FOUND) {
-                scrutiny_idx = file_records.length;
-                found_scrutiny = true;
+            if (!scrutiny_record && ejFindFunction(&info, "scrRun") != EJ_ADDR_NOT_FOUND) {
+                scrutiny_record = record;
             }
             else if (addr == EJ_ADDR_NOT_FOUND &&
                      (addr = ejFindFunction(&info, func_name)) != EJ_ADDR_NOT_FOUND) {
@@ -161,10 +160,12 @@ populateRecords(const char *func_name, gear *got_entries)
 
             ejReleaseInfo(&info);
         }
-
-        if (gearAppend(&file_records, &record) != GEAR_RET_OK) {
-            exit(1);
+        else {
+            record->path = NULL;
+            record->is_elf = false;
         }
+
+        linkedListAppend(&file_records, &record->node);
     }
 
     reapMapIteratorDestroy(iterator);
@@ -173,7 +174,7 @@ populateRecords(const char *func_name, gear *got_entries)
         exit(1);
     }
 
-    if (!found_scrutiny) {
+    if (!scrutiny_record) {
         fprintf(stderr, "libscrutiny.so not found in memory\n");
         exit(1);
     }
@@ -188,21 +189,20 @@ populateRecords(const char *func_name, gear *got_entries)
 }
 
 bool
-findFunction(const char *func_name, gear *got_entries)
+findFunction(const char *func_name, linkedList *got_entries)
 {
-    size_t idx;
     ejAddr addr = EJ_ADDR_NOT_FOUND;
     struct fileRecord *record;
 
-    if (file_records.item_size == 0) {
+    if (!file_records.head) {
         return populateRecords(func_name, got_entries);
     }
 
-    GEAR_FOR_EACH_WITH_INDEX(&file_records, record, idx)
+    LINKED_LIST_ITERATE(&file_records, record)
     {
         ejElfInfo info;
 
-        if (!record->is_elf || idx == scrutiny_idx) {
+        if (!record->is_elf || record == scrutiny_record) {
             continue;
         }
 
@@ -234,7 +234,7 @@ scrPatchedFunction(const char *func_name)
 {
     struct patchInfo *info;
 
-    GEAR_FOR_EACH(&patched_functions, info)
+    LINKED_LIST_ITERATE(&patched_functions, info)
     {
         if (strcmp(info->func_name, func_name) == 0) {
             return info->real_addr;
@@ -242,6 +242,15 @@ scrPatchedFunction(const char *func_name)
     }
 
     return NULL;
+}
+
+void
+patchGoalFree(void *item)
+{
+    scrPatchGoal *goal = item;
+
+    free(goal->func_name);
+    linkedListFree(&goal->got_entries, NULL);
 }
 
 #else  // SCR_MONKEYPATCH

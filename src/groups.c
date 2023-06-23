@@ -7,6 +7,14 @@
 #include "internal.h"
 #include "monkeypatch.h"
 
+static void
+paramFree(void *item)
+{
+    scrTestParam *param = item;
+
+    free(param->name);
+}
+
 static bool
 groupSetup(const scrGroup *group, const scrOptions *options, int error_fd, void **group_ctx)
 {
@@ -43,7 +51,7 @@ groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe
         return SCR_TEST_CODE_ERROR;
     }
 
-    GEAR_FOR_EACH(&group->params, param)
+    LINKED_LIST_ITERATE(&group->params, param)
     {
         int result;
 
@@ -81,26 +89,32 @@ void
 scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
                 unsigned int flags)
 {
-    scrTestParam param = {.test_fn = test_fn, .timeout = timeout, .flags = flags};
+    scrTestParam *param;
 
-    param.name = strdup(name);
-    if (!param.name) {
+    param = linkedListNodeNew(sizeof(*param));
+    if (!param) {
+        exit(1);
+    }
+    param->test_fn = test_fn;
+    param->timeout = timeout;
+    param->flags = flags;
+    param->name = strdup(name);
+    if (!param->name) {
         exit(1);
     }
 
-    if (gearAppend(&group->params, &param) != GEAR_RET_OK) {
-        exit(1);
-    }
+    linkedListAppend(&group->params, &param->node);
+    group->num_tests++;
 }
 
 bool
 scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func)
 {
 #ifdef SCR_MONKEYPATCH
-    scrPatchGoal goal = {.func_ptr = new_func};
+    scrPatchGoal *goal;
     scrPatchGoal *ptr;
 
-    GEAR_FOR_EACH(&group->patch_goals, ptr)
+    LINKED_LIST_ITERATE(&group->patch_goals, ptr)
     {
         if (strcmp(ptr->func_name, func_name) == 0) {
             fprintf(stderr, "A patch has already been registered for %s\n", func_name);
@@ -108,16 +122,21 @@ scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func)
         }
     }
 
-    gearInit(&goal.got_entries, sizeof(void *));
-    if (!findFunction(func_name, &goal.got_entries)) {
+    goal = linkedListNodeNew(sizeof(*goal));
+    goal->func_ptr = new_func;
+    goal->func_name = strdup(func_name);
+    if (!goal->func_name) {
+        exit(1);
+    }
+    linkedListInit(&goal->got_entries);
+
+    if (!findFunction(func_name, &goal->got_entries)) {
         fprintf(stderr, "%s not found\n", func_name);
+        patchGoalFree(goal);
         return false;
     }
 
-    goal.func_name = strdup(func_name);
-    if (!goal.func_name || gearAppend(&group->patch_goals, &goal) != GEAR_RET_OK) {
-        exit(1);
-    }
+    linkedListAppend(&group->patch_goals, &goal->node);
 
     return true;
 #else  // SCR_MONKEYPATCH
@@ -130,25 +149,12 @@ scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func)
 }
 
 void
-groupFree(scrGroup *group)
+groupFree(void *item)
 {
-    scrTestParam *param;
-#ifdef SCR_MONKEYPATCH
-    scrPatchGoal *goal;
-#endif
+    scrGroup *group = item;
 
-    GEAR_FOR_EACH(&group->params, param)
-    {
-        free(param->name);
-    }
-    gearReset(&group->params);
-
+    linkedListFree(&group->params, paramFree);
 #ifdef SCR_MONKEYPATCH
-    GEAR_FOR_EACH(&group->patch_goals, goal)
-    {
-        free(goal->func_name);
-        gearReset(&goal->got_entries);
-    }
-    gearReset(&group->patch_goals);
+    linkedListFree(&group->patch_goals, patchGoalFree);
 #endif
 }

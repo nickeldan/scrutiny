@@ -1,13 +1,13 @@
-#ifndef SCRUTINY_MONKEYPATCH_H
-#define SCRUTINY_MONKEYPATCH_H
+#pragma once
 
 #include "internal.h"
 
 #ifdef SCR_MONKEYPATCH
 
 bool
-findFunction(const char *func_name, gear *got_entries);
+findFunction(const char *func_name, linkedList *got_entries);
+
+void
+patchGoalFree(void *item);
 
 #endif  // SCR_MONKEYPATCH
-
-#endif  // SCRUTINY_MONKEYPATCH_H
