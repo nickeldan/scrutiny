@@ -1,4 +1,4 @@
-CFLAGS := -std=gnu99 -fdiagnostics-color -Wall -Wextra -Werror -fvisibility=hidden -DGEAR_NO_EXPORT
+CFLAGS := -std=gnu99 -fdiagnostics-color -Wall -Wextra -Werror -fvisibility=hidden
 ifeq ($(debug),yes)
     CFLAGS += -O0 -g -DDEBUG
 else
@@ -6,7 +6,7 @@ else
 endif
 
 ifeq ($(monkeypatch),yes)
-CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_PROC -DREAP_NO_ITERATE_FD -DREAP_NO_ITERATE_NET -DREAP_NO_ITERATE_THREAD -DREAP_NO_EXPORT -DEJ_NO_EXPORT
+CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_EXPORT -DEJ_NO_EXPORT
 endif
 
 all: _all
@@ -19,16 +19,13 @@ else
     BUILD_DEPS := yes
 endif
 
-GEAR_DIR := packages/gear
-include $(GEAR_DIR)/make.mk
-
 SCR_SHARED_LIBRARY := libscrutiny.so
 
 SCR_SOURCE_FILES := $(wildcard src/*.c)
-SCR_OBJECT_FILES := $(patsubst %.c,%.o,$(SCR_SOURCE_FILES)) $(GEAR_OBJECT_FILES)
+SCR_OBJECT_FILES := $(patsubst %.c,%.o,$(SCR_SOURCE_FILES))
 SCR_ONLY_HEADER_FILES := $(wildcard include/scrutiny/*.h)
-SCR_HEADER_FILES := $(SCR_ONLY_HEADER_FILES) $(GEAR_HEADER_FILES)
-SCR_INCLUDE_FLAGS := -Iinclude $(GEAR_INCLUDE_FLAGS)
+SCR_HEADER_FILES := $(SCR_ONLY_HEADER_FILES)
+SCR_INCLUDE_FLAGS := -Iinclude
 
 REAP_DIR := packages/reap
 include $(REAP_DIR)/make.mk

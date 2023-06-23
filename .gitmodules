@@ -1,11 +1,7 @@
-[submodule "gear"]
-	path = packages/gear
-	url = https://github.com/nickeldan/gear
-	tag = 0.6.2
 [submodule "packages/reap"]
 	path = packages/reap
 	url = https://github.com/nickeldan/reap
-    tag = 1.0.2
+    tag = 1.0.3
 [submodule "packages/elfjack"]
 	path = packages/elfjack
 	url = https://github.com/nickeldan/elfjack

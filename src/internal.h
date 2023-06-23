@@ -1,12 +1,11 @@
-#ifndef SCRUTINY_INTERNAL_H
-#define SCRUTINY_INTERNAL_H
+#pragma once
 
 #include <stdbool.h>
 #include <sys/types.h>
 
-#include <gear/gear.h>
-
 #include <scrutiny/scrutiny.h>
+
+#include "linked_list.h"
 
 typedef enum scrTestCode {
     SCR_TEST_CODE_OK = 0,
@@ -16,6 +15,7 @@ typedef enum scrTestCode {
 } scrTestCode;
 
 typedef struct scrTestParam {
+    linkedListNode node;
     scrTestFn *test_fn;
     char *name;
     unsigned int timeout;
@@ -24,21 +24,29 @@ typedef struct scrTestParam {
 
 #ifdef SCR_MONKEYPATCH
 
+typedef struct scrGotEntry {
+    linkedListNode node;
+    void *entry;
+} scrGotEntry;
+
 typedef struct scrPatchGoal {
+    linkedListNode node;
     char *func_name;
     void *func_ptr;
-    gear got_entries;
+    linkedList got_entries;
 } scrPatchGoal;
 
 #endif
 
 struct scrGroup {
+    linkedListNode node;
     scrCtxCreateFn *create_fn;
     scrCtxCleanupFn *cleanup_fn;
-    gear params;
+    linkedList params;
 #ifdef SCR_MONKEYPATCH
-    gear patch_goals;
+    linkedList patch_goals;
 #endif
+    unsigned int num_tests;
 };
 
 #ifndef ARRAY_LENGTH
@@ -60,14 +68,14 @@ int
 groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe_fd);
 
 void
-groupFree(scrGroup *group);
+groupFree(void *item);
 
 void
 showTestResult(const scrTestParam *param, scrTestCode result);
 
 #ifdef SCR_MONKEYPATCH
 scrTestCode
-testRun(const scrTestParam *param, bool verbose, const gear *patch_goals);
+testRun(const scrTestParam *param, bool verbose, const linkedList *patch_goals);
 #else
 scrTestCode
 testRun(const scrTestParam *param, bool verbose);
@@ -83,5 +91,3 @@ void
 waitForProcess(pid_t pid, unsigned int timeout, int *status, bool *timed_out);
 
 extern bool show_color;
-
-#endif  // SCRUTINY_INTERNAL_H

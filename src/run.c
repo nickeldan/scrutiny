@@ -10,7 +10,7 @@
 #include "internal.h"
 #include "monkeypatch.h"
 
-static gear groups;
+static linkedList groups;
 static const int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
 
 static void
@@ -48,8 +48,8 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats)
         else {
             fprintf(stderr, "Failed to communicate with group runner\n");
         }
-        stats->num_errored += group->params.length;
-        GEAR_FOR_EACH(&group->params, param)
+        stats->num_errored += group->num_tests;
+        LINKED_LIST_ITERATE(&group->params, param)
         {
             showTestResult(param, SCR_TEST_CODE_ERROR);
         }
@@ -77,7 +77,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
     int fds[2], error_fds[2];
     scrTestParam *param;
 
-    if (group->params.length == 0) {
+    if (group->num_tests == 0) {
         return true;
     }
 
@@ -107,16 +107,16 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
     if (WIFSIGNALED(status)) {
         were_failures = true;
         fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
-        stats->num_errored += group->params.length;
-        GEAR_FOR_EACH(&group->params, param)
+        stats->num_errored += group->num_tests;
+        LINKED_LIST_ITERATE(&group->params, param)
         {
             showTestResult(param, SCR_TEST_CODE_ERROR);
         }
     }
     else if (exit_code == SCR_TEST_CODE_SKIP) {
         were_failures = false;
-        stats->num_skipped += group->params.length;
-        GEAR_FOR_EACH(&group->params, param)
+        stats->num_skipped += group->num_tests;
+        LINKED_LIST_ITERATE(&group->params, param)
         {
             showTestResult(param, SCR_TEST_CODE_SKIP);
         }
@@ -124,13 +124,13 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
     else if (exit_code != SCR_TEST_CODE_OK) {
         were_failures = true;
         if (exit_code == SCR_TEST_CODE_FAIL) {
-            stats->num_failed += group->params.length;
+            stats->num_failed += group->num_tests;
         }
         else {
             fprintf(stderr, "Group runner exited with an error\n");
-            stats->num_errored += group->params.length;
+            stats->num_errored += group->num_tests;
         }
-        GEAR_FOR_EACH(&group->params, param)
+        LINKED_LIST_ITERATE(&group->params, param)
         {
             showTestResult(param, exit_code);
         }
@@ -149,24 +149,17 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
 static void
 freeResources(void)
 {
-    scrGroup *group;
-
-    GEAR_FOR_EACH(&groups, group)
-    {
-        groupFree(group);
-    }
-    gearReset(&groups);
+    linkedListFree(&groups, groupFree);
 }
 
 scrGroup *
 scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 {
-    scrGroup group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
+    scrGroup *group;
 
-    if (groups.item_size == 0) {
+    if (!groups.head) {
         struct sigaction action = {.sa_handler = signalHandler};
 
-        gearInit(&groups, sizeof(scrGroup));
         atexit(freeResources);
 
         sigfillset(&action.sa_mask);
@@ -175,18 +168,17 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
         }
     }
 
-    gearInit(&group.params, sizeof(scrTestParam));
-    gearSetExpansion(&group.params, 5, 10);
-
+    group = linkedListNodeNew(sizeof(*group));
+    group->create_fn = create_fn;
+    group->cleanup_fn = cleanup_fn;
+    linkedListInit(&group->params);
 #ifdef SCR_MONKEYPATCH
-    gearInit(&group.patch_goals, sizeof(scrPatchGoal));
+    linkedListInit(&group->patch_goals);
 #endif
+    group->num_tests = 0;
 
-    if (gearAppend(&groups, &group) != GEAR_RET_OK) {
-        exit(1);
-    }
-
-    return GEAR_GET_ITEM(&groups, groups.length - 1);
+    linkedListAppend(&groups, &group->node);
+    return group;
 }
 
 int
@@ -203,7 +195,7 @@ scrRun(const scrOptions *options, scrStats *stats)
 
     printf("Scrutiny %s\n\n", SCRUTINY_VERSION);
 
-    if (groups.item_size == 0) {
+    if (!groups.head) {
         goto show_summary;
     }
 
@@ -213,7 +205,7 @@ scrRun(const scrOptions *options, scrStats *stats)
 
     show_color = isatty(STDOUT_FILENO);
 
-    GEAR_FOR_EACH(&groups, group)
+    LINKED_LIST_ITERATE(&groups, group)
     {
         if (!groupRun(group, options, stats)) {
             break;

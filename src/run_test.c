@@ -23,7 +23,7 @@ struct testFds {
 #include <sys/ptrace.h>
 
 static bool
-applyPatches(pid_t child, const gear *patch_goals, int *status)
+applyPatches(pid_t child, const linkedList *patch_goals, int *status)
 {
     scrPatchGoal *goal;
 
@@ -33,17 +33,17 @@ applyPatches(pid_t child, const gear *patch_goals, int *status)
         return false;
     }
 
-    GEAR_FOR_EACH(patch_goals, goal)
+    LINKED_LIST_ITERATE(patch_goals, goal)
     {
-        void **got_entry;
+        scrGotEntry *entry;
 
-        GEAR_FOR_EACH(&goal->got_entries, got_entry)
+        LINKED_LIST_ITERATE(&goal->got_entries, entry)
         {
-            if (ptrace(PTRACE_POKEDATA, child, *got_entry, goal->func_ptr) == -1) {
+            if (ptrace(PTRACE_POKEDATA, child, entry->entry, goal->func_ptr) == -1) {
                 perror("ptrace (POKEDATA)");
                 kill(child, SIGKILL);
                 ptrace(PTRACE_DETACH, child, NULL, NULL);
-                while (waitpid(child, status, 0) < 0 && !(WIFEXITED(*status) || WIFSIGNALED(*status))) {}
+                while (waitpid(child, status, 0) < 0 || !(WIFEXITED(*status) || WIFSIGNALED(*status))) {}
                 return false;
             }
         }
@@ -215,7 +215,7 @@ makeTempFile(char *template)
 
 scrTestCode
 #ifdef SCR_MONKEYPATCH
-testRun(const scrTestParam *param, bool verbose, const gear *patch_goals)
+testRun(const scrTestParam *param, bool verbose, const linkedList *patch_goals)
 #else
 testRun(const scrTestParam *param, bool verbose)
 #endif
