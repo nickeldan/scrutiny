@@ -520,7 +520,7 @@ fail_timeout(void)
 static void
 error_segfault(void)
 {
-    *(unsigned char *)SCR_GROUP_CTX() = 0;
+    *(unsigned char *)scrGroupCtx() = 0;
 }
 
 static void

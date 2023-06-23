@@ -26,11 +26,11 @@ linkedListAppend(linkedList *list, linkedListNode *node)
 {
     if (list->tail) {
         list->tail->next = node;
-        list->tail = node;
     }
     else {
-        list->head = list->tail = node;
+        list->head = node;
     }
+    list->tail = node;
 }
 
 void

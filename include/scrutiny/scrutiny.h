@@ -3,8 +3,7 @@
  * @brief Master include file.
  */
 
-#ifndef SCRUTINY_SCRUTINY_H
-#define SCRUTINY_SCRUTINY_H
+#pragma once
 
 /**
  * @brief Scrutiny's version.
@@ -13,5 +12,3 @@
 
 #include "run.h"
 #include "test.h"
-
-#endif  // SCRUTINY_SCRUTINY_H

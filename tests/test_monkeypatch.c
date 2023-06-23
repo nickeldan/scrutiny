@@ -31,7 +31,7 @@ test_true_getppid(void)
     pid_t answer;
     pid_t (*true_getppid)(void);
 
-    answer = (intptr_t)SCR_GROUP_CTX();
+    answer = (intptr_t)scrGroupCtx();
     true_getppid = scrPatchedFunction("getppid");
     SCR_ASSERT_PTR_NEQ(true_getppid, NULL);
     SCR_ASSERT_EQ(true_getppid(), answer);
