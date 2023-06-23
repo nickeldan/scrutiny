@@ -3,8 +3,7 @@
  * @brief Defines the runner functionality.
  */
 
-#ifndef SCRUTINY_RUN_H
-#define SCRUTINY_RUN_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -117,5 +116,3 @@ scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func) SC
  */
 int
 scrRun(const scrOptions *options, scrStats *stats) SCR_EXPORT;
-
-#endif  // SCRUTINY_RUN_H

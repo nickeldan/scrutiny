@@ -53,13 +53,13 @@ bad_setup(void *global_ctx)
 static void
 use_global_ctx(void)
 {
-    SCR_ASSERT_PTR_EQ(SCR_GROUP_CTX(), &global_num);
+    SCR_ASSERT_PTR_EQ(scrGroupCtx(), &global_num);
 }
 
 static void
 read_from_pipe1(void)
 {
-    int fd = *(int *)SCR_GROUP_CTX();
+    int fd = *(int *)scrGroupCtx();
     unsigned char buffer[2];
 
     SCR_ASSERT_EQ(read(fd, buffer, sizeof(buffer)), 2);
@@ -70,7 +70,7 @@ read_from_pipe1(void)
 static void
 read_from_pipe2(void)
 {
-    int fd = *(int *)SCR_GROUP_CTX();
+    int fd = *(int *)scrGroupCtx();
     unsigned char buffer[2];
 
     SCR_ASSERT_EQ(read(fd, buffer, sizeof(buffer)), 2);

@@ -3,14 +3,18 @@
  * @brief Defines the test macros.
  */
 
-#ifndef SCRUTINY_TEST_H
-#define SCRUTINY_TEST_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
 
 #include "definitions.h"
 
+/**
+ * @brief Gets the group context.
+ *
+ * @return  The group context.
+ */
 void *
 scrGroupCtx(void) SCR_EXPORT SCR_PURE;
 
@@ -23,11 +27,6 @@ scrGroupCtx(void) SCR_EXPORT SCR_PURE;
  */
 void *
 scrPatchedFunction(const char *func_name) SCR_EXPORT SCR_NONNULL(1);
-
-/**
- * @brief Returns the group context in the form of a void*.
- */
-#define SCR_GROUP_CTX() scrGroupCtx()
 
 void
 scrTestSkip(void) SCR_EXPORT SCR_NORETURN;
@@ -248,5 +247,3 @@ scrAssertMemEq(SCR_CONTEXT_DECL, const void *ptr1, const char *expr1, const void
  */
 #define SCR_ASSERT_MEM_EQ(expr1, expr2, size) \
     scrAssertMemEq(SCR_CONTEXT_PARAMS, expr1, #expr1, expr2, #expr2, size)
-
-#endif  // SCRUTINY_TEST_H

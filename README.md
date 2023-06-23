@@ -184,7 +184,7 @@ For each group of tests, there is a group context which is a `void*`.  It is acc
 
 ```c
 void my_test(void) {
-    void *ctx = SCR_GROUP_CTX();
+    void *ctx = scrGroupCtx();
 }
 ```
 

@@ -1,5 +1,4 @@
-#ifndef SCRUTINY_DEFINITIONS_H
-#define SCRUTINY_DEFINITIONS_H
+#pragma once
 
 #ifdef __GNUC__
 
@@ -20,5 +19,3 @@
 #define SCR_NORETURN
 
 #endif
-
-#endif  // SCRUTINY_DEFINITIONS_H
