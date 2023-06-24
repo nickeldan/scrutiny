@@ -134,7 +134,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
         {
             showTestResult(param, exit_code);
         }
-        dumpFd(error_fds[0]);
+        dumpFd(error_fds[0], false);
     }
     else {
         were_failures = receiveStats(fds[0], group, stats);

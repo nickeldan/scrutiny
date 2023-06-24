@@ -54,7 +54,7 @@ pid_t
 cleanFork(void);
 
 void
-dumpFd(int fd);
+dumpFd(int fd, bool printable_only);
 
 int
 groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe_fd);

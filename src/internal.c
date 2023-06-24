@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +18,16 @@
 bool show_color;
 
 static void
+replaceNonPrintable(char *buffer, size_t size)
+{
+    for (size_t k = 0; k < size; k++) {
+        if (!isprint(buffer[k])) {
+            buffer[k] = '.';
+        }
+    }
+}
+
+static void
 killAndExit(pid_t child)
 {
     kill(child, SIGKILL);
@@ -33,7 +44,7 @@ cleanFork(void)
 }
 
 void
-dumpFd(int fd)
+dumpFd(int fd, bool printable_only)
 {
     ssize_t transmitted;
     char buffer[1024];
@@ -42,10 +53,11 @@ dumpFd(int fd)
     lseek(fd, 0, SEEK_SET);
 
     while ((transmitted = read(fd, buffer, sizeof(buffer))) > 0) {
+        if (printable_only) {
+            replaceNonPrintable(buffer, transmitted);
+        }
         if (write(STDOUT_FILENO, buffer, transmitted) < 0) {}
     }
-
-    if (show_color && write(STDOUT_FILENO, RESET_COLOR, sizeof(RESET_COLOR) - 1) < 0) {}
 }
 
 void

@@ -5,7 +5,7 @@
 static void
 gonna_fail(void)
 {
-    SCR_FAIL("Failing");
+    SCR_FAIL("Intentionally failing");
 }
 
 static void
