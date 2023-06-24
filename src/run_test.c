@@ -118,20 +118,20 @@ showTestOutput(const struct testFds *fds)
     bool some_output = false;
 
     if (hasData(fds->log_fd)) {
-        dumpFd(fds->log_fd);
+        dumpFd(fds->log_fd, false);
         some_output = true;
     }
 
     if (hasData(fds->stdout_fd)) {
         printf("\n-------- stdout --------\n");
-        dumpFd(fds->stdout_fd);
+        dumpFd(fds->stdout_fd, true);
         printf("\n------------------------\n");
         some_output = true;
     }
 
     if (hasData(fds->stderr_fd)) {
         printf("\n-------- stderr --------\n");
-        dumpFd(fds->stderr_fd);
+        dumpFd(fds->stderr_fd, true);
         printf("\n------------------------\n");
         some_output = true;
     }

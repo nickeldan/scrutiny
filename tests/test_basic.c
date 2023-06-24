@@ -512,6 +512,14 @@ fail_with_output(void)
 }
 
 static void
+fail_with_nonprintable_output(void)
+{
+    printf("Here's some non-printable output: \x80\x81\x82\n");
+    fprintf(stderr, "Here's some non-printable output: \x80\x81\x82\n");
+    SCR_FAIL("Intentionally failing");
+}
+
+static void
 fail_timeout(void)
 {
     sleep(2);
@@ -620,6 +628,7 @@ main(int argc, char **argv)
     ADD_FAIL(fail_buffers_equal);
     ADD_FAIL(fail_error_message);
     ADD_FAIL(fail_with_output);
+    ADD_FAIL(fail_with_nonprintable_output);
     ADD_TIMEOUT(fail_timeout, 1);
     ADD_ERROR(error_segfault);
     ADD_ERROR(error_not_timeout);

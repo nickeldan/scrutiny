@@ -2,11 +2,11 @@ CFLAGS := -std=gnu99 -fdiagnostics-color -Wall -Wextra -Werror -fvisibility=hidd
 ifeq ($(debug),yes)
     CFLAGS += -O0 -g -DDEBUG
 else
-    CFLAGS += -O2 -DNDEBUG
+    CFLAGS += -O3 -DNDEBUG
 endif
 
 ifeq ($(monkeypatch),yes)
-CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_PROC -DREAP_NO_ITERATE_FD -DREAP_NO_ITERATE_NET -DREAP_NO_ITERATE_THREAD -DREAP_NO_EXPORT -DEJ_NO_EXPORT
+CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_EXPORT -DEJ_NO_EXPORT
 endif
 
 all: _all
