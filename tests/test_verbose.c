@@ -31,16 +31,16 @@ int
 main(int argc, char **argv)
 {
     scrGroup *group;
-    scrOptions options = {.flags = SCR_RUN_FLAG_VERBOSE};
+    scrOptions options = {.flags = SCR_RF_VERBOSE};
     (void)argc;
 
     printf("\nRunning %s\n\n", argv[0]);
 
     group = scrGroupCreate(NULL, NULL);
-    scrGroupAddTest(group, "Log passing", log_passing, 0, 0);
-    scrGroupAddTest(group, "Log skipping", log_skipping, 0, 0);
-    scrGroupAddTest(group, "Show stdout passing", show_stdout_passing, 0, 0);
-    scrGroupAddTest(group, "Show stderr passing", show_stderr_passing, 0, 0);
+    scrGroupAddTest(group, "Log passing", log_passing, NULL);
+    scrGroupAddTest(group, "Log skipping", log_skipping, NULL);
+    scrGroupAddTest(group, "Show stdout passing", show_stdout_passing, NULL);
+    scrGroupAddTest(group, "Show stderr passing", show_stderr_passing, NULL);
 
     return scrRun(&options, NULL);
 }

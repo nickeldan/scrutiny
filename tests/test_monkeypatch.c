@@ -58,9 +58,9 @@ main(int argc, char **argv)
         return 1;
     }
 
-    scrGroupAddTest(group, "Fake getppid", test_fake_getppid, 0, 0);
-    scrGroupAddTest(group, "Get true getppid", test_true_getppid, 0, 0);
-    scrGroupAddTest(group, "Nonpatched function", test_nonpatched_function, 0, 0);
+    scrGroupAddTest(group, "Fake getppid", test_fake_getppid, NULL);
+    scrGroupAddTest(group, "Get true getppid", test_true_getppid, NULL);
+    scrGroupAddTest(group, "Nonpatched function", test_nonpatched_function, NULL);
 
     return scrRun(NULL, NULL);
 }

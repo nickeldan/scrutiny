@@ -15,12 +15,11 @@ typedef enum scrTestCode {
     SCR_TEST_CODE_SKIP,
 } scrTestCode;
 
-typedef struct scrTestParam {
+typedef struct scrTest {
     scrTestFn *test_fn;
     char *name;
-    unsigned int timeout;
-    unsigned int flags;
-} scrTestParam;
+    scrTestOptions options;
+} scrTest;
 
 #ifdef SCR_MONKEYPATCH
 
@@ -35,7 +34,7 @@ typedef struct scrPatchGoal {
 struct scrGroup {
     scrCtxCreateFn *create_fn;
     scrCtxCleanupFn *cleanup_fn;
-    gear params;
+    gear tests;
 #ifdef SCR_MONKEYPATCH
     gear patch_goals;
 #endif
@@ -63,14 +62,14 @@ void
 groupFree(scrGroup *group);
 
 void
-showTestResult(const scrTestParam *param, scrTestCode result);
+showTestResult(const scrTest *test, scrTestCode result);
 
 #ifdef SCR_MONKEYPATCH
 scrTestCode
-testRun(const scrTestParam *param, bool verbose, const gear *patch_goals);
+testRun(const scrTest *test, bool verbose, const gear *patch_goals);
 #else
 scrTestCode
-testRun(const scrTestParam *param, bool verbose);
+testRun(const scrTest *test, bool verbose);
 #endif
 
 void

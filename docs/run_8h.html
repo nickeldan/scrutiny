@@ -95,6 +95,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscrTestOptions.html">scrTestOptions</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscrOptions.html">scrOptions</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options to pass to scrRunnerRun.  <a href="structscrOptions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -104,18 +106,18 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:afbf76019c1c088b5b3debd5cc9e9f960"><td class="memItemLeft" align="right" valign="top"><a id="afbf76019c1c088b5b3debd5cc9e9f960" name="afbf76019c1c088b5b3debd5cc9e9f960"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>SCR_TEST_FLAG_XFAIL</b></td></tr>
-<tr class="memdesc:afbf76019c1c088b5b3debd5cc9e9f960"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates that a test is expected to fail. <br /></td></tr>
-<tr class="separator:afbf76019c1c088b5b3debd5cc9e9f960"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4701a8c215ac188f58bead0aaaa2e12d"><td class="memItemLeft" align="right" valign="top"><a id="a4701a8c215ac188f58bead0aaaa2e12d" name="a4701a8c215ac188f58bead0aaaa2e12d"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>SCR_RUN_FLAG_FAIL_FAST</b></td></tr>
-<tr class="memdesc:a4701a8c215ac188f58bead0aaaa2e12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instructs the runner to stop as soon as a test fails. <br /></td></tr>
-<tr class="separator:a4701a8c215ac188f58bead0aaaa2e12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b3a445133640032f798960de6d2d413"><td class="memItemLeft" align="right" valign="top"><a id="a2b3a445133640032f798960de6d2d413" name="a2b3a445133640032f798960de6d2d413"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>SCR_RUN_FLAG_VERBOSE</b></td></tr>
-<tr class="memdesc:a2b3a445133640032f798960de6d2d413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays output even when tests pass. <br /></td></tr>
-<tr class="separator:a2b3a445133640032f798960de6d2d413"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af510b4137d4ff6b0abbd8fcbac6b6f92"><td class="memItemLeft" align="right" valign="top"><a id="af510b4137d4ff6b0abbd8fcbac6b6f92" name="af510b4137d4ff6b0abbd8fcbac6b6f92"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SCR_TF_XFAIL</b></td></tr>
+<tr class="memdesc:af510b4137d4ff6b0abbd8fcbac6b6f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates that a test is expected to fail. <br /></td></tr>
+<tr class="separator:af510b4137d4ff6b0abbd8fcbac6b6f92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a206468410777a658b1ddfd3dd7dc4af4"><td class="memItemLeft" align="right" valign="top"><a id="a206468410777a658b1ddfd3dd7dc4af4" name="a206468410777a658b1ddfd3dd7dc4af4"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SCR_RF_FAIL_FAST</b></td></tr>
+<tr class="memdesc:a206468410777a658b1ddfd3dd7dc4af4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instructs the runner to stop as soon as a test fails. <br /></td></tr>
+<tr class="separator:a206468410777a658b1ddfd3dd7dc4af4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07bb4c30679481ab0cd2c54e8ad252a0"><td class="memItemLeft" align="right" valign="top"><a id="a07bb4c30679481ab0cd2c54e8ad252a0" name="a07bb4c30679481ab0cd2c54e8ad252a0"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SCR_RF_VERBOSE</b></td></tr>
+<tr class="memdesc:a07bb4c30679481ab0cd2c54e8ad252a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays output even when tests pass. <br /></td></tr>
+<tr class="separator:a07bb4c30679481ab0cd2c54e8ad252a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -149,9 +151,9 @@ Functions</h2></td></tr>
 <tr class="memitem:aa7aed75585fe45f023ce488bdd83706f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#aa7aed75585fe45f023ce488bdd83706f">scrGroupCreate</a> (<a class="el" href="run_8h.html#a33a9c3f5723dacf090e0117092404b88">scrCtxCreateFn</a> create_fn, <a class="el" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a> cleanup_fn) SCR_EXPORT SCR_MALLOC</td></tr>
 <tr class="memdesc:aa7aed75585fe45f023ce488bdd83706f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new test group.  <a href="run_8h.html#aa7aed75585fe45f023ce488bdd83706f">More...</a><br /></td></tr>
 <tr class="separator:aa7aed75585fe45f023ce488bdd83706f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97926c282dab0eb4d458bb8261da237e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a97926c282dab0eb4d458bb8261da237e">scrGroupAddTest</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *name, <a class="el" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, unsigned int timeout, unsigned int flags) SCR_EXPORT SCR_NONNULL(1</td></tr>
-<tr class="memdesc:a97926c282dab0eb4d458bb8261da237e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="run_8h.html#a97926c282dab0eb4d458bb8261da237e">More...</a><br /></td></tr>
-<tr class="separator:a97926c282dab0eb4d458bb8261da237e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ac327eb399ec3e6f882c7aca1310e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a0ac327eb399ec3e6f882c7aca1310e06">scrGroupAddTest</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *name, <a class="el" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, const <a class="el" href="structscrTestOptions.html">scrTestOptions</a> *options) SCR_EXPORT SCR_NONNULL(1</td></tr>
+<tr class="memdesc:a0ac327eb399ec3e6f882c7aca1310e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="run_8h.html#a0ac327eb399ec3e6f882c7aca1310e06">More...</a><br /></td></tr>
+<tr class="separator:a0ac327eb399ec3e6f882c7aca1310e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5aec8913657b800656593d83a643abae"><td class="memItemLeft" align="right" valign="top">void bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a5aec8913657b800656593d83a643abae">scrGroupPatchFunction</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *func_name, void *new_func) SCR_EXPORT SCR_NONNULL(1</td></tr>
 <tr class="memdesc:a5aec8913657b800656593d83a643abae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables monkeypatching of a function for all of a group's tests.  <a href="run_8h.html#a5aec8913657b800656593d83a643abae">More...</a><br /></td></tr>
 <tr class="separator:a5aec8913657b800656593d83a643abae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -200,8 +202,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a97926c282dab0eb4d458bb8261da237e" name="a97926c282dab0eb4d458bb8261da237e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97926c282dab0eb4d458bb8261da237e">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
+<a id="a0ac327eb399ec3e6f882c7aca1310e06" name="a0ac327eb399ec3e6f882c7aca1310e06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ac327eb399ec3e6f882c7aca1310e06">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,14 +229,8 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>timeout</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>flags</em>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structscrTestOptions.html">scrTestOptions</a> *&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -250,8 +246,7 @@ Functions</h2></td></tr>
     <tr><td class="paramname">group</td><td>The group handle. </td></tr>
     <tr><td class="paramname">name</td><td>The name of the test. </td></tr>
     <tr><td class="paramname">test_fn</td><td>The test function. </td></tr>
-    <tr><td class="paramname">timeout</td><td>If positive, then the number of seconds the test has to finish. </td></tr>
-    <tr><td class="paramname">flags</td><td>Zero or more flags bitwise-or combined. </td></tr>
+    <tr><td class="paramname">options</td><td>A pointer to the options to use. If NULL, default options will be used. </td></tr>
   </table>
   </dd>
 </dl>
