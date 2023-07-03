@@ -38,7 +38,7 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats)
     bool were_failures;
     ssize_t transmitted;
     scrStats stats_obj;
-    scrTestParam *param;
+    scrTest *test;
 
     transmitted = read(pipe_fd, &stats_obj, sizeof(stats_obj));
     if (transmitted < (ssize_t)sizeof(stats_obj)) {
@@ -48,10 +48,10 @@ receiveStats(int pipe_fd, const scrGroup *group, scrStats *stats)
         else {
             fprintf(stderr, "Failed to communicate with group runner\n");
         }
-        stats->num_errored += group->params.length;
-        GEAR_FOR_EACH(&group->params, param)
+        stats->num_errored += group->tests.length;
+        GEAR_FOR_EACH(&group->tests, test)
         {
-            showTestResult(param, SCR_TEST_CODE_ERROR);
+            showTestResult(test, SCR_TEST_CODE_ERROR);
         }
 
         were_failures = true;
@@ -75,9 +75,9 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
     int status, exit_code;
     pid_t child;
     int fds[2], error_fds[2];
-    scrTestParam *param;
+    scrTest *test;
 
-    if (group->params.length == 0) {
+    if (group->tests.length == 0) {
         return true;
     }
 
@@ -107,32 +107,32 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
     if (WIFSIGNALED(status)) {
         were_failures = true;
         fprintf(stderr, "Group runner was terminated by a signal: %i\n", WTERMSIG(status));
-        stats->num_errored += group->params.length;
-        GEAR_FOR_EACH(&group->params, param)
+        stats->num_errored += group->tests.length;
+        GEAR_FOR_EACH(&group->tests, test)
         {
-            showTestResult(param, SCR_TEST_CODE_ERROR);
+            showTestResult(test, SCR_TEST_CODE_ERROR);
         }
     }
     else if (exit_code == SCR_TEST_CODE_SKIP) {
         were_failures = false;
-        stats->num_skipped += group->params.length;
-        GEAR_FOR_EACH(&group->params, param)
+        stats->num_skipped += group->tests.length;
+        GEAR_FOR_EACH(&group->tests, test)
         {
-            showTestResult(param, SCR_TEST_CODE_SKIP);
+            showTestResult(test, SCR_TEST_CODE_SKIP);
         }
     }
     else if (exit_code != SCR_TEST_CODE_OK) {
         were_failures = true;
         if (exit_code == SCR_TEST_CODE_FAIL) {
-            stats->num_failed += group->params.length;
+            stats->num_failed += group->tests.length;
         }
         else {
             fprintf(stderr, "Group runner exited with an error\n");
-            stats->num_errored += group->params.length;
+            stats->num_errored += group->tests.length;
         }
-        GEAR_FOR_EACH(&group->params, param)
+        GEAR_FOR_EACH(&group->tests, test)
         {
-            showTestResult(param, exit_code);
+            showTestResult(test, exit_code);
         }
         dumpFd(error_fds[0], false);
     }
@@ -143,7 +143,7 @@ groupRun(const scrGroup *group, const scrOptions *options, scrStats *stats)
     close(fds[0]);
     close(error_fds[0]);
 
-    return !(were_failures && (options->flags & SCR_RUN_FLAG_FAIL_FAST));
+    return !(were_failures && (options->flags & SCR_RF_FAIL_FAST));
 }
 
 static void
@@ -175,8 +175,8 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
         }
     }
 
-    gearInit(&group.params, sizeof(scrTestParam));
-    gearSetExpansion(&group.params, 5, 10);
+    gearInit(&group.tests, sizeof(scrTest));
+    gearSetExpansion(&group.tests, 5, 10);
 
 #ifdef SCR_MONKEYPATCH
     gearInit(&group.patch_goals, sizeof(scrPatchGoal));

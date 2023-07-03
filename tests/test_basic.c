@@ -559,6 +559,7 @@ main(int argc, char **argv)
 {
     unsigned int num_pass = 0, num_fail = 0, num_error = 0, num_skip = 0;
     scrGroup *group;
+    const scrTestOptions xfail_options = {.flags = SCR_TF_XFAIL}, timeout_options = {.timeout = 1};
     scrStats stats;
     (void)argc;
 
@@ -629,7 +630,7 @@ main(int argc, char **argv)
     ADD_FAIL(fail_error_message);
     ADD_FAIL(fail_with_output);
     ADD_FAIL(fail_with_nonprintable_output);
-    ADD_TIMEOUT(fail_timeout, 1);
+    ADD_TIMEOUT(fail_timeout);
     ADD_ERROR(error_segfault);
     ADD_ERROR(error_not_timeout);
     ADD_SKIP(skip_me);

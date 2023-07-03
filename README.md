@@ -31,7 +31,7 @@ void my_test(void) {
 and add it to a group:
 
 ```c
-scrGroupAddTest(group, "Test name", my_test, 0, 0);
+scrGroupAddTest(group, "Test name", my_test, NULL);
 ```
 
 Once you have added all of the tests, you can run them by
@@ -170,12 +170,23 @@ The signature of `scrGroupAddTest` is
 
 ```c
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout, unsigned int flags);
+scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, const scrTestOptions *options);
 ```
+
+where
+
+```c
+typedef scrTestOptions
+    unsigned int timeout;
+    unsigned flags;
+} scrTestOptions;
+```
+
+If `options` is `NULL`, then default options will be used (i.e., 0 for both).
 
 If `timeout` is positive, then the test will fail if not completed within that many seconds.
 
-At the moment, the only valid value for `flags` other than `0` is `SCR_TEST_FLAG_XFAIL`.  If this value is passed, then success/failure will be inverted.  That is, the test will be expected to fail and a failure will be counted if the test passes.
+At the moment, the only valid value for `flags` other than `0` is `SCR_TF_XFAIL`.  If this value is passed, then success/failure will be inverted.  That is, the test will be expected to fail and a failure will be counted if the test passes.
 
 Global/group context
 --------------------
@@ -195,7 +206,7 @@ int
 scrRun(const scrOptions *options, scrStats *stats);
 ```
 
-where `scrOptions` is defined as
+where
 
 ```c
 typedef struct scrOptions {
@@ -231,8 +242,8 @@ Run flags
 
 The `flags` field in `scrOptions` is some bitwise-or combination of any or none of the following:
 
-* `SCR_RUN_FLAG_FAIL_FAST`: Causes the framework to stop running tests as soon as any test either fails or encounters an error.
-* `SCR_RUN_FLAG_VERBOSE`: Show logging messages as well as `stdout`/`stderr` even when tests pass or are skipped.
+* `SCR_RF_FAIL_FAST`: Causes the framework to stop running tests as soon as any test either fails or encounters an error.
+* `SCR_RF_VERBOSE`: Show logging messages as well as `stdout`/`stderr` even when tests pass or are skipped.
 
 Monkeypatching
 --------------

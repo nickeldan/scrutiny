@@ -32,6 +32,11 @@ scrCtxCleanupFn(void *);
 typedef void
 scrTestFn(void);
 
+typedef struct scrTestOptions {
+    unsigned int timeout;
+    unsigned int flags;
+} scrTestOptions;
+
 /**
  * @brief Options to pass to scrRunnerRun.
  */
@@ -54,16 +59,16 @@ typedef struct scrStats {
 /**
  * @brief Indicates that a test is expected to fail.
  */
-#define SCR_TEST_FLAG_XFAIL 0x00000001
+#define SCR_TF_XFAIL 0x00000001
 
 /**
  * @brief Instructs the runner to stop as soon as a test fails.
  */
-#define SCR_RUN_FLAG_FAIL_FAST 0x00000001
+#define SCR_RF_FAIL_FAST 0x00000001
 /**
  * @brief Displays output even when tests pass.
  */
-#define SCR_RUN_FLAG_VERBOSE 0x00000002
+#define SCR_RF_VERBOSE 0x00000002
 
 /**
  * @brief Creates a new test group.
@@ -84,12 +89,11 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT 
  * @param group     The group handle.
  * @param name      The name of the test.
  * @param test_fn   The test function.
- * @param timeout   If positive, then the number of seconds the test has to finish.
- * @param flags     Zero or more flags bitwise-or combined.
+ * @param options   A pointer to the options to use.  If NULL, default options will be used.
  */
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
-                unsigned int flags) SCR_EXPORT SCR_NONNULL(1, 2, 3);
+scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn,
+                const scrTestOptions *options) SCR_EXPORT SCR_NONNULL(1, 2, 3);
 
 /**
  * @brief Enables monkeypatching of a function for all of a group's tests.

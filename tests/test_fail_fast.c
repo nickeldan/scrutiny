@@ -17,15 +17,15 @@ int
 main(int argc, char **argv)
 {
     scrGroup *group;
-    scrOptions options = {.flags = SCR_RUN_FLAG_FAIL_FAST};
+    scrOptions options = {.flags = SCR_RF_FAIL_FAST};
     scrStats stats;
     (void)argc;
 
     printf("\nRunning %s\n\n", argv[0]);
 
     group = scrGroupCreate(NULL, NULL);
-    scrGroupAddTest(group, "gonna_fail", gonna_fail, 0, 0);
-    scrGroupAddTest(group, "never_gonna_run", never_gonna_run, 0, 0);
+    scrGroupAddTest(group, "gonna_fail", gonna_fail, NULL);
+    scrGroupAddTest(group, "never_gonna_run", never_gonna_run, NULL);
 
     scrRun(&options, &stats);
 

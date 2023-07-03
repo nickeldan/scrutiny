@@ -37,20 +37,20 @@ groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe
 {
     void *group_ctx;
     scrStats stats_obj = {0};
-    scrTestParam *param;
+    scrTest *test;
 
     if (!groupSetup(group, options, error_fd, &group_ctx)) {
         return SCR_TEST_CODE_ERROR;
     }
 
-    GEAR_FOR_EACH(&group->params, param)
+    GEAR_FOR_EACH(&group->tests, test)
     {
         int result;
 
 #ifdef SCR_MONKEYPATCH
-        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE, &group->patch_goals);
+        result = testRun(test, options->flags & SCR_RF_VERBOSE, &group->patch_goals);
 #else
-        result = testRun(param, options->flags & SCR_RUN_FLAG_VERBOSE);
+        result = testRun(test, options->flags & SCR_RF_VERBOSE);
 #endif
 
         switch (result) {
@@ -60,7 +60,7 @@ groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe
         default: stats_obj.num_errored++; break;
         }
 
-        if ((options->flags) & SCR_RUN_FLAG_FAIL_FAST && result != SCR_TEST_CODE_OK &&
+        if ((options->flags) & SCR_RF_FAIL_FAST && result != SCR_TEST_CODE_OK &&
             result != SCR_TEST_CODE_SKIP) {
             break;
         }
@@ -78,17 +78,20 @@ groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe
 }
 
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, unsigned int timeout,
-                unsigned int flags)
+scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, const scrTestOptions *options)
 {
-    scrTestParam param = {.test_fn = test_fn, .timeout = timeout, .flags = flags};
+    scrTest test = {.test_fn = test_fn};
 
-    param.name = strdup(name);
-    if (!param.name) {
+    if (options) {
+        memcpy(&test.options, options, sizeof(*options));
+    }
+
+    test.name = strdup(name);
+    if (!test.name) {
         exit(1);
     }
 
-    if (gearAppend(&group->params, &param) != GEAR_RET_OK) {
+    if (gearAppend(&group->tests, &test) != GEAR_RET_OK) {
         exit(1);
     }
 }
@@ -132,16 +135,16 @@ scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func)
 void
 groupFree(scrGroup *group)
 {
-    scrTestParam *param;
+    scrTest *test;
 #ifdef SCR_MONKEYPATCH
     scrPatchGoal *goal;
 #endif
 
-    GEAR_FOR_EACH(&group->params, param)
+    GEAR_FOR_EACH(&group->tests, test)
     {
-        free(param->name);
+        free(test->name);
     }
-    gearReset(&group->params);
+    gearReset(&group->tests);
 
 #ifdef SCR_MONKEYPATCH
     GEAR_FOR_EACH(&group->patch_goals, goal)

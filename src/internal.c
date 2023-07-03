@@ -61,11 +61,11 @@ dumpFd(int fd, bool printable_only)
 }
 
 void
-showTestResult(const scrTestParam *param, scrTestCode result)
+showTestResult(const scrTest *test, scrTestCode result)
 {
-    bool xfail = (param->flags & SCR_TEST_FLAG_XFAIL);
+    bool xfail = (test->options.flags & SCR_TF_XFAIL);
 
-    printf("Test result (%s): ", param->name);
+    printf("Test result (%s): ", test->name);
     switch (result) {
     case SCR_TEST_CODE_OK:
         printf("%s%s%s\n", show_color ? GREEN : "", xfail ? "XFAILED" : "PASSED",

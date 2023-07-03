@@ -56,7 +56,7 @@ applyPatches(pid_t child, const gear *patch_goals, int *status)
 #endif  // SCR_MONKEYPATCH
 
 static int
-testDo(const struct testFds *fds, const scrTestParam *param)
+testDo(const struct testFds *fds, const scrTest *test)
 {
     int stdin_fd, local_errno;
     bool check;
@@ -97,7 +97,7 @@ testDo(const struct testFds *fds, const scrTestParam *param)
     raise(SIGSTOP);
 #endif
 
-    param->test_fn();
+    test->test_fn();
     return SCR_TEST_CODE_OK;
 
 error:
@@ -142,7 +142,7 @@ showTestOutput(const struct testFds *fds)
 }
 
 static scrTestCode
-summarizeTest(const scrTestParam *param, const struct testFds *fds, pid_t child, const int *status_ptr,
+summarizeTest(const scrTest *test, const struct testFds *fds, pid_t child, const int *status_ptr,
               bool verbose)
 {
     scrTestCode ret;
@@ -153,24 +153,24 @@ summarizeTest(const scrTestParam *param, const struct testFds *fds, pid_t child,
         status = *status_ptr;
     }
     else {
-        waitForProcess(child, param->timeout, &status, &timed_out);
+        waitForProcess(child, test->options.timeout, &status, &timed_out);
     }
 
     if (timed_out) {
-        printf("Test result (%s): %sFAIL%s: Timed out\n", param->name, show_color ? RED : "",
+        printf("Test result (%s): %sFAIL%s: Timed out\n", test->name, show_color ? RED : "",
                show_color ? RESET_COLOR : "");
         ret = SCR_TEST_CODE_FAIL;
     }
     else if (WIFSIGNALED(status)) {
         int signum = WTERMSIG(status);
 
-        printf("Test result (%s): %sERROR%s: Terminated by signal (%i): %s\n", param->name,
+        printf("Test result (%s): %sERROR%s: Terminated by signal (%i): %s\n", test->name,
                show_color ? RED : "", show_color ? RESET_COLOR : "", signum, strsignal(signum));
         ret = SCR_TEST_CODE_ERROR;
     }
     else {
         ret = WEXITSTATUS(status);
-        if (param->flags & SCR_TEST_FLAG_XFAIL) {
+        if (test->options.flags & SCR_TF_XFAIL) {
             if (ret == SCR_TEST_CODE_OK) {
                 ret = SCR_TEST_CODE_FAIL;
             }
@@ -181,7 +181,7 @@ summarizeTest(const scrTestParam *param, const struct testFds *fds, pid_t child,
         if (ret == SCR_TEST_CODE_OK || ret == SCR_TEST_CODE_SKIP) {
             show_output = false;
         }
-        showTestResult(param, ret);
+        showTestResult(test, ret);
     }
 
     if (show_output || verbose) {
@@ -215,9 +215,9 @@ makeTempFile(char *template)
 
 scrTestCode
 #ifdef SCR_MONKEYPATCH
-testRun(const scrTestParam *param, bool verbose, const gear *patch_goals)
+testRun(const scrTest *test, bool verbose, const gear *patch_goals)
 #else
-testRun(const scrTestParam *param, bool verbose)
+testRun(const scrTest *test, bool verbose)
 #endif
 {
 #ifdef SCR_MONKEYPATCH
@@ -247,7 +247,7 @@ testRun(const scrTestParam *param, bool verbose)
     child = cleanFork();
     switch (child) {
     case -1: perror("fork"); goto done;
-    case 0: _exit(testDo(&fds, param));
+    case 0: _exit(testDo(&fds, test));
     default: break;
     }
 
@@ -257,7 +257,7 @@ testRun(const scrTestParam *param, bool verbose)
     }
 #endif
 
-    ret = summarizeTest(param, &fds, child, status_ptr, verbose);
+    ret = summarizeTest(test, &fds, child, status_ptr, verbose);
 
 done:
     close(fds.stdout_fd);

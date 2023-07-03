@@ -3,37 +3,37 @@
 
 #define ADD_PASS(test)                             \
     do {                                           \
-        scrGroupAddTest(group, #test, test, 0, 0); \
+        scrGroupAddTest(group, #test, test, NULL); \
         num_pass++;                                \
     } while (0)
-#define ADD_XFAIL(test)                                              \
-    do {                                                             \
-        scrGroupAddTest(group, #test, test, 0, SCR_TEST_FLAG_XFAIL); \
-        num_pass++;                                                  \
+#define ADD_XFAIL(test)                                      \
+    do {                                                     \
+        scrGroupAddTest(group, #test, test, &xfail_options); \
+        num_pass++;                                          \
     } while (0)
 #define ADD_FAIL(test)                             \
     do {                                           \
-        scrGroupAddTest(group, #test, test, 0, 0); \
+        scrGroupAddTest(group, #test, test, NULL); \
         num_fail++;                                \
     } while (0)
-#define ADD_XPASS(test)                                              \
-    do {                                                             \
-        scrGroupAddTest(group, #test, test, 0, SCR_TEST_FLAG_XFAIL); \
-        num_fail++;                                                  \
+#define ADD_XPASS(test)                                      \
+    do {                                                     \
+        scrGroupAddTest(group, #test, test, &xfail_options); \
+        num_fail++;                                          \
     } while (0)
 #define ADD_ERROR(test)                            \
     do {                                           \
-        scrGroupAddTest(group, #test, test, 0, 0); \
+        scrGroupAddTest(group, #test, test, NULL); \
         num_error++;                               \
     } while (0)
-#define ADD_TIMEOUT(test, timeout)                       \
-    do {                                                 \
-        scrGroupAddTest(group, #test, test, timeout, 0); \
-        num_fail++;                                      \
+#define ADD_TIMEOUT(test)                                      \
+    do {                                                       \
+        scrGroupAddTest(group, #test, test, &timeout_options); \
+        num_fail++;                                            \
     } while (0)
 #define ADD_SKIP(test)                             \
     do {                                           \
-        scrGroupAddTest(group, #test, test, 0, 0); \
+        scrGroupAddTest(group, #test, test, NULL); \
         num_skip++;                                \
     } while (0)
 
