@@ -12,7 +12,7 @@
 /**
  * @brief An opaque structure encapsulating each testing group.
  */
-typedef struct scrGroup scrGroup;
+typedef struct scrGroupStruct *scrGroup;
 
 /**
  * @brief The signature for a group context creation function.
@@ -80,7 +80,7 @@ typedef struct scrStats {
  *
  * @return  A group handle.
  */
-scrGroup *
+scrGroup
 scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT SCR_MALLOC;
 
 /**
@@ -92,8 +92,8 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT 
  * @param options   A pointer to the options to use.  If NULL, default options will be used.
  */
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn,
-                const scrTestOptions *options) SCR_EXPORT SCR_NONNULL(1, 2, 3);
+scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTestOptions *options) SCR_EXPORT
+    SCR_NONNULL(1, 2, 3);
 
 /**
  * @brief Enables monkeypatching of a function for all of a group's tests.
@@ -109,7 +109,7 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn,
  * @note                Functions within libscrutiny.so cannot be monkeypatched.
  */
 bool
-scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_substring,
+scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_substring,
                       void *new_func) SCR_EXPORT SCR_NONNULL(1, 2, 4);
 
 /**

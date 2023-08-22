@@ -16,7 +16,7 @@ never_gonna_run(void)
 int
 main(int argc, char **argv)
 {
-    scrGroup *group;
+    scrGroup group;
     scrOptions options = {.flags = SCR_RF_FAIL_FAST};
     scrStats stats;
     (void)argc;

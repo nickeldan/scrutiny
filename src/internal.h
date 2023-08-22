@@ -30,7 +30,7 @@ typedef struct scrPatchGoal {
 
 #endif
 
-struct scrGroup {
+struct scrGroupStruct {
     scrCtxCreateFn *create_fn;
     scrCtxCleanupFn *cleanup_fn;
     gear tests;
@@ -55,10 +55,10 @@ void
 dumpFd(int fd, bool printable_only);
 
 int
-groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe_fd);
+groupDo(const scrGroup group, const scrOptions *options, int error_fd, int pipe_fd);
 
 void
-groupFree(scrGroup *group);
+groupFree(scrGroup group);
 
 void
 showTestResult(const scrTest *test, scrTestCode result);

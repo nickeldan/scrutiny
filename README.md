@@ -15,7 +15,7 @@ All of the functionality can be accessed by
 Every test must be part of a group.  You can create a group by
 
 ```c
-scrGroup *group;
+scrGroup group;
 
 group = scrGroupCreate(NULL, NULL);
 ```
@@ -170,7 +170,7 @@ The signature of `scrGroupAddTest` is
 
 ```c
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, const scrTestOptions *options);
+scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTestOptions *options);
 ```
 
 where
@@ -265,7 +265,7 @@ and then patch `malloc` with
 
 ```c
 bool
-scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_substring, void *new_func);
+scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_substring, void *new_func);
 ```
 
 Here, `new_func` would be a function pointer to `fake_malloc`.  E.g.,

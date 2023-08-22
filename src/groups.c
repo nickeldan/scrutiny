@@ -8,7 +8,7 @@
 #include "monkeypatch.h"
 
 static bool
-groupSetup(const scrGroup *group, const scrOptions *options, int error_fd, void **group_ctx)
+groupSetup(const scrGroup group, const scrOptions *options, int error_fd, void **group_ctx)
 {
     sigset_t set;
 
@@ -33,7 +33,7 @@ groupSetup(const scrGroup *group, const scrOptions *options, int error_fd, void 
 }
 
 int
-groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe_fd)
+groupDo(const scrGroup group, const scrOptions *options, int error_fd, int pipe_fd)
 {
     void *group_ctx;
     scrStats stats_obj = {0};
@@ -78,7 +78,7 @@ groupDo(const scrGroup *group, const scrOptions *options, int error_fd, int pipe
 }
 
 void
-scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, const scrTestOptions *options)
+scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTestOptions *options)
 {
     scrTest test = {.test_fn = test_fn};
 
@@ -97,7 +97,7 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, const scrT
 }
 
 bool
-scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_substring, void *new_func)
+scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_substring, void *new_func)
 {
 #ifdef SCR_MONKEYPATCH
     scrPatchGoal goal = {.func_ptr = new_func};
@@ -124,7 +124,7 @@ scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_s
 }
 
 void
-groupFree(scrGroup *group)
+groupFree(scrGroup group)
 {
     scrTest *test;
 #ifdef SCR_MONKEYPATCH

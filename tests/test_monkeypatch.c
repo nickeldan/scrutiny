@@ -59,7 +59,7 @@ test_selective_patch(void)
 int
 main(int argc, char **argv)
 {
-    scrGroup *group;
+    scrGroup group;
 
     (void)argc;
 
