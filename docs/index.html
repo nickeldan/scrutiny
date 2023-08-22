@@ -74,18 +74,18 @@ Testing basics</h1>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="scrutiny_8h.html">scrutiny/scrutiny.h</a>&gt;</span></div>
 <div class="ttc" id="ascrutiny_8h_html"><div class="ttname"><a href="scrutiny_8h.html">scrutiny.h</a></div><div class="ttdoc">Master include file.</div></div>
 </div><!-- fragment --><p >Every test must be part of a group. You can create a group by</p>
-<div class="fragment"><div class="line"><a class="code hl_typedef" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group;</div>
+<div class="fragment"><div class="line"><a class="code hl_typedef" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> group;</div>
 <div class="line"> </div>
-<div class="line">group = <a class="code hl_function" href="run_8h.html#aa7aed75585fe45f023ce488bdd83706f">scrGroupCreate</a>(NULL, NULL);</div>
-<div class="ttc" id="arun_8h_html_aa7aed75585fe45f023ce488bdd83706f"><div class="ttname"><a href="run_8h.html#aa7aed75585fe45f023ce488bdd83706f">scrGroupCreate</a></div><div class="ttdeci">scrGroup * scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT SCR_MALLOC</div><div class="ttdoc">Creates a new test group.</div></div>
-<div class="ttc" id="arun_8h_html_ac6666827e21523e7bc29f69e17650ef9"><div class="ttname"><a href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a></div><div class="ttdeci">struct scrGroup scrGroup</div><div class="ttdoc">An opaque structure encapsulating each testing group.</div><div class="ttdef"><b>Definition:</b> run.h:15</div></div>
+<div class="line">group = <a class="code hl_function" href="run_8h.html#ac19ec14833b015c6ccbd424d20cfeb1e">scrGroupCreate</a>(NULL, NULL);</div>
+<div class="ttc" id="arun_8h_html_ac19ec14833b015c6ccbd424d20cfeb1e"><div class="ttname"><a href="run_8h.html#ac19ec14833b015c6ccbd424d20cfeb1e">scrGroupCreate</a></div><div class="ttdeci">scrGroup scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT SCR_MALLOC</div><div class="ttdoc">Creates a new test group.</div></div>
+<div class="ttc" id="arun_8h_html_ae54cb7e18b1b20683e0480e98c0f6c31"><div class="ttname"><a href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a></div><div class="ttdeci">struct scrGroupStruct * scrGroup</div><div class="ttdoc">An opaque structure encapsulating each testing group.</div><div class="ttdef"><b>Definition:</b> run.h:15</div></div>
 </div><!-- fragment --><p >After that, you can define a test function:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> my_test(<span class="keywordtype">void</span>) {</div>
 <div class="line">    ...</div>
 <div class="line">}</div>
 </div><!-- fragment --><p >and add it to a group:</p>
-<div class="fragment"><div class="line"><a class="code hl_function" href="run_8h.html#a0ac327eb399ec3e6f882c7aca1310e06">scrGroupAddTest</a>(group, <span class="stringliteral">&quot;Test name&quot;</span>, my_test, NULL);</div>
-<div class="ttc" id="arun_8h_html_a0ac327eb399ec3e6f882c7aca1310e06"><div class="ttname"><a href="run_8h.html#a0ac327eb399ec3e6f882c7aca1310e06">scrGroupAddTest</a></div><div class="ttdeci">void scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, const scrTestOptions *options) SCR_EXPORT SCR_NONNULL(1</div><div class="ttdoc">Adds a test to a group.</div></div>
+<div class="fragment"><div class="line"><a class="code hl_function" href="run_8h.html#a38b44f8ac530738e72643a68c9cc70d7">scrGroupAddTest</a>(group, <span class="stringliteral">&quot;Test name&quot;</span>, my_test, NULL);</div>
+<div class="ttc" id="arun_8h_html_a38b44f8ac530738e72643a68c9cc70d7"><div class="ttname"><a href="run_8h.html#a38b44f8ac530738e72643a68c9cc70d7">scrGroupAddTest</a></div><div class="ttdeci">void scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTestOptions *options) SCR_EXPORT SCR_NONNULL(1</div><div class="ttdoc">Adds a test to a group.</div></div>
 </div><!-- fragment --><p >Once you have added all of the tests, you can run them by</p>
 <div class="fragment"><div class="line"><a class="code hl_function" href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">scrRun</a>(NULL, NULL);</div>
 <div class="ttc" id="arun_8h_html_af1680b15d3118f62b2d457e061ee22a4"><div class="ttname"><a href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">scrRun</a></div><div class="ttdeci">void bool int scrRun(const scrOptions *options, scrStats *stats) SCR_EXPORT</div><div class="ttdoc">Runs all of the tests.</div></div>
@@ -194,7 +194,7 @@ Writing tests</h1>
 Test parameters</h1>
 <p >The signature of <code>scrGroupAddTest</code> is</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span></div>
-<div class="line"><a class="code hl_function" href="run_8h.html#a0ac327eb399ec3e6f882c7aca1310e06">scrGroupAddTest</a>(<a class="code hl_typedef" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, <a class="code hl_typedef" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, <span class="keyword">const</span> <a class="code hl_struct" href="structscrTestOptions.html">scrTestOptions</a> *options);</div>
+<div class="line"><a class="code hl_function" href="run_8h.html#a38b44f8ac530738e72643a68c9cc70d7">scrGroupAddTest</a>(<a class="code hl_typedef" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> group, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, <a class="code hl_typedef" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, <span class="keyword">const</span> <a class="code hl_struct" href="structscrTestOptions.html">scrTestOptions</a> *options);</div>
 <div class="ttc" id="arun_8h_html_a78714973fe7a20ca16e1cf263d6035e4"><div class="ttname"><a href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a></div><div class="ttdeci">void scrTestFn(void)</div><div class="ttdoc">The signature for a test function.</div><div class="ttdef"><b>Definition:</b> run.h:33</div></div>
 <div class="ttc" id="astructscrTestOptions_html"><div class="ttname"><a href="structscrTestOptions.html">scrTestOptions</a></div><div class="ttdef"><b>Definition:</b> run.h:35</div></div>
 </div><!-- fragment --><p >where</p>
@@ -226,8 +226,8 @@ Global/group context</h1>
 <div class="ttc" id="astructscrOptions_html_a8467b749302edfa3c9edbba81ad66c44"><div class="ttname"><a href="structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44">scrOptions::flags</a></div><div class="ttdeci">unsigned int flags</div><div class="ttdef"><b>Definition:</b> run.h:45</div></div>
 </div><!-- fragment --><p >If the <code>options</code> argument is <code>NULL</code>, then default values will be used (i.e., <code>NULL</code> and <code>0</code>).</p>
 <p >By default, each group context is equal to the global context. However, you can pass function pointers to <code>scrGroupCreate</code> which can set up and tear down a group context. The signature of <code>scrGroupCreate</code> is</p>
-<div class="fragment"><div class="line"><a class="code hl_typedef" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *</div>
-<div class="line"><a class="code hl_function" href="run_8h.html#aa7aed75585fe45f023ce488bdd83706f">scrGroupCreate</a>(<a class="code hl_typedef" href="run_8h.html#a33a9c3f5723dacf090e0117092404b88">scrCtxCreateFn</a> create_fn, <a class="code hl_typedef" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a> cleanup_fn);</div>
+<div class="fragment"><div class="line"><a class="code hl_typedef" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> *</div>
+<div class="line"><a class="code hl_function" href="run_8h.html#ac19ec14833b015c6ccbd424d20cfeb1e">scrGroupCreate</a>(<a class="code hl_typedef" href="run_8h.html#a33a9c3f5723dacf090e0117092404b88">scrCtxCreateFn</a> create_fn, <a class="code hl_typedef" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a> cleanup_fn);</div>
 <div class="ttc" id="arun_8h_html_a0ddbd6caab0df72aea82c68428d9578a"><div class="ttname"><a href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a></div><div class="ttdeci">void scrCtxCleanupFn(void *)</div><div class="ttdoc">The signature for a group context cleanup function.</div><div class="ttdef"><b>Definition:</b> run.h:27</div></div>
 <div class="ttc" id="arun_8h_html_a33a9c3f5723dacf090e0117092404b88"><div class="ttname"><a href="run_8h.html#a33a9c3f5723dacf090e0117092404b88">scrCtxCreateFn</a></div><div class="ttdeci">void * scrCtxCreateFn(void *)</div><div class="ttdoc">The signature for a group context creation function.</div><div class="ttdef"><b>Definition:</b> run.h:21</div></div>
 </div><!-- fragment --><p >where</p>
@@ -255,10 +255,10 @@ Monkeypatching</h1>
 <div class="line">}</div>
 </div><!-- fragment --><p >and then patch <code>malloc</code> with</p>
 <div class="fragment"><div class="line"><span class="keywordtype">bool</span></div>
-<div class="line"><a class="code hl_function" href="run_8h.html#afe92cbe7f530db52f66e512a0f09a137">scrGroupPatchFunction</a>(<a class="code hl_typedef" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, <span class="keyword">const</span> <span class="keywordtype">char</span> *func_name, <span class="keyword">const</span> <span class="keywordtype">char</span> *file_substring, <span class="keywordtype">void</span> *new_func);</div>
-<div class="ttc" id="arun_8h_html_afe92cbe7f530db52f66e512a0f09a137"><div class="ttname"><a href="run_8h.html#afe92cbe7f530db52f66e512a0f09a137">scrGroupPatchFunction</a></div><div class="ttdeci">void bool scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_substring, void *new_func) SCR_EXPORT SCR_NONNULL(1</div><div class="ttdoc">Enables monkeypatching of a function for all of a group's tests.</div></div>
+<div class="line"><a class="code hl_function" href="run_8h.html#a8de3f03238ed08517044288cb6768e84">scrGroupPatchFunction</a>(<a class="code hl_typedef" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> group, <span class="keyword">const</span> <span class="keywordtype">char</span> *func_name, <span class="keyword">const</span> <span class="keywordtype">char</span> *file_substring, <span class="keywordtype">void</span> *new_func);</div>
+<div class="ttc" id="arun_8h_html_a8de3f03238ed08517044288cb6768e84"><div class="ttname"><a href="run_8h.html#a8de3f03238ed08517044288cb6768e84">scrGroupPatchFunction</a></div><div class="ttdeci">void bool scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_substring, void *new_func) SCR_EXPORT SCR_NONNULL(1</div><div class="ttdoc">Enables monkeypatching of a function for all of a group's tests.</div></div>
 </div><!-- fragment --><p >Here, <code>new_func</code> would be a function pointer to <code>fake_malloc</code>. E.g.,</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> ( !<a class="code hl_function" href="run_8h.html#afe92cbe7f530db52f66e512a0f09a137">scrGroupPatchFunction</a>(group, <span class="stringliteral">&quot;malloc&quot;</span>, NULL, fake_malloc) ) {</div>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> ( !<a class="code hl_function" href="run_8h.html#a8de3f03238ed08517044288cb6768e84">scrGroupPatchFunction</a>(group, <span class="stringliteral">&quot;malloc&quot;</span>, NULL, fake_malloc) ) {</div>
 <div class="line">    <span class="comment">// handle the error</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><p >This test would then pass:</p>

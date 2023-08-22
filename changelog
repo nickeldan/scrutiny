@@ -1,3 +1,7 @@
+0.7.0:
+    - Monkeypatching can now be selectively applied to ELF files.
+    - scrGroup is now a pointer typedef.
+
 0.6.2:
     - Fixed an integer comparison error for i386 builds.
 

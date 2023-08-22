@@ -30,7 +30,7 @@ show_stderr_passing(void)
 int
 main(int argc, char **argv)
 {
-    scrGroup *group;
+    scrGroup group;
     scrOptions options = {.flags = SCR_RF_VERBOSE};
     (void)argc;
 

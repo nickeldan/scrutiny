@@ -102,7 +102,7 @@ int
 main(int argc, char **argv)
 {
     unsigned int num_pass = 0, num_skip = 0, num_fail = 0, num_error = 0;
-    scrGroup *group;
+    scrGroup group;
     scrOptions options = {.global_ctx = &global_num};
     scrStats stats;
     (void)argc;

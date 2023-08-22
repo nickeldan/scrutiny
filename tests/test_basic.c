@@ -558,7 +558,7 @@ int
 main(int argc, char **argv)
 {
     unsigned int num_pass = 0, num_fail = 0, num_error = 0, num_skip = 0;
-    scrGroup *group;
+    scrGroup group;
     const scrTestOptions xfail_options = {.flags = SCR_TF_XFAIL}, timeout_options = {.timeout = 1};
     scrStats stats;
     (void)argc;
