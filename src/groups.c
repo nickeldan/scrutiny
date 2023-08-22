@@ -97,28 +97,18 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn, const scrT
 }
 
 bool
-scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func)
+scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_substring, void *new_func)
 {
 #ifdef SCR_MONKEYPATCH
     scrPatchGoal goal = {.func_ptr = new_func};
-    scrPatchGoal *ptr;
-
-    GEAR_FOR_EACH(&group->patch_goals, ptr)
-    {
-        if (strcmp(ptr->func_name, func_name) == 0) {
-            fprintf(stderr, "A patch has already been registered for %s\n", func_name);
-            return false;
-        }
-    }
 
     gearInit(&goal.got_entries, sizeof(void *));
-    if (!findFunction(func_name, &goal.got_entries)) {
+    if (!findFunction(func_name, file_substring, &goal.got_entries)) {
         fprintf(stderr, "%s not found\n", func_name);
         return false;
     }
 
-    goal.func_name = strdup(func_name);
-    if (!goal.func_name || gearAppend(&group->patch_goals, &goal) != GEAR_RET_OK) {
+    if (gearAppend(&group->patch_goals, &goal) != GEAR_RET_OK) {
         exit(1);
     }
 
@@ -126,6 +116,7 @@ scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func)
 #else  // SCR_MONKEYPATCH
     (void)group;
     (void)func_name;
+    (void)file_substring;
     (void)new_func;
     fprintf(stderr, "Monkeypatching is not available\n");
     return false;
@@ -149,7 +140,6 @@ groupFree(scrGroup *group)
 #ifdef SCR_MONKEYPATCH
     GEAR_FOR_EACH(&group->patch_goals, goal)
     {
-        free(goal->func_name);
         gearReset(&goal->got_entries);
     }
     gearReset(&group->patch_goals);

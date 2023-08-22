@@ -6,6 +6,9 @@
 
 #ifdef SCR_MONKEYPATCH
 
+pid_t
+indirectGetPpid(void);
+
 static void *
 group_setup(void *global_ctx)
 {
@@ -43,6 +46,16 @@ test_nonpatched_function(void)
     SCR_ASSERT_PTR_EQ(scrPatchedFunction("malloc"), NULL);
 }
 
+static void
+test_selective_patch(void)
+{
+    pid_t answer;
+
+    answer = (intptr_t)scrGroupCtx();
+    SCR_ASSERT_EQ(getppid(), answer);
+    SCR_ASSERT_EQ(indirectGetPpid(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -53,14 +66,18 @@ main(int argc, char **argv)
     printf("\nRunning %s\n\n", argv[0]);
 
     group = scrGroupCreate(group_setup, NULL);
-
-    if (!scrGroupPatchFunction(group, "getppid", fake_getppid)) {
+    if (!scrGroupPatchFunction(group, "getppid", NULL, fake_getppid)) {
         return 1;
     }
-
     scrGroupAddTest(group, "Fake getppid", test_fake_getppid, NULL);
     scrGroupAddTest(group, "Get true getppid", test_true_getppid, NULL);
     scrGroupAddTest(group, "Nonpatched function", test_nonpatched_function, NULL);
+
+    group = scrGroupCreate(group_setup, NULL);
+    if (!scrGroupPatchFunction(group, "getppid", "libaux", fake_getppid)) {
+        return 1;
+    }
+    scrGroupAddTest(group, "Selective patching", test_selective_patch, NULL);
 
     return scrRun(NULL, NULL);
 }

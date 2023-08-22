@@ -109,11 +109,11 @@ addPatchInfo(const char *func_name, ejAddr addr)
 }
 
 static bool
-populateRecords(const char *func_name, gear *got_entries)
+populateRecords(const char *func_name, const char *file_substring, gear *got_entries)
 {
     int ret;
     bool found_scrutiny = false;
-    ejAddr addr = EJ_ADDR_NOT_FOUND;
+    ejAddr func_addr = EJ_ADDR_NOT_FOUND;
     char path[PATH_MAX];
     reapMapIterator *iterator;
     reapMapResult result;
@@ -151,11 +151,11 @@ populateRecords(const char *func_name, gear *got_entries)
                 scrutiny_idx = file_records.length;
                 found_scrutiny = true;
             }
-            else if (addr == EJ_ADDR_NOT_FOUND &&
-                     (addr = ejFindFunction(&info, func_name)) != EJ_ADDR_NOT_FOUND) {
-                addr = ejResolveAddress(&info, addr, result.start);
+            else if (func_addr == EJ_ADDR_NOT_FOUND &&
+                     (func_addr = ejFindFunction(&info, func_name)) != EJ_ADDR_NOT_FOUND) {
+                func_addr = ejResolveAddress(&info, func_addr, result.start);
             }
-            else {
+            else if (!file_substring || strstr(path, file_substring)) {
                 searchForGotEntry(&info, func_name, got_entries, result.start);
             }
 
@@ -178,24 +178,24 @@ populateRecords(const char *func_name, gear *got_entries)
         exit(1);
     }
 
-    if (addr == EJ_ADDR_NOT_FOUND) {
+    if (func_addr == EJ_ADDR_NOT_FOUND) {
         return false;
     }
 
-    addPatchInfo(func_name, addr);
+    addPatchInfo(func_name, func_addr);
 
     return true;
 }
 
 bool
-findFunction(const char *func_name, gear *got_entries)
+findFunction(const char *func_name, const char *file_substring, gear *got_entries)
 {
     size_t idx;
-    ejAddr addr = EJ_ADDR_NOT_FOUND;
+    ejAddr func_addr = EJ_ADDR_NOT_FOUND;
     struct fileRecord *record;
 
     if (file_records.item_size == 0) {
-        return populateRecords(func_name, got_entries);
+        return populateRecords(func_name, file_substring, got_entries);
     }
 
     GEAR_FOR_EACH_WITH_INDEX(&file_records, record, idx)
@@ -211,20 +211,21 @@ findFunction(const char *func_name, gear *got_entries)
             exit(1);
         }
 
-        if (addr == EJ_ADDR_NOT_FOUND && (addr = ejFindFunction(&info, func_name)) != EJ_ADDR_NOT_FOUND) {
-            addr = ejResolveAddress(&info, addr, record->file_start);
+        if (func_addr == EJ_ADDR_NOT_FOUND &&
+            (func_addr = ejFindFunction(&info, func_name)) != EJ_ADDR_NOT_FOUND) {
+            func_addr = ejResolveAddress(&info, func_addr, record->file_start);
         }
-        else {
+        else if (!file_substring || strstr(record->path, file_substring)) {
             searchForGotEntry(&info, func_name, got_entries, record->file_start);
         }
         ejReleaseInfo(&info);
     }
 
-    if (addr == EJ_ADDR_NOT_FOUND) {
+    if (func_addr == EJ_ADDR_NOT_FOUND) {
         return false;
     }
 
-    addPatchInfo(func_name, addr);
+    addPatchInfo(func_name, func_addr);
 
     return true;
 }

@@ -24,7 +24,6 @@ typedef struct scrTest {
 #ifdef SCR_MONKEYPATCH
 
 typedef struct scrPatchGoal {
-    char *func_name;
     void *func_ptr;
     gear got_entries;
 } scrPatchGoal;
