@@ -265,13 +265,13 @@ and then patch `malloc` with
 
 ```c
 bool
-scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func);
+scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_substring, void *new_func);
 ```
 
 Here, `new_func` would be a function pointer to `fake_malloc`.  E.g.,
 
 ```c
-if ( !scrGroupPatchFunction(group, "malloc", fake_malloc) ) {
+if ( !scrGroupPatchFunction(group, "malloc", NULL, fake_malloc) ) {
     // handle the error
 }
 ```
@@ -286,7 +286,9 @@ malloc_fail(void)
 }
 ```
 
-When you attempt to patch a function, Scrutiny will walk your the process' maps file in procfs and identify any ELF files (libscrutiny.so is skipped).  If any of them contain a global offset table (GOT) entry for the specified function, the address of the entry will be recorded.  When a process running one of the tests in the group is started, it will be ptraced and those GOT entries will be altered to point to the interposed function.  If no GOT entries are found, then `scrGroupPatchFunction` will return `false`.
+When you attempt to patch a function, Scrutiny will walk your the process' maps file in procfs and identify any ELF files (libscrutiny.so is skipped).  If any of them contain a global offset table (GOT) entry for the specified function, the address of the entry will be recorded.  When a process running one of the tests in the group is started, it will be ptraced and those GOT entries will be altered to point to the interposed function.  If the to-be-patched function is not found in any `.text` section, then `scrGroupPatchFunction` will return `false`.
+
+If `file_substring` is not `NULL`, then only ELF files whose paths contain the value as a substring will be patched.  That means that the same function can be patched in the same testing group multiple times.  If the same ELF file would be patched multiple times by different calls to `scrGroupPatchFunction`, then the last call would be the one that is ultimately applied.
 
 During testing, you may acquire a pointer to the original function (e.g., the true `malloc`) by
 

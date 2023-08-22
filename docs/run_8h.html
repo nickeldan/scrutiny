@@ -154,9 +154,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a0ac327eb399ec3e6f882c7aca1310e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a0ac327eb399ec3e6f882c7aca1310e06">scrGroupAddTest</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *name, <a class="el" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, const <a class="el" href="structscrTestOptions.html">scrTestOptions</a> *options) SCR_EXPORT SCR_NONNULL(1</td></tr>
 <tr class="memdesc:a0ac327eb399ec3e6f882c7aca1310e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="run_8h.html#a0ac327eb399ec3e6f882c7aca1310e06">More...</a><br /></td></tr>
 <tr class="separator:a0ac327eb399ec3e6f882c7aca1310e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5aec8913657b800656593d83a643abae"><td class="memItemLeft" align="right" valign="top">void bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a5aec8913657b800656593d83a643abae">scrGroupPatchFunction</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *func_name, void *new_func) SCR_EXPORT SCR_NONNULL(1</td></tr>
-<tr class="memdesc:a5aec8913657b800656593d83a643abae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables monkeypatching of a function for all of a group's tests.  <a href="run_8h.html#a5aec8913657b800656593d83a643abae">More...</a><br /></td></tr>
-<tr class="separator:a5aec8913657b800656593d83a643abae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe92cbe7f530db52f66e512a0f09a137"><td class="memItemLeft" align="right" valign="top">void bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#afe92cbe7f530db52f66e512a0f09a137">scrGroupPatchFunction</a> (<a class="el" href="run_8h.html#ac6666827e21523e7bc29f69e17650ef9">scrGroup</a> *group, const char *func_name, const char *file_substring, void *new_func) SCR_EXPORT SCR_NONNULL(1</td></tr>
+<tr class="memdesc:afe92cbe7f530db52f66e512a0f09a137"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables monkeypatching of a function for all of a group's tests.  <a href="run_8h.html#afe92cbe7f530db52f66e512a0f09a137">More...</a><br /></td></tr>
+<tr class="separator:afe92cbe7f530db52f66e512a0f09a137"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1680b15d3118f62b2d457e061ee22a4"><td class="memItemLeft" align="right" valign="top">void bool int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">scrRun</a> (const <a class="el" href="structscrOptions.html">scrOptions</a> *options, <a class="el" href="structscrStats.html">scrStats</a> *stats) SCR_EXPORT</td></tr>
 <tr class="memdesc:af1680b15d3118f62b2d457e061ee22a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs all of the tests.  <a href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">More...</a><br /></td></tr>
 <tr class="separator:af1680b15d3118f62b2d457e061ee22a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -253,8 +253,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a5aec8913657b800656593d83a643abae" name="a5aec8913657b800656593d83a643abae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5aec8913657b800656593d83a643abae">&#9670;&nbsp;</a></span>scrGroupPatchFunction()</h2>
+<a id="afe92cbe7f530db52f66e512a0f09a137" name="afe92cbe7f530db52f66e512a0f09a137"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe92cbe7f530db52f66e512a0f09a137">&#9670;&nbsp;</a></span>scrGroupPatchFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -270,6 +270,12 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>func_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>file_substring</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -290,6 +296,7 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">group</td><td>The group handle. </td></tr>
     <tr><td class="paramname">func_name</td><td>The name of the function to patch. </td></tr>
+    <tr><td class="paramname">file_substring</td><td>If not NULL, then only files containing this value as a substring will be patched. </td></tr>
     <tr><td class="paramname">new_func</td><td>The new function to use.</td></tr>
   </table>
   </dd>

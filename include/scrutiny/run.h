@@ -98,9 +98,10 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn,
 /**
  * @brief Enables monkeypatching of a function for all of a group's tests.
  *
- * @param group         The group handle.
- * @param func_name     The name of the function to patch.
- * @param new_func      The new function to use.
+ * @param group             The group handle.
+ * @param func_name         The name of the function to patch.
+ * @param file_substring    If not NULL, then only files containing this value as a substring will be patched.
+ * @param new_func          The new function to use.
  *
  * @return              true if successful and false otherwise.  If monkeypatching was not enabled at compile
  * time, then this function will always return false.
@@ -108,7 +109,8 @@ scrGroupAddTest(scrGroup *group, const char *name, scrTestFn test_fn,
  * @note                Functions within libscrutiny.so cannot be monkeypatched.
  */
 bool
-scrGroupPatchFunction(scrGroup *group, const char *func_name, void *new_func) SCR_EXPORT SCR_NONNULL(1, 2, 3);
+scrGroupPatchFunction(scrGroup *group, const char *func_name, const char *file_substring,
+                      void *new_func) SCR_EXPORT SCR_NONNULL(1, 2, 4);
 
 /**
  * @brief Runs all of the tests.
