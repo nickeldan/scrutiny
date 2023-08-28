@@ -4,16 +4,9 @@
 #include <stdlib.h>
 #include <sys/syscall.h>
 #include <sys/wait.h>
-#include <time.h>
 #include <unistd.h>
 
 #include "internal.h"
-
-#ifdef CLOCK_MONOTONIC_COARSE
-#define SCR_CLOCK_TYPE CLOCK_MONOTONIC_COARSE
-#else
-#define SCR_CLOCK_TYPE CLOCK_MONOTONIC
-#endif
 
 bool show_color;
 
@@ -21,7 +14,9 @@ static void
 replaceNonPrintable(char *buffer, size_t size)
 {
     for (size_t k = 0; k < size; k++) {
-        if (!isprint(buffer[k])) {
+        char c = buffer[k];
+
+        if (!isprint(c) && c != '\n' && c != '\t' && c != '\r') {
             buffer[k] = '.';
         }
     }
@@ -91,19 +86,16 @@ showTestResult(const scrTest *test, scrTestCode result)
 #include <poll.h>
 #include <string.h>
 #include <sys/signalfd.h>
+#include <sys/timerfd.h>
 
 void
 waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
 {
-    struct pollfd pollers[2] = {{.events = POLLIN}, {.events = POLLIN}};
+    unsigned int num_pollers;
+    struct pollfd pollers[3] = {{.events = POLLIN}, {.events = POLLIN}};
     sigset_t set;
-    struct timespec start_time;
 
     *timed_out = false;
-
-    if (timeout > 0) {
-        clock_gettime(SCR_CLOCK_TYPE, &start_time);
-    }
 
     pollers[0].fd = syscall(SYS_pidfd_open, child, 0);
     if (pollers[0].fd < 0) {
@@ -119,44 +111,45 @@ waitForProcess(pid_t child, unsigned int timeout, int *status, bool *timed_out)
         goto error;
     }
 
-    while (1) {
-        int remaining = -1, res;
+    if (timeout > 0) {
+        struct itimerspec timer = {.it_value = {.tv_sec = timeout}};
 
-        if (timeout > 0 && !*timed_out) {
-            unsigned long elapsed;
-            struct timespec now;
-
-            clock_gettime(SCR_CLOCK_TYPE, &now);
-            elapsed = now.tv_sec - start_time.tv_sec;
-            if (elapsed >= timeout) {
-                *timed_out = true;
-                kill(child, SIGKILL);
-            }
-            else {
-                remaining = timeout - elapsed;
-            }
+        num_pollers = 3;
+        pollers[2].events = POLLIN;
+        pollers[2].fd = timerfd_create(CLOCK_MONOTONIC, 0);
+        if (pollers[2].fd < 0) {
+            perror("timerfd_create");
+            goto error;
         }
 
-        res = poll(pollers, 2, remaining * 1000);
-        if (res > 0) {
-            break;
+        if (timerfd_settime(pollers[2].fd, 0, &timer, NULL) != 0) {
+            perror("timerfd_settime");
+            goto error;
         }
-        else if (res < 0) {
-            int local_errno = errno;
+    }
+    else {
+        num_pollers = 2;
+    }
 
-            if (local_errno != EINTR) {
-                fprintf(stderr, "poll: %s\n", strerror(local_errno));
-                goto error;
-            }
+    while (poll(pollers, num_pollers, -1) < 0) {
+        int local_errno = errno;
+
+        if (local_errno != EINTR) {
+            fprintf(stderr, "poll: %s\n", strerror(local_errno));
+            goto error;
         }
     }
 
-    for (int k = 0; k < 2; k++) {
+    for (unsigned int k = 0; k < num_pollers; k++) {
         close(pollers[k].fd);
     }
 
     if (pollers[1].revents & POLLIN) {
         goto error;
+    }
+    if (num_pollers == 3 && pollers[2].revents & POLLIN) {
+        *timed_out = true;
+        kill(child, SIGKILL);
     }
 
     while (waitpid(child, status, 0) < 0) {}
@@ -167,6 +160,14 @@ error:
 }
 
 #else  // SYS_pidfd_open
+
+#include <time.h>
+
+#ifdef CLOCK_MONOTONIC_COARSE
+#define SCR_CLOCK_TYPE CLOCK_MONOTONIC_COARSE
+#else
+#define SCR_CLOCK_TYPE CLOCK_MONOTONIC
+#endif
 
 #define ONE_TENTH_SECOND 10000000
 

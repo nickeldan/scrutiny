@@ -1,9 +1,8 @@
 TEST_BINARIES := $(patsubst %.c,%,$(wildcard $(TEST_DIR)/test_*.c))
+AUX_LIB := $(TEST_DIR)/libaux.so
 CURDIR := $(shell pwd)
 
 ifeq ($(monkeypatch),yes)
-
-AUX_LIB := $(TEST_DIR)/libaux.so
 
 $(AUX_LIB): $(TEST_DIR)/aux.c
 	$(CC) -shared -fPIC $(CFLAGS) $< -o $@

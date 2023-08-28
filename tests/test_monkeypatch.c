@@ -60,6 +60,7 @@ int
 main(int argc, char **argv)
 {
     scrGroup group;
+    scrTestOptions options = {.timeout = 1};
 
     (void)argc;
 
@@ -69,15 +70,15 @@ main(int argc, char **argv)
     if (!scrGroupPatchFunction(group, "getppid", NULL, fake_getppid)) {
         return 1;
     }
-    scrGroupAddTest(group, "Fake getppid", test_fake_getppid, NULL);
-    scrGroupAddTest(group, "Get true getppid", test_true_getppid, NULL);
-    scrGroupAddTest(group, "Nonpatched function", test_nonpatched_function, NULL);
+    scrGroupAddTest(group, "Fake getppid", test_fake_getppid, &options);
+    scrGroupAddTest(group, "Get true getppid", test_true_getppid, &options);
+    scrGroupAddTest(group, "Nonpatched function", test_nonpatched_function, &options);
 
     group = scrGroupCreate(group_setup, NULL);
     if (!scrGroupPatchFunction(group, "getppid", "libaux", fake_getppid)) {
         return 1;
     }
-    scrGroupAddTest(group, "Selective patching", test_selective_patch, NULL);
+    scrGroupAddTest(group, "Selective patching", test_selective_patch, &options);
 
     return scrRun(NULL, NULL);
 }
