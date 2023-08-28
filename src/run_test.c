@@ -12,10 +12,13 @@
 
 #include "internal.h"
 
-struct testFds {
+struct testParams {
     int stdout_fd;
     int stderr_fd;
     int log_fd;
+#ifdef SCR_MONKEYPATCH
+    unsigned int have_patches : 1;
+#endif
 };
 
 #ifdef SCR_MONKEYPATCH
@@ -56,13 +59,13 @@ applyPatches(pid_t child, const gear *patch_goals, int *status)
 #endif  // SCR_MONKEYPATCH
 
 static int
-testDo(const struct testFds *fds, const scrTest *test)
+testDo(const struct testParams *params, const scrTest *test)
 {
     int stdin_fd, local_errno;
     bool check;
     sigset_t set;
 
-    setLogFd(fds->log_fd);
+    setLogFd(params->log_fd);
 
     stdin_fd = open("/dev/null", O_RDONLY);
     if (stdin_fd < 0) {
@@ -73,14 +76,14 @@ testDo(const struct testFds *fds, const scrTest *test)
     local_errno = errno;
     close(stdin_fd);
     if (!check) {
-        perror("dup2");
+        fprintf(stderr, "dup2: %s\n", strerror(local_errno));
         goto error;
     }
 
-    check = (dup2(fds->stdout_fd, STDOUT_FILENO) >= 0 && dup2(fds->stderr_fd, STDERR_FILENO) >= 0);
+    check = (dup2(params->stdout_fd, STDOUT_FILENO) >= 0 && dup2(params->stderr_fd, STDERR_FILENO) >= 0);
     local_errno = errno;
-    close(fds->stdout_fd);
-    close(fds->stderr_fd);
+    close(params->stdout_fd);
+    close(params->stderr_fd);
     if (!check) {
         fprintf(stderr, "dup2: %s\n", strerror(local_errno));
         return SCR_TEST_CODE_ERROR;
@@ -90,19 +93,21 @@ testDo(const struct testFds *fds, const scrTest *test)
     sigprocmask(SIG_SETMASK, &set, NULL);
 
 #ifdef SCR_MONKEYPATCH
-    if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1) {
-        perror("ptrace (TRACEME)");
-        return SCR_TEST_CODE_ERROR;
+    if (params->have_patches) {
+        if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1) {
+            perror("ptrace (TRACEME)");
+            return SCR_TEST_CODE_ERROR;
+        }
+        raise(SIGSTOP);
     }
-    raise(SIGSTOP);
 #endif
 
     test->test_fn();
     return SCR_TEST_CODE_OK;
 
 error:
-    close(fds->stdout_fd);
-    close(fds->stderr_fd);
+    close(params->stdout_fd);
+    close(params->stderr_fd);
     return SCR_TEST_CODE_ERROR;
 }
 
@@ -113,7 +118,7 @@ hasData(int fd)
 }
 
 static void
-showTestOutput(const struct testFds *fds)
+showTestOutput(const struct testParams *fds)
 {
     bool some_output = false;
 
@@ -142,7 +147,7 @@ showTestOutput(const struct testFds *fds)
 }
 
 static scrTestCode
-summarizeTest(const scrTest *test, const struct testFds *fds, pid_t child, const int *status_ptr,
+summarizeTest(const scrTest *test, const struct testParams *fds, pid_t child, const int *status_ptr,
               bool verbose)
 {
     scrTestCode ret;
@@ -226,42 +231,46 @@ testRun(const scrTest *test, bool verbose)
     int *status_ptr = NULL;
     scrTestCode ret = SCR_TEST_CODE_ERROR;
     pid_t child;
-    struct testFds fds = {.log_fd = -1};
+    struct testParams params = {.log_fd = -1};
     char stdout_template[] = TEMPLATE(out), stderr_template[] = TEMPLATE(err), log_template[] = TEMPLATE(log);
 #undef TMP_PREFIX
 #undef TEMPLATE
 
-    fds.stdout_fd = makeTempFile(stdout_template);
-    if (fds.stdout_fd < 0) {
+    params.stdout_fd = makeTempFile(stdout_template);
+    if (params.stdout_fd < 0) {
         return SCR_TEST_CODE_ERROR;
     }
-    fds.stderr_fd = makeTempFile(stderr_template);
-    if (fds.stderr_fd < 0) {
+    params.stderr_fd = makeTempFile(stderr_template);
+    if (params.stderr_fd < 0) {
         goto done;
     }
-    fds.log_fd = makeTempFile(log_template);
-    if (fds.log_fd < 0) {
+    params.log_fd = makeTempFile(log_template);
+    if (params.log_fd < 0) {
         goto done;
     }
+
+#ifdef SCR_MONKEYPATCH
+    params.have_patches = (patch_goals->length > 0);
+#endif
 
     child = cleanFork();
     switch (child) {
     case -1: perror("fork"); goto done;
-    case 0: _exit(testDo(&fds, test));
+    case 0: _exit(testDo(&params, test)); break;
     default: break;
     }
 
 #ifdef SCR_MONKEYPATCH
-    if (!applyPatches(child, patch_goals, &status)) {
+    if (params.have_patches && !applyPatches(child, patch_goals, &status)) {
         status_ptr = &status;
     }
 #endif
 
-    ret = summarizeTest(test, &fds, child, status_ptr, verbose);
+    ret = summarizeTest(test, &params, child, status_ptr, verbose);
 
 done:
-    close(fds.stdout_fd);
-    close(fds.stderr_fd);
-    close(fds.log_fd);
+    close(params.stdout_fd);
+    close(params.stderr_fd);
+    close(params.log_fd);
     return ret;
 }
