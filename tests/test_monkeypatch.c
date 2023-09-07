@@ -60,7 +60,7 @@ int
 main(int argc, char **argv)
 {
     scrGroup group;
-    scrTestOptions options = {.timeout = 1};
+    const scrTestOptions options = {.timeout = 1};
 
     (void)argc;
 

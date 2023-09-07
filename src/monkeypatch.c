@@ -78,7 +78,7 @@ searchForGotEntry(const ejElfInfo *info, const char *func_name, gear *got_entrie
         return;
     }
 
-    ptr = (void *)(intptr_t)ejResolveAddress(info, entry, file_start);
+    ptr = (void *)(uintptr_t)ejResolveAddress(info, entry, file_start);
     if (gearAppend(got_entries, &ptr) != GEAR_RET_OK) {
         exit(1);
     }

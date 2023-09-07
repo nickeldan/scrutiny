@@ -47,12 +47,7 @@ groupDo(const scrGroup group, const scrOptions *options, int error_fd, int pipe_
     {
         int result;
 
-#ifdef SCR_MONKEYPATCH
-        result = testRun(test, options->flags & SCR_RF_VERBOSE, &group->patch_goals);
-#else
         result = testRun(test, options->flags & SCR_RF_VERBOSE);
-#endif
-
         switch (result) {
         case SCR_TEST_CODE_OK: stats_obj.num_passed++; break;
         case SCR_TEST_CODE_SKIP: stats_obj.num_skipped++; break;
@@ -90,6 +85,10 @@ scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTe
     if (!test.name) {
         exit(1);
     }
+
+#ifdef SCR_MONKEYPATCH
+    test.patch_goals = &group->patch_goals;
+#endif
 
     if (gearAppend(&group->tests, &test) != GEAR_RET_OK) {
         exit(1);

@@ -32,9 +32,12 @@ scrCtxCleanupFn(void *);
 typedef void
 scrTestFn(void);
 
+/**
+ * @brief Options to pass to scrGroupAddTest.
+ */
 typedef struct scrTestOptions {
-    unsigned int timeout;
-    unsigned int flags;
+    unsigned int timeout; /**< If positive, the number of seconds to timeout the test. */
+    unsigned int flags;   /**< Bitwise-or-combined flags. */
 } scrTestOptions;
 
 /**

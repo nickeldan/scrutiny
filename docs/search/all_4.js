@@ -48,7 +48,7 @@ var searchData=
   ['scrrun_45',['scrRun',['../run_8h.html#af1680b15d3118f62b2d457e061ee22a4',1,'run.h']]],
   ['scrstats_46',['scrStats',['../run_8h.html#a0ab54a6f620fd8de5f8f12228a905406',1,'scrStats():&#160;run.h'],['../structscrStats.html',1,'scrStats']]],
   ['scrtestfn_47',['scrTestFn',['../run_8h.html#a78714973fe7a20ca16e1cf263d6035e4',1,'run.h']]],
-  ['scrtestoptions_48',['scrTestOptions',['../structscrTestOptions.html',1,'']]],
+  ['scrtestoptions_48',['scrTestOptions',['../structscrTestOptions.html',1,'scrTestOptions'],['../run_8h.html#ab7171d2b7d09a67ecefaab183cfd59c8',1,'scrTestOptions():&#160;run.h']]],
   ['scrutiny_49',['Scrutiny',['../index.html',1,'']]],
   ['scrutiny_2eh_50',['scrutiny.h',['../scrutiny_8h.html',1,'']]],
   ['scrutiny_5fversion_51',['SCRUTINY_VERSION',['../scrutiny_8h.html#af8d9e35da7f9738df5ec67f565a96e13',1,'scrutiny.h']]]

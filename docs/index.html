@@ -94,7 +94,7 @@ Testing basics</h1>
 <div class="fragment"><div class="line"><a class="code hl_struct" href="structscrStats.html">scrStats</a> stats;</div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_function" href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">scrRun</a>(NULL, &amp;stats);</div>
-<div class="ttc" id="astructscrStats_html"><div class="ttname"><a href="structscrStats.html">scrStats</a></div><div class="ttdoc">Holds the test results.</div><div class="ttdef"><b>Definition:</b> run.h:51</div></div>
+<div class="ttc" id="astructscrStats_html"><div class="ttname"><a href="structscrStats.html">scrStats</a></div><div class="ttdoc">Holds the test results.</div><div class="ttdef"><b>Definition:</b> run.h:54</div></div>
 </div><!-- fragment --><p >where <code><a class="el" href="structscrStats.html" title="Holds the test results.">scrStats</a></code> is defined as</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structscrStats.html">scrStats</a> {</div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="structscrStats.html#ae1897529c0e662fd86856911a88c6b8b">num_passed</a>;</div>
@@ -103,10 +103,10 @@ Testing basics</h1>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="structscrStats.html#a32944f34261641031f5a06f51f786065">num_errored</a>;</div>
 <div class="line">} <a class="code hl_typedef" href="run_8h.html#a0ab54a6f620fd8de5f8f12228a905406">scrStats</a>;</div>
 <div class="ttc" id="arun_8h_html_a0ab54a6f620fd8de5f8f12228a905406"><div class="ttname"><a href="run_8h.html#a0ab54a6f620fd8de5f8f12228a905406">scrStats</a></div><div class="ttdeci">struct scrStats scrStats</div><div class="ttdoc">Holds the test results.</div></div>
-<div class="ttc" id="astructscrStats_html_a2cab04795b417dacc314938b25a6f89b"><div class="ttname"><a href="structscrStats.html#a2cab04795b417dacc314938b25a6f89b">scrStats::num_failed</a></div><div class="ttdeci">unsigned int num_failed</div><div class="ttdef"><b>Definition:</b> run.h:54</div></div>
-<div class="ttc" id="astructscrStats_html_a32944f34261641031f5a06f51f786065"><div class="ttname"><a href="structscrStats.html#a32944f34261641031f5a06f51f786065">scrStats::num_errored</a></div><div class="ttdeci">unsigned int num_errored</div><div class="ttdef"><b>Definition:</b> run.h:56</div></div>
-<div class="ttc" id="astructscrStats_html_ad3370711e149678702e565fc920133a0"><div class="ttname"><a href="structscrStats.html#ad3370711e149678702e565fc920133a0">scrStats::num_skipped</a></div><div class="ttdeci">unsigned int num_skipped</div><div class="ttdef"><b>Definition:</b> run.h:53</div></div>
-<div class="ttc" id="astructscrStats_html_ae1897529c0e662fd86856911a88c6b8b"><div class="ttname"><a href="structscrStats.html#ae1897529c0e662fd86856911a88c6b8b">scrStats::num_passed</a></div><div class="ttdeci">unsigned int num_passed</div><div class="ttdef"><b>Definition:</b> run.h:52</div></div>
+<div class="ttc" id="astructscrStats_html_a2cab04795b417dacc314938b25a6f89b"><div class="ttname"><a href="structscrStats.html#a2cab04795b417dacc314938b25a6f89b">scrStats::num_failed</a></div><div class="ttdeci">unsigned int num_failed</div><div class="ttdef"><b>Definition:</b> run.h:57</div></div>
+<div class="ttc" id="astructscrStats_html_a32944f34261641031f5a06f51f786065"><div class="ttname"><a href="structscrStats.html#a32944f34261641031f5a06f51f786065">scrStats::num_errored</a></div><div class="ttdeci">unsigned int num_errored</div><div class="ttdef"><b>Definition:</b> run.h:59</div></div>
+<div class="ttc" id="astructscrStats_html_ad3370711e149678702e565fc920133a0"><div class="ttname"><a href="structscrStats.html#ad3370711e149678702e565fc920133a0">scrStats::num_skipped</a></div><div class="ttdeci">unsigned int num_skipped</div><div class="ttdef"><b>Definition:</b> run.h:56</div></div>
+<div class="ttc" id="astructscrStats_html_ae1897529c0e662fd86856911a88c6b8b"><div class="ttname"><a href="structscrStats.html#ae1897529c0e662fd86856911a88c6b8b">scrStats::num_passed</a></div><div class="ttdeci">unsigned int num_passed</div><div class="ttdef"><b>Definition:</b> run.h:55</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md1"></a>
 Writing tests</h1>
 <p >Various macros are provided in order to test various conditions. For example, for integers,</p>
@@ -196,12 +196,13 @@ Test parameters</h1>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span></div>
 <div class="line"><a class="code hl_function" href="run_8h.html#a38b44f8ac530738e72643a68c9cc70d7">scrGroupAddTest</a>(<a class="code hl_typedef" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> group, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, <a class="code hl_typedef" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, <span class="keyword">const</span> <a class="code hl_struct" href="structscrTestOptions.html">scrTestOptions</a> *options);</div>
 <div class="ttc" id="arun_8h_html_a78714973fe7a20ca16e1cf263d6035e4"><div class="ttname"><a href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a></div><div class="ttdeci">void scrTestFn(void)</div><div class="ttdoc">The signature for a test function.</div><div class="ttdef"><b>Definition:</b> run.h:33</div></div>
-<div class="ttc" id="astructscrTestOptions_html"><div class="ttname"><a href="structscrTestOptions.html">scrTestOptions</a></div><div class="ttdef"><b>Definition:</b> run.h:35</div></div>
+<div class="ttc" id="astructscrTestOptions_html"><div class="ttname"><a href="structscrTestOptions.html">scrTestOptions</a></div><div class="ttdoc">Options to pass to scrGroupAddTest.</div><div class="ttdef"><b>Definition:</b> run.h:38</div></div>
 </div><!-- fragment --><p >where</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <a class="code hl_struct" href="structscrTestOptions.html">scrTestOptions</a></div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> timeout;</div>
 <div class="line">    <span class="keywordtype">unsigned</span> flags;</div>
-<div class="line">} <a class="code hl_struct" href="structscrTestOptions.html">scrTestOptions</a>;</div>
+<div class="line">} <a class="code hl_typedef" href="run_8h.html#ab7171d2b7d09a67ecefaab183cfd59c8">scrTestOptions</a>;</div>
+<div class="ttc" id="arun_8h_html_ab7171d2b7d09a67ecefaab183cfd59c8"><div class="ttname"><a href="run_8h.html#ab7171d2b7d09a67ecefaab183cfd59c8">scrTestOptions</a></div><div class="ttdeci">struct scrTestOptions scrTestOptions</div><div class="ttdoc">Options to pass to scrGroupAddTest.</div></div>
 </div><!-- fragment --><p >If <code>options</code> is <code>NULL</code>, then default options will be used (i.e., 0 for both).</p>
 <p >If <code>timeout</code> is positive, then the test will fail if not completed within that many seconds.</p>
 <p >At the moment, the only valid value for <code>flags</code> other than <code>0</code> is <code>SCR_TF_XFAIL</code>. If this value is passed, then success/failure will be inverted. That is, the test will be expected to fail and a failure will be counted if the test passes.</p>
@@ -215,15 +216,15 @@ Global/group context</h1>
 </div><!-- fragment --><p >The signature of <code>scrRun</code> is</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span></div>
 <div class="line"><a class="code hl_function" href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">scrRun</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structscrOptions.html">scrOptions</a> *options, <a class="code hl_struct" href="structscrStats.html">scrStats</a> *stats);</div>
-<div class="ttc" id="astructscrOptions_html"><div class="ttname"><a href="structscrOptions.html">scrOptions</a></div><div class="ttdoc">Options to pass to scrRunnerRun.</div><div class="ttdef"><b>Definition:</b> run.h:43</div></div>
+<div class="ttc" id="astructscrOptions_html"><div class="ttname"><a href="structscrOptions.html">scrOptions</a></div><div class="ttdoc">Options to pass to scrRunnerRun.</div><div class="ttdef"><b>Definition:</b> run.h:46</div></div>
 </div><!-- fragment --><p >where</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structscrOptions.html">scrOptions</a> {</div>
 <div class="line">    <span class="keywordtype">void</span> *<a class="code hl_variable" href="structscrOptions.html#a2a2eee9cdea6949ae9b6db842eaf3c09">global_ctx</a>;</div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44">flags</a>;</div>
 <div class="line">} <a class="code hl_typedef" href="run_8h.html#a86df619ddcdab198dd59ea817de931e6">scrOptions</a>;</div>
 <div class="ttc" id="arun_8h_html_a86df619ddcdab198dd59ea817de931e6"><div class="ttname"><a href="run_8h.html#a86df619ddcdab198dd59ea817de931e6">scrOptions</a></div><div class="ttdeci">struct scrOptions scrOptions</div><div class="ttdoc">Options to pass to scrRunnerRun.</div></div>
-<div class="ttc" id="astructscrOptions_html_a2a2eee9cdea6949ae9b6db842eaf3c09"><div class="ttname"><a href="structscrOptions.html#a2a2eee9cdea6949ae9b6db842eaf3c09">scrOptions::global_ctx</a></div><div class="ttdeci">void * global_ctx</div><div class="ttdef"><b>Definition:</b> run.h:44</div></div>
-<div class="ttc" id="astructscrOptions_html_a8467b749302edfa3c9edbba81ad66c44"><div class="ttname"><a href="structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44">scrOptions::flags</a></div><div class="ttdeci">unsigned int flags</div><div class="ttdef"><b>Definition:</b> run.h:45</div></div>
+<div class="ttc" id="astructscrOptions_html_a2a2eee9cdea6949ae9b6db842eaf3c09"><div class="ttname"><a href="structscrOptions.html#a2a2eee9cdea6949ae9b6db842eaf3c09">scrOptions::global_ctx</a></div><div class="ttdeci">void * global_ctx</div><div class="ttdef"><b>Definition:</b> run.h:47</div></div>
+<div class="ttc" id="astructscrOptions_html_a8467b749302edfa3c9edbba81ad66c44"><div class="ttname"><a href="structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44">scrOptions::flags</a></div><div class="ttdeci">unsigned int flags</div><div class="ttdef"><b>Definition:</b> run.h:48</div></div>
 </div><!-- fragment --><p >If the <code>options</code> argument is <code>NULL</code>, then default values will be used (i.e., <code>NULL</code> and <code>0</code>).</p>
 <p >By default, each group context is equal to the global context. However, you can pass function pointers to <code>scrGroupCreate</code> which can set up and tear down a group context. The signature of <code>scrGroupCreate</code> is</p>
 <div class="fragment"><div class="line"><a class="code hl_typedef" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> *</div>
