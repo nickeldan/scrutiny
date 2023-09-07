@@ -1,5 +1,4 @@
-#ifndef SCRUTINY_INTERNAL_H
-#define SCRUTINY_INTERNAL_H
+#pragma once
 
 #include <stdbool.h>
 #include <sys/types.h>
@@ -19,6 +18,9 @@ typedef struct scrTest {
     scrTestFn *test_fn;
     char *name;
     scrTestOptions options;
+#ifdef SCR_MONKEYPATCH
+    gear *patch_goals;
+#endif
 } scrTest;
 
 #ifdef SCR_MONKEYPATCH
@@ -63,13 +65,8 @@ groupFree(scrGroup group);
 void
 showTestResult(const scrTest *test, scrTestCode result);
 
-#ifdef SCR_MONKEYPATCH
-scrTestCode
-testRun(const scrTest *test, bool verbose, const gear *patch_goals);
-#else
 scrTestCode
 testRun(const scrTest *test, bool verbose);
-#endif
 
 void
 setGroupCtx(void *ctx);
@@ -81,5 +78,3 @@ void
 waitForProcess(pid_t pid, unsigned int timeout, int *status, bool *timed_out);
 
 extern bool show_color;
-
-#endif  // SCRUTINY_INTERNAL_H

@@ -219,11 +219,7 @@ makeTempFile(char *template)
 #define TEMPLATE(fmt) TMP_PREFIX "/tmp/scrutiny_" #fmt "_XXXXXX"
 
 scrTestCode
-#ifdef SCR_MONKEYPATCH
-testRun(const scrTest *test, bool verbose, const gear *patch_goals)
-#else
 testRun(const scrTest *test, bool verbose)
-#endif
 {
 #ifdef SCR_MONKEYPATCH
     int status;
@@ -250,7 +246,7 @@ testRun(const scrTest *test, bool verbose)
     }
 
 #ifdef SCR_MONKEYPATCH
-    params.have_patches = (patch_goals->length > 0);
+    params.have_patches = (test->patch_goals->length > 0);
 #endif
 
     child = cleanFork();
@@ -261,7 +257,7 @@ testRun(const scrTest *test, bool verbose)
     }
 
 #ifdef SCR_MONKEYPATCH
-    if (params.have_patches && !applyPatches(child, patch_goals, &status)) {
+    if (params.have_patches && !applyPatches(child, test->patch_goals, &status)) {
         status_ptr = &status;
     }
 #endif
