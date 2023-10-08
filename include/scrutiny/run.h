@@ -6,13 +6,14 @@
 #pragma once
 
 #include <stdbool.h>
+#include <sys/types.h>
 
 #include "definitions.h"
 
 /**
- * @brief An opaque structure encapsulating each testing group.
+ * @brief A representation of a testing group.
  */
-typedef struct scrGroupStruct *scrGroup;
+typedef size_t scrGroup;
 
 /**
  * @brief The signature for a group context creation function.
@@ -84,7 +85,7 @@ typedef struct scrStats {
  * @return  A group handle.
  */
 scrGroup
-scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT SCR_MALLOC;
+scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT;
 
 /**
  * @brief Adds a test to a group.
@@ -96,7 +97,7 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn) SCR_EXPORT 
  */
 void
 scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTestOptions *options) SCR_EXPORT
-    SCR_NONNULL(1, 2, 3);
+    SCR_NONNULL(2, 3);
 
 /**
  * @brief Enables monkeypatching of a function for all of a group's tests.
@@ -113,7 +114,7 @@ scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTe
  */
 bool
 scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_substring,
-                      void *new_func) SCR_EXPORT SCR_NONNULL(1, 2, 4);
+                      void *new_func) SCR_EXPORT SCR_NONNULL(2, 4);
 
 /**
  * @brief Runs all of the tests.

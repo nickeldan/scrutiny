@@ -10,7 +10,7 @@
 #include "internal.h"
 #include "monkeypatch.h"
 
-static gear groups;
+gear groups;
 static const int kill_signals[] = {SIGHUP, SIGQUIT, SIGTERM, SIGINT};
 
 static void
@@ -33,7 +33,7 @@ removeSignalHandler(void)
 }
 
 static bool
-receiveStats(int pipe_fd, const scrGroup group, scrStats *stats)
+receiveStats(int pipe_fd, const scrGroupStruct *group, scrStats *stats)
 {
     bool were_failures;
     ssize_t transmitted;
@@ -69,7 +69,7 @@ receiveStats(int pipe_fd, const scrGroup group, scrStats *stats)
 }
 
 static bool
-groupRun(const scrGroup group, const scrOptions *options, scrStats *stats)
+groupRun(const scrGroupStruct *group, const scrOptions *options, scrStats *stats)
 {
     bool were_failures;
     int status, exit_code;
@@ -149,7 +149,7 @@ groupRun(const scrGroup group, const scrOptions *options, scrStats *stats)
 static void
 freeResources(void)
 {
-    scrGroup group;
+    scrGroupStruct *group;
 
     GEAR_FOR_EACH(&groups, group)
     {
@@ -161,7 +161,7 @@ freeResources(void)
 scrGroup
 scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
 {
-    struct scrGroupStruct group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
+    scrGroupStruct group = {.create_fn = create_fn, .cleanup_fn = cleanup_fn};
 
     if (groups.item_size == 0) {
         struct sigaction action = {.sa_handler = signalHandler};
@@ -186,7 +186,7 @@ scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn)
         exit(1);
     }
 
-    return GEAR_GET_ITEM(&groups, groups.length - 1);
+    return groups.length - 1;
 }
 
 int
@@ -194,7 +194,7 @@ scrRun(const scrOptions *options, scrStats *stats)
 {
     scrStats stats_obj;
     const scrOptions options_obj = {0};
-    scrGroup group;
+    scrGroupStruct *group;
 
     if (!stats) {
         stats = &stats_obj;

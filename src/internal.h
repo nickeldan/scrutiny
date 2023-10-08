@@ -32,14 +32,14 @@ typedef struct scrPatchGoal {
 
 #endif
 
-struct scrGroupStruct {
+typedef struct scrGroupStruct {
     scrCtxCreateFn *create_fn;
     scrCtxCleanupFn *cleanup_fn;
     gear tests;
 #ifdef SCR_MONKEYPATCH
     gear patch_goals;
 #endif
-};
+} scrGroupStruct;
 
 #ifndef ARRAY_LENGTH
 #define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -57,10 +57,10 @@ void
 dumpFd(int fd, bool printable_only);
 
 int
-groupDo(const scrGroup group, const scrOptions *options, int error_fd, int pipe_fd);
+groupDo(const scrGroupStruct *group, const scrOptions *options, int error_fd, int pipe_fd);
 
 void
-groupFree(scrGroup group);
+groupFree(scrGroupStruct *group);
 
 void
 showTestResult(const scrTest *test, scrTestCode result);
@@ -77,4 +77,5 @@ setLogFd(int fd);
 void
 waitForProcess(pid_t pid, unsigned int timeout, int *status, bool *timed_out);
 
+extern gear groups;
 extern bool show_color;

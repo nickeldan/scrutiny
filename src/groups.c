@@ -8,7 +8,7 @@
 #include "monkeypatch.h"
 
 static bool
-groupSetup(const scrGroup group, const scrOptions *options, int error_fd, void **group_ctx)
+groupSetup(const scrGroupStruct *group, const scrOptions *options, int error_fd, void **group_ctx)
 {
     sigset_t set;
 
@@ -33,7 +33,7 @@ groupSetup(const scrGroup group, const scrOptions *options, int error_fd, void *
 }
 
 int
-groupDo(const scrGroup group, const scrOptions *options, int error_fd, int pipe_fd)
+groupDo(const scrGroupStruct *group, const scrOptions *options, int error_fd, int pipe_fd)
 {
     void *group_ctx;
     scrStats stats_obj = {0};
@@ -75,6 +75,7 @@ groupDo(const scrGroup group, const scrOptions *options, int error_fd, int pipe_
 void
 scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTestOptions *options)
 {
+    scrGroupStruct *gs = GEAR_GET_ITEM(&groups, group);
     scrTest test = {.test_fn = test_fn};
 
     if (options) {
@@ -87,10 +88,10 @@ scrGroupAddTest(scrGroup group, const char *name, scrTestFn test_fn, const scrTe
     }
 
 #ifdef SCR_MONKEYPATCH
-    test.patch_goals = &group->patch_goals;
+    test.patch_goals = &gs->patch_goals;
 #endif
 
-    if (gearAppend(&group->tests, &test) != GEAR_RET_OK) {
+    if (gearAppend(&gs->tests, &test) != GEAR_RET_OK) {
         exit(1);
     }
 }
@@ -99,6 +100,7 @@ bool
 scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_substring, void *new_func)
 {
 #ifdef SCR_MONKEYPATCH
+    scrGroupStruct *gs = GEAR_GET_ITEM(&groups, group);
     scrPatchGoal goal = {.func_ptr = new_func};
 
     gearInit(&goal.got_entries, sizeof(void *));
@@ -107,7 +109,7 @@ scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_su
         return false;
     }
 
-    if (gearAppend(&group->patch_goals, &goal) != GEAR_RET_OK) {
+    if (gearAppend(&gs->patch_goals, &goal) != GEAR_RET_OK) {
         exit(1);
     }
 
@@ -123,7 +125,7 @@ scrGroupPatchFunction(scrGroup group, const char *func_name, const char *file_su
 }
 
 void
-groupFree(scrGroup group)
+groupFree(scrGroupStruct *group)
 {
     scrTest *test;
 #ifdef SCR_MONKEYPATCH
