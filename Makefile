@@ -50,7 +50,6 @@ BUILD_DEPS ?= $(if $(MAKECMDGOALS),$(subst clean,,$(MAKECMDGOALS)),yes)
 ifneq ($(BUILD_DEPS),)
 
 $(SCR_DEPS_FILE): $(SCR_SOURCE_FILES) $(SCR_HEADER_FILES)
-	@mkdir -p $(@D)
 	@rm -f $@
 	for file in $(SCR_SOURCE_FILES); do \
 	    echo "src/`$(CC) $(SCR_INCLUDE_FLAGS) -MM $$file`" >> $@ && \
@@ -61,7 +60,6 @@ include $(SCR_DEPS_FILE)
 endif
 
 $(SCR_SHARED_LIBRARY): $(SCR_OBJECT_FILES)
-	@mkdir -p $(@D)
 	$(CC) $(LDFLAGS) -Wl,--gc-sections -shared -o $@ $(filter %.o,$^)
 
 scr_clean:

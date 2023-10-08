@@ -79,6 +79,7 @@ $(function() {
 <p>Defines the runner functionality.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &lt;sys/types.h&gt;</code><br />
 <code>#include &quot;definitions.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for run.h:</div>
@@ -122,10 +123,10 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ae54cb7e18b1b20683e0480e98c0f6c31"><td class="memItemLeft" align="right" valign="top"><a id="ae54cb7e18b1b20683e0480e98c0f6c31" name="ae54cb7e18b1b20683e0480e98c0f6c31"></a>
-typedef struct scrGroupStruct *&#160;</td><td class="memItemRight" valign="bottom"><b>scrGroup</b></td></tr>
-<tr class="memdesc:ae54cb7e18b1b20683e0480e98c0f6c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">An opaque structure encapsulating each testing group. <br /></td></tr>
-<tr class="separator:ae54cb7e18b1b20683e0480e98c0f6c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd916ccfa36d2da98086bd41306bc877"><td class="memItemLeft" align="right" valign="top"><a id="afd916ccfa36d2da98086bd41306bc877" name="afd916ccfa36d2da98086bd41306bc877"></a>
+typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><b>scrGroup</b></td></tr>
+<tr class="memdesc:afd916ccfa36d2da98086bd41306bc877"><td class="mdescLeft">&#160;</td><td class="mdescRight">A representation of a testing group. <br /></td></tr>
+<tr class="separator:afd916ccfa36d2da98086bd41306bc877"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33a9c3f5723dacf090e0117092404b88"><td class="memItemLeft" align="right" valign="top"><a id="a33a9c3f5723dacf090e0117092404b88" name="a33a9c3f5723dacf090e0117092404b88"></a>
 typedef void *&#160;</td><td class="memItemRight" valign="bottom"><b>scrCtxCreateFn</b>(void *)</td></tr>
 <tr class="memdesc:a33a9c3f5723dacf090e0117092404b88"><td class="mdescLeft">&#160;</td><td class="mdescRight">The signature for a group context creation function. <br /></td></tr>
@@ -153,15 +154,15 @@ typedef struct <a class="el" href="structscrStats.html">scrStats</a>&#160;</td><
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac19ec14833b015c6ccbd424d20cfeb1e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#ac19ec14833b015c6ccbd424d20cfeb1e">scrGroupCreate</a> (<a class="el" href="run_8h.html#a33a9c3f5723dacf090e0117092404b88">scrCtxCreateFn</a> create_fn, <a class="el" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a> cleanup_fn) SCR_EXPORT SCR_MALLOC</td></tr>
-<tr class="memdesc:ac19ec14833b015c6ccbd424d20cfeb1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new test group.  <a href="run_8h.html#ac19ec14833b015c6ccbd424d20cfeb1e">More...</a><br /></td></tr>
-<tr class="separator:ac19ec14833b015c6ccbd424d20cfeb1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38b44f8ac530738e72643a68c9cc70d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a38b44f8ac530738e72643a68c9cc70d7">scrGroupAddTest</a> (<a class="el" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> group, const char *name, <a class="el" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, const <a class="el" href="structscrTestOptions.html">scrTestOptions</a> *options) SCR_EXPORT SCR_NONNULL(1</td></tr>
-<tr class="memdesc:a38b44f8ac530738e72643a68c9cc70d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="run_8h.html#a38b44f8ac530738e72643a68c9cc70d7">More...</a><br /></td></tr>
-<tr class="separator:a38b44f8ac530738e72643a68c9cc70d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8de3f03238ed08517044288cb6768e84"><td class="memItemLeft" align="right" valign="top">void bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a8de3f03238ed08517044288cb6768e84">scrGroupPatchFunction</a> (<a class="el" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> group, const char *func_name, const char *file_substring, void *new_func) SCR_EXPORT SCR_NONNULL(1</td></tr>
-<tr class="memdesc:a8de3f03238ed08517044288cb6768e84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables monkeypatching of a function for all of a group's tests.  <a href="run_8h.html#a8de3f03238ed08517044288cb6768e84">More...</a><br /></td></tr>
-<tr class="separator:a8de3f03238ed08517044288cb6768e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cff1c7140ca4a6bfc518b04f973a196"><td class="memItemLeft" align="right" valign="top"><a class="el" href="run_8h.html#afd916ccfa36d2da98086bd41306bc877">scrGroup</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a0cff1c7140ca4a6bfc518b04f973a196">scrGroupCreate</a> (<a class="el" href="run_8h.html#a33a9c3f5723dacf090e0117092404b88">scrCtxCreateFn</a> create_fn, <a class="el" href="run_8h.html#a0ddbd6caab0df72aea82c68428d9578a">scrCtxCleanupFn</a> cleanup_fn) SCR_EXPORT</td></tr>
+<tr class="memdesc:a0cff1c7140ca4a6bfc518b04f973a196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new test group.  <a href="run_8h.html#a0cff1c7140ca4a6bfc518b04f973a196">More...</a><br /></td></tr>
+<tr class="separator:a0cff1c7140ca4a6bfc518b04f973a196"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1666b6826309045f418f7c19e683cd5d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#a1666b6826309045f418f7c19e683cd5d">scrGroupAddTest</a> (<a class="el" href="run_8h.html#afd916ccfa36d2da98086bd41306bc877">scrGroup</a> group, const char *name, <a class="el" href="run_8h.html#a78714973fe7a20ca16e1cf263d6035e4">scrTestFn</a> test_fn, const <a class="el" href="structscrTestOptions.html">scrTestOptions</a> *options) SCR_EXPORT SCR_NONNULL(2</td></tr>
+<tr class="memdesc:a1666b6826309045f418f7c19e683cd5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a test to a group.  <a href="run_8h.html#a1666b6826309045f418f7c19e683cd5d">More...</a><br /></td></tr>
+<tr class="separator:a1666b6826309045f418f7c19e683cd5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7ec0a6cc51c3916ba97997b0f062d54"><td class="memItemLeft" align="right" valign="top">void bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#ab7ec0a6cc51c3916ba97997b0f062d54">scrGroupPatchFunction</a> (<a class="el" href="run_8h.html#afd916ccfa36d2da98086bd41306bc877">scrGroup</a> group, const char *func_name, const char *file_substring, void *new_func) SCR_EXPORT SCR_NONNULL(2</td></tr>
+<tr class="memdesc:ab7ec0a6cc51c3916ba97997b0f062d54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables monkeypatching of a function for all of a group's tests.  <a href="run_8h.html#ab7ec0a6cc51c3916ba97997b0f062d54">More...</a><br /></td></tr>
+<tr class="separator:ab7ec0a6cc51c3916ba97997b0f062d54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1680b15d3118f62b2d457e061ee22a4"><td class="memItemLeft" align="right" valign="top">void bool int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">scrRun</a> (const <a class="el" href="structscrOptions.html">scrOptions</a> *options, <a class="el" href="structscrStats.html">scrStats</a> *stats) SCR_EXPORT</td></tr>
 <tr class="memdesc:af1680b15d3118f62b2d457e061ee22a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs all of the tests.  <a href="run_8h.html#af1680b15d3118f62b2d457e061ee22a4">More...</a><br /></td></tr>
 <tr class="separator:af1680b15d3118f62b2d457e061ee22a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,14 +170,14 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Defines the runner functionality. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ac19ec14833b015c6ccbd424d20cfeb1e" name="ac19ec14833b015c6ccbd424d20cfeb1e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac19ec14833b015c6ccbd424d20cfeb1e">&#9670;&nbsp;</a></span>scrGroupCreate()</h2>
+<a id="a0cff1c7140ca4a6bfc518b04f973a196" name="a0cff1c7140ca4a6bfc518b04f973a196"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cff1c7140ca4a6bfc518b04f973a196">&#9670;&nbsp;</a></span>scrGroupCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a> scrGroupCreate </td>
+          <td class="memname"><a class="el" href="run_8h.html#afd916ccfa36d2da98086bd41306bc877">scrGroup</a> scrGroupCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="run_8h.html#a33a9c3f5723dacf090e0117092404b88">scrCtxCreateFn</a>&#160;</td>
           <td class="paramname"><em>create_fn</em>, </td>
@@ -207,8 +208,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a38b44f8ac530738e72643a68c9cc70d7" name="a38b44f8ac530738e72643a68c9cc70d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38b44f8ac530738e72643a68c9cc70d7">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
+<a id="a1666b6826309045f418f7c19e683cd5d" name="a1666b6826309045f418f7c19e683cd5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1666b6826309045f418f7c19e683cd5d">&#9670;&nbsp;</a></span>scrGroupAddTest()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -216,7 +217,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void scrGroupAddTest </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="run_8h.html#afd916ccfa36d2da98086bd41306bc877">scrGroup</a>&#160;</td>
           <td class="paramname"><em>group</em>, </td>
         </tr>
         <tr>
@@ -258,8 +259,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8de3f03238ed08517044288cb6768e84" name="a8de3f03238ed08517044288cb6768e84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8de3f03238ed08517044288cb6768e84">&#9670;&nbsp;</a></span>scrGroupPatchFunction()</h2>
+<a id="ab7ec0a6cc51c3916ba97997b0f062d54" name="ab7ec0a6cc51c3916ba97997b0f062d54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7ec0a6cc51c3916ba97997b0f062d54">&#9670;&nbsp;</a></span>scrGroupPatchFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -267,7 +268,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void bool scrGroupPatchFunction </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="run_8h.html#ae54cb7e18b1b20683e0480e98c0f6c31">scrGroup</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="run_8h.html#afd916ccfa36d2da98086bd41306bc877">scrGroup</a>&#160;</td>
           <td class="paramname"><em>group</em>, </td>
         </tr>
         <tr>

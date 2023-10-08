@@ -220,7 +220,7 @@ If the `options` argument is `NULL`, then default values will be used (i.e., `NU
 By default, each group context is equal to the global context.  However, you can pass function pointers to `scrGroupCreate` which can set up and tear down a group context.  The signature of `scrGroupCreate` is
 
 ```c
-scrGroup *
+scrGroup
 scrGroupCreate(scrCtxCreateFn create_fn, scrCtxCleanupFn cleanup_fn);
 ```
 
@@ -286,7 +286,7 @@ malloc_fail(void)
 }
 ```
 
-When you attempt to patch a function, Scrutiny will walk your the process' maps file in procfs and identify any ELF files (libscrutiny.so is skipped).  If any of them contain a global offset table (GOT) entry for the specified function, the address of the entry will be recorded.  When a process running one of the tests in the group is started, it will be ptraced and those GOT entries will be altered to point to the interposed function.  If the to-be-patched function is not found in any `.text` section, then `scrGroupPatchFunction` will return `false`.
+When you attempt to patch a function, Scrutiny will walk the the process' maps file in procfs and identify any ELF files (libscrutiny.so is skipped).  If any of them contain a global offset table (GOT) entry for the specified function, the address of the entry will be recorded.  When a process running one of the tests in the group is started, it will be ptraced and those GOT entries will be altered to point to the interposed function.  If the to-be-patched function is not found in any `.text` section, then `scrGroupPatchFunction` will return `false`.
 
 If `file_substring` is not `NULL`, then only ELF files whose paths contain the value as a substring will be patched.  That means that the same function can be patched in the same testing group multiple times.  If the same ELF file would be patched multiple times by different calls to `scrGroupPatchFunction`, then the last call would be the one that is ultimately applied.
 
