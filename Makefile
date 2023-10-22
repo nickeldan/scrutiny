@@ -9,6 +9,17 @@ ifeq ($(monkeypatch),yes)
 CFLAGS += -DSCR_MONKEYPATCH -DREAP_NO_EXPORT -DEJ_NO_EXPORT
 endif
 
+ifeq ($(shell uname -s),Darwin)
+    DARWIN := yes
+    LDFLAGS := -dylib
+    SCR_SHARED_LIBRARY := libscrutiny.dylib
+    UPDATE_LIBRARIES_CMD := update_dyld_shared_cache
+else
+    LDFLAGS := -Wl,--gc-sections
+    SCR_SHARED_LIBRARY := libscrutiny.so
+    UPDATE_LIBRARIES_CMD := ldconfig
+endif
+
 all: _all
 
 BUILD_DEPS :=
@@ -22,13 +33,13 @@ endif
 GEAR_DIR := packages/gear
 include $(GEAR_DIR)/make.mk
 
-SCR_SHARED_LIBRARY := libscrutiny.so
-
 SCR_SOURCE_FILES := $(wildcard src/*.c)
 SCR_OBJECT_FILES := $(patsubst %.c,%.o,$(SCR_SOURCE_FILES)) $(GEAR_OBJECT_FILES)
 SCR_ONLY_HEADER_FILES := $(wildcard include/scrutiny/*.h)
 SCR_HEADER_FILES := $(SCR_ONLY_HEADER_FILES) $(GEAR_HEADER_FILES)
 SCR_INCLUDE_FLAGS := -Iinclude $(GEAR_INCLUDE_FLAGS)
+
+ifeq ($(monkeypatch),yes)
 
 REAP_DIR := packages/reap
 include $(REAP_DIR)/make.mk
@@ -36,10 +47,10 @@ include $(REAP_DIR)/make.mk
 EJ_DIR := packages/elfjack
 include $(EJ_DIR)/make.mk
 
-ifeq ($(monkeypatch),yes)
 SCR_OBJECT_FILES += $(REAP_OBJECT_FILES) $(EJ_OBJECT_FILES)
 SCR_HEADER_FILES += $(REAP_HEADER_FILES) $(EJ_HEADER_FILES)
 SCR_INCLUDE_FLAGS += $(REAP_INCLUDE_FLAGS) $(EJ_INCLUDE_FLAGS)
+
 endif
 
 SCR_DEPS_FILE := src/deps.mk
@@ -60,7 +71,7 @@ include $(SCR_DEPS_FILE)
 endif
 
 $(SCR_SHARED_LIBRARY): $(SCR_OBJECT_FILES)
-	$(CC) $(LDFLAGS) -Wl,--gc-sections -shared -o $@ $(filter %.o,$^)
+	$(CC) $(LDFLAGS) -shared -o $@ $(filter %.o,$^)
 
 scr_clean:
 	@rm -f $(SCR_SHARED_LIBRARY) $(SCR_OBJECT_FILES)
@@ -80,7 +91,7 @@ format:
 	find . -path ./packages -prune -o -name '*.[hc]' -print0 | xargs -0 -n 1 clang-format -i
 
 install: /usr/local/lib/$(SCR_SHARED_LIBRARY) $(foreach file,$(SCR_ONLY_HEADER_FILES),/usr/local/include/scrutiny/$(notdir $(file)))
-	ldconfig
+	$(UPDATE_LIBRARIES_CMD)
 
 /usr/local/lib/$(notdir $(SCR_SHARED_LIBRARY)): $(SCR_SHARED_LIBRARY)
 	cp $< $@
@@ -92,7 +103,7 @@ install: /usr/local/lib/$(SCR_SHARED_LIBRARY) $(foreach file,$(SCR_ONLY_HEADER_F
 uninstall:
 	rm -rf /usr/local/include/scrutiny
 	rm -f /usr/local/lib/$(SCR_SHARED_LIBRARY)
-	ldconfig
+	$(UPDATE_LIBRARIES_CMD)
 
 clean: $(CLEAN_TARGETS)
 	@rm -f $(DEPS_FILES)

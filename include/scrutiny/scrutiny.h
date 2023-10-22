@@ -8,7 +8,7 @@
 /**
  * @brief Scrutiny's version.
  */
-#define SCRUTINY_VERSION "0.7.1"
+#define SCRUTINY_VERSION "0.7.2"
 
 #include "run.h"
 #include "test.h"

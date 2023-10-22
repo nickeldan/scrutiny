@@ -156,6 +156,7 @@ summarizeTest(const scrTest *test, const struct testParams *fds, pid_t child, co
 
     if (status_ptr) {
         status = *status_ptr;
+        timed_out = false;
     }
     else {
         waitForProcess(child, test->options.timeout, &status, &timed_out);
