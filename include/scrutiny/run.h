@@ -42,7 +42,7 @@ typedef struct scrTestOptions {
 } scrTestOptions;
 
 /**
- * @brief Options to pass to scrRunnerRun.
+ * @brief Options to pass to scrRun.
  */
 typedef struct scrOptions {
     void *global_ctx;   /**< The global context for the tests. */

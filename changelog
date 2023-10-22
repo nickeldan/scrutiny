@@ -1,3 +1,6 @@
+0.7.2:
+    - Added support for MacOS.
+
 0.7.1:
     - Changed scrGroup to be an integer type instead of a pointer.
 
