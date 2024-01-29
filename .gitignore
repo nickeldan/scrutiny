@@ -1,6 +1,6 @@
-.vscode
+/.vscode
+/.DS_Store
 *.o
 *.so
 *.dylib
-*.a
 deps.mk
