@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['flags_0',['flags',['../structscrTestOptions.html#a56eccb3d547db3b994cbe8f9097692c1',1,'scrTestOptions::flags()'],['../structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44',1,'scrOptions::flags()']]]
+  ['basics_0',['Testing basics',['../index.html#autotoc_md0',1,'']]],
+  ['building_20scrutiny_1',['Building Scrutiny',['../index.html#autotoc_md6',1,'']]]
 ];

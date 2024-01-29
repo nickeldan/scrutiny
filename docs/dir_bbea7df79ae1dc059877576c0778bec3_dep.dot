@@ -1,11 +1,12 @@
 digraph "include/scrutiny"
 {
  // LATEX_PDF_SIZE
-  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
-  node [fontname="Helvetica",fontsize="10",shape=record];
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
   compound=true
   subgraph clusterdir_d44c64559bbebec7f509842c48db8b23 {
-    graph [ bgcolor="#edf0f7", pencolor="grey25", style="filled,dashed,", label="include", fontname="Helvetica", fontsize="10", URL="dir_d44c64559bbebec7f509842c48db8b23.html"]
-  dir_bbea7df79ae1dc059877576c0778bec3 [shape=box, label="scrutiny", style="filled,bold,", fillcolor="#edf0f7", color="grey25", URL="dir_bbea7df79ae1dc059877576c0778bec3.html"];
+    graph [ bgcolor="#edf0f7", pencolor="grey25", label="include", fontname=Helvetica,fontsize=10 style="filled,dashed", URL="dir_d44c64559bbebec7f509842c48db8b23.html",tooltip=""]
+  dir_bbea7df79ae1dc059877576c0778bec3 [label="scrutiny", fillcolor="#edf0f7", color="grey25", style="filled,bold", URL="dir_bbea7df79ae1dc059877576c0778bec3.html",tooltip=""];
   }
 }

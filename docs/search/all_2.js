@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['num_5ferrored_0',['num_errored',['../structscrStats.html#a32944f34261641031f5a06f51f786065',1,'scrStats']]],
-  ['num_5ffailed_1',['num_failed',['../structscrStats.html#a2cab04795b417dacc314938b25a6f89b',1,'scrStats']]],
-  ['num_5fpassed_2',['num_passed',['../structscrStats.html#ae1897529c0e662fd86856911a88c6b8b',1,'scrStats']]],
-  ['num_5fskipped_3',['num_skipped',['../structscrStats.html#ad3370711e149678702e565fc920133a0',1,'scrStats']]]
+  ['flags_0',['flags',['../structscrTestOptions.html#a56eccb3d547db3b994cbe8f9097692c1',1,'scrTestOptions::flags'],['../structscrOptions.html#a8467b749302edfa3c9edbba81ad66c44',1,'scrOptions::flags'],['../index.html#autotoc_md4',1,'Run flags']]]
 ];
